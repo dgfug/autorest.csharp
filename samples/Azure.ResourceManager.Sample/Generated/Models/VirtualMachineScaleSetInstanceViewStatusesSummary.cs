@@ -5,28 +5,73 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
-using Azure.Core;
+using Azure.ResourceManager.Sample;
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> Instance view statuses summary for virtual machines of a virtual machine scale set. </summary>
-    public partial class VirtualMachineScaleSetInstanceViewStatusesSummary
+    /// <summary>
+    /// Instance view statuses summary for virtual machines of a virtual machine scale set.
+    /// Serialized Name: VirtualMachineScaleSetInstanceViewStatusesSummary
+    /// </summary>
+    internal partial class VirtualMachineScaleSetInstanceViewStatusesSummary
     {
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetInstanceViewStatusesSummary. </summary>
+        /// <summary>
+        /// Keeps track of any properties unknown to the library.
+        /// <para>
+        /// To assign an object to the value of this property use <see cref="BinaryData.FromObjectAsJson{T}(T, System.Text.Json.JsonSerializerOptions?)"/>.
+        /// </para>
+        /// <para>
+        /// To assign an already formatted json string to this property use <see cref="BinaryData.FromString(string)"/>.
+        /// </para>
+        /// <para>
+        /// Examples:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson("foo")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("\"foo\"")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson(new { key = "value" })</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("{\"key\": \"value\"}")</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        private IDictionary<string, BinaryData> _serializedAdditionalRawData;
+
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetInstanceViewStatusesSummary"/>. </summary>
         internal VirtualMachineScaleSetInstanceViewStatusesSummary()
         {
             StatusesSummary = new ChangeTrackingList<VirtualMachineStatusCodeCount>();
         }
 
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetInstanceViewStatusesSummary. </summary>
-        /// <param name="statusesSummary"> The extensions information. </param>
-        internal VirtualMachineScaleSetInstanceViewStatusesSummary(IReadOnlyList<VirtualMachineStatusCodeCount> statusesSummary)
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetInstanceViewStatusesSummary"/>. </summary>
+        /// <param name="statusesSummary">
+        /// The extensions information.
+        /// Serialized Name: VirtualMachineScaleSetInstanceViewStatusesSummary.statusesSummary
+        /// </param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
+        internal VirtualMachineScaleSetInstanceViewStatusesSummary(IReadOnlyList<VirtualMachineStatusCodeCount> statusesSummary, IDictionary<string, BinaryData> serializedAdditionalRawData)
         {
             StatusesSummary = statusesSummary;
+            _serializedAdditionalRawData = serializedAdditionalRawData;
         }
 
-        /// <summary> The extensions information. </summary>
+        /// <summary>
+        /// The extensions information.
+        /// Serialized Name: VirtualMachineScaleSetInstanceViewStatusesSummary.statusesSummary
+        /// </summary>
+        [WirePath("statusesSummary")]
         public IReadOnlyList<VirtualMachineStatusCodeCount> StatusesSummary { get; }
     }
 }

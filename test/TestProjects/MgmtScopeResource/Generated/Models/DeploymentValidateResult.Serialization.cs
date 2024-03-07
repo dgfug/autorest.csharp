@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtScopeResource.Models
 {
@@ -14,32 +13,34 @@ namespace MgmtScopeResource.Models
     {
         internal static DeploymentValidateResult DeserializeDeploymentValidateResult(JsonElement element)
         {
-            Optional<ErrorResponse> error = default;
-            Optional<DeploymentPropertiesExtended> properties = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            ErrorResponse errorResponse = default;
+            DeploymentPropertiesExtended properties = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("error"))
+                if (property.NameEquals("errorResponse"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    error = ErrorResponse.DeserializeErrorResponse(property.Value);
+                    errorResponse = ErrorResponse.DeserializeErrorResponse(property.Value);
                     continue;
                 }
-                if (property.NameEquals("properties"))
+                if (property.NameEquals("properties"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     properties = DeploymentPropertiesExtended.DeserializeDeploymentPropertiesExtended(property.Value);
                     continue;
                 }
             }
-            return new DeploymentValidateResult(error.Value, properties.Value);
+            return new DeploymentValidateResult(errorResponse, properties);
         }
     }
 }

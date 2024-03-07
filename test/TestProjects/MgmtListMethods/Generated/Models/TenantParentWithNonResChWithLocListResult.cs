@@ -15,20 +15,17 @@ namespace MgmtListMethods.Models
     /// <summary> The List Availability Set operation response. </summary>
     internal partial class TenantParentWithNonResChWithLocListResult
     {
-        /// <summary> Initializes a new instance of TenantParentWithNonResChWithLocListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="TenantParentWithNonResChWithLocListResult"/>. </summary>
         /// <param name="value"> The list of fakes. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         internal TenantParentWithNonResChWithLocListResult(IEnumerable<TenantParentWithNonResChWithLocData> value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            Argument.AssertNotNull(value, nameof(value));
 
             Value = value.ToList();
         }
 
-        /// <summary> Initializes a new instance of TenantParentWithNonResChWithLocListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="TenantParentWithNonResChWithLocListResult"/>. </summary>
         /// <param name="value"> The list of fakes. </param>
         /// <param name="nextLink"> The URI to fetch the next page of Fakes. Call ListNext() with this URI to fetch the next page of Fakes. </param>
         internal TenantParentWithNonResChWithLocListResult(IReadOnlyList<TenantParentWithNonResChWithLocData> value, string nextLink)

@@ -7,20 +7,23 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 using MgmtListMethods;
 
 namespace MgmtListMethods.Models
 {
-    public partial class ResGrpParentListResult
+    internal partial class ResGrpParentListResult
     {
         internal static ResGrpParentListResult DeserializeResGrpParentListResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IReadOnlyList<ResGrpParentData> value = default;
-            Optional<string> nextLink = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     List<ResGrpParentData> array = new List<ResGrpParentData>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -30,13 +33,13 @@ namespace MgmtListMethods.Models
                     value = array;
                     continue;
                 }
-                if (property.NameEquals("nextLink"))
+                if (property.NameEquals("nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new ResGrpParentListResult(value, nextLink.Value);
+            return new ResGrpParentListResult(value, nextLink);
         }
     }
 }

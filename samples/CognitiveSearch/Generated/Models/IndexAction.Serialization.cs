@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -17,7 +18,7 @@ namespace CognitiveSearch.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(ActionType))
             {
-                writer.WritePropertyName("@search.action");
+                writer.WritePropertyName("@search.action"u8);
                 writer.WriteStringValue(ActionType.Value.ToSerialString());
             }
             foreach (var item in AdditionalProperties)

@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtListMethods.Models
 {
@@ -14,27 +13,30 @@ namespace MgmtListMethods.Models
     {
         internal static NonResourceChild DeserializeNonResourceChild(JsonElement element)
         {
-            Optional<string> name = default;
-            Optional<int> numberOfCores = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string name = default;
+            int? numberOfCores = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("numberOfCores"))
+                if (property.NameEquals("numberOfCores"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     numberOfCores = property.Value.GetInt32();
                     continue;
                 }
             }
-            return new NonResourceChild(name.Value, Optional.ToNullable(numberOfCores));
+            return new NonResourceChild(name, numberOfCores);
         }
     }
 }

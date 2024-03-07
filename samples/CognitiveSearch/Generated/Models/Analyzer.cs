@@ -6,26 +6,28 @@
 #nullable disable
 
 using System;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
-    /// <summary> Base type for analyzers. </summary>
+    /// <summary>
+    /// Base type for analyzers.
+    /// Please note <see cref="Analyzer"/> is the base class. According to the scenario, a derived class of the base class might need to be assigned here, or this property needs to be casted to one of the possible derived classes.
+    /// The available derived classes include <see cref="CustomAnalyzer"/>, <see cref="PatternAnalyzer"/>, <see cref="StandardAnalyzer"/> and <see cref="StopAnalyzer"/>.
+    /// </summary>
     public partial class Analyzer
     {
-        /// <summary> Initializes a new instance of Analyzer. </summary>
+        /// <summary> Initializes a new instance of <see cref="Analyzer"/>. </summary>
         /// <param name="name"> The name of the analyzer. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
         public Analyzer(string name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            Argument.AssertNotNull(name, nameof(name));
 
             Name = name;
         }
 
-        /// <summary> Initializes a new instance of Analyzer. </summary>
+        /// <summary> Initializes a new instance of <see cref="Analyzer"/>. </summary>
         /// <param name="odataType"> Identifies the concrete type of the analyzer. </param>
         /// <param name="name"> The name of the analyzer. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         internal Analyzer(string odataType, string name)

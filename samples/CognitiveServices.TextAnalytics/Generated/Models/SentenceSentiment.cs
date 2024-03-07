@@ -6,13 +6,14 @@
 #nullable disable
 
 using System;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The SentenceSentiment. </summary>
     public partial class SentenceSentiment
     {
-        /// <summary> Initializes a new instance of SentenceSentiment. </summary>
+        /// <summary> Initializes a new instance of <see cref="SentenceSentiment"/>. </summary>
         /// <param name="text"> The sentence text. </param>
         /// <param name="sentiment"> The predicted Sentiment for the sentence. </param>
         /// <param name="confidenceScores"> The sentiment confidence score between 0 and 1 for the sentence for all classes. </param>
@@ -21,14 +22,8 @@ namespace CognitiveServices.TextAnalytics.Models
         /// <exception cref="ArgumentNullException"> <paramref name="text"/> or <paramref name="confidenceScores"/> is null. </exception>
         internal SentenceSentiment(string text, SentenceSentimentValue sentiment, SentimentConfidenceScorePerLabel confidenceScores, int offset, int length)
         {
-            if (text == null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
-            if (confidenceScores == null)
-            {
-                throw new ArgumentNullException(nameof(confidenceScores));
-            }
+            Argument.AssertNotNull(text, nameof(text));
+            Argument.AssertNotNull(confidenceScores, nameof(confidenceScores));
 
             Text = text;
             Sentiment = sentiment;

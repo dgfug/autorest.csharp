@@ -18,19 +18,22 @@ namespace body_complex
 {
     internal partial class PolymorphismRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of PolymorphismRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public PolymorphismRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateGetValidRequest()
@@ -39,7 +42,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -62,7 +65,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -82,7 +85,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -92,7 +95,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -107,34 +110,34 @@ namespace body_complex
         /// <param name="complexBody">
         /// Please put a salmon that looks like this:
         /// {
-        ///         &apos;fishtype&apos;:&apos;Salmon&apos;,
-        ///         &apos;location&apos;:&apos;alaska&apos;,
-        ///         &apos;iswild&apos;:true,
-        ///         &apos;species&apos;:&apos;king&apos;,
-        ///         &apos;length&apos;:1.0,
-        ///         &apos;siblings&apos;:[
+        ///         'fishtype':'Salmon',
+        ///         'location':'alaska',
+        ///         'iswild':true,
+        ///         'species':'king',
+        ///         'length':1.0,
+        ///         'siblings':[
         ///           {
-        ///             &apos;fishtype&apos;:&apos;Shark&apos;,
-        ///             &apos;age&apos;:6,
-        ///             &apos;birthday&apos;: &apos;2012-01-05T01:00:00Z&apos;,
-        ///             &apos;length&apos;:20.0,
-        ///             &apos;species&apos;:&apos;predator&apos;,
+        ///             'fishtype':'Shark',
+        ///             'age':6,
+        ///             'birthday': '2012-01-05T01:00:00Z',
+        ///             'length':20.0,
+        ///             'species':'predator',
         ///           },
         ///           {
-        ///             &apos;fishtype&apos;:&apos;Sawshark&apos;,
-        ///             &apos;age&apos;:105,
-        ///             &apos;birthday&apos;: &apos;1900-01-05T01:00:00Z&apos;,
-        ///             &apos;length&apos;:10.0,
-        ///             &apos;picture&apos;: new Buffer([255, 255, 255, 255, 254]).toString(&apos;base64&apos;),
-        ///             &apos;species&apos;:&apos;dangerous&apos;,
+        ///             'fishtype':'Sawshark',
+        ///             'age':105,
+        ///             'birthday': '1900-01-05T01:00:00Z',
+        ///             'length':10.0,
+        ///             'picture': new Buffer([255, 255, 255, 255, 254]).toString('base64'),
+        ///             'species':'dangerous',
         ///           },
         ///           {
-        ///             &apos;fishtype&apos;: &apos;goblin&apos;,
-        ///             &apos;age&apos;: 1,
-        ///             &apos;birthday&apos;: &apos;2015-08-08T00:00:00Z&apos;,
-        ///             &apos;length&apos;: 30.0,
-        ///             &apos;species&apos;: &apos;scary&apos;,
-        ///             &apos;jawsize&apos;: 5
+        ///             'fishtype': 'goblin',
+        ///             'age': 1,
+        ///             'birthday': '2015-08-08T00:00:00Z',
+        ///             'length': 30.0,
+        ///             'species': 'scary',
+        ///             'jawsize': 5
         ///           }
         ///         ]
         ///       };
@@ -155,7 +158,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -163,34 +166,34 @@ namespace body_complex
         /// <param name="complexBody">
         /// Please put a salmon that looks like this:
         /// {
-        ///         &apos;fishtype&apos;:&apos;Salmon&apos;,
-        ///         &apos;location&apos;:&apos;alaska&apos;,
-        ///         &apos;iswild&apos;:true,
-        ///         &apos;species&apos;:&apos;king&apos;,
-        ///         &apos;length&apos;:1.0,
-        ///         &apos;siblings&apos;:[
+        ///         'fishtype':'Salmon',
+        ///         'location':'alaska',
+        ///         'iswild':true,
+        ///         'species':'king',
+        ///         'length':1.0,
+        ///         'siblings':[
         ///           {
-        ///             &apos;fishtype&apos;:&apos;Shark&apos;,
-        ///             &apos;age&apos;:6,
-        ///             &apos;birthday&apos;: &apos;2012-01-05T01:00:00Z&apos;,
-        ///             &apos;length&apos;:20.0,
-        ///             &apos;species&apos;:&apos;predator&apos;,
+        ///             'fishtype':'Shark',
+        ///             'age':6,
+        ///             'birthday': '2012-01-05T01:00:00Z',
+        ///             'length':20.0,
+        ///             'species':'predator',
         ///           },
         ///           {
-        ///             &apos;fishtype&apos;:&apos;Sawshark&apos;,
-        ///             &apos;age&apos;:105,
-        ///             &apos;birthday&apos;: &apos;1900-01-05T01:00:00Z&apos;,
-        ///             &apos;length&apos;:10.0,
-        ///             &apos;picture&apos;: new Buffer([255, 255, 255, 255, 254]).toString(&apos;base64&apos;),
-        ///             &apos;species&apos;:&apos;dangerous&apos;,
+        ///             'fishtype':'Sawshark',
+        ///             'age':105,
+        ///             'birthday': '1900-01-05T01:00:00Z',
+        ///             'length':10.0,
+        ///             'picture': new Buffer([255, 255, 255, 255, 254]).toString('base64'),
+        ///             'species':'dangerous',
         ///           },
         ///           {
-        ///             &apos;fishtype&apos;: &apos;goblin&apos;,
-        ///             &apos;age&apos;: 1,
-        ///             &apos;birthday&apos;: &apos;2015-08-08T00:00:00Z&apos;,
-        ///             &apos;length&apos;: 30.0,
-        ///             &apos;species&apos;: &apos;scary&apos;,
-        ///             &apos;jawsize&apos;: 5
+        ///             'fishtype': 'goblin',
+        ///             'age': 1,
+        ///             'birthday': '2015-08-08T00:00:00Z',
+        ///             'length': 30.0,
+        ///             'species': 'scary',
+        ///             'jawsize': 5
         ///           }
         ///         ]
         ///       };
@@ -211,7 +214,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -221,7 +224,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/dotsyntax", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -244,7 +247,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -264,7 +267,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -274,7 +277,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/composedWithDiscriminator", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -297,7 +300,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -317,7 +320,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -327,7 +330,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/composedWithoutDiscriminator", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -350,7 +353,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -370,7 +373,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -380,7 +383,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/complicated", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -403,7 +406,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -423,7 +426,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -433,7 +436,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/complicated", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -445,7 +448,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types that are polymorphic, but not at the root of the hierarchy; also have additional properties. </summary>
-        /// <param name="complexBody"> The Salmon to use. </param>
+        /// <param name="complexBody"> The <see cref="Salmon"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="complexBody"/> is null. </exception>
         public async Task<Response> PutComplicatedAsync(Salmon complexBody, CancellationToken cancellationToken = default)
@@ -462,12 +465,12 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Put complex types that are polymorphic, but not at the root of the hierarchy; also have additional properties. </summary>
-        /// <param name="complexBody"> The Salmon to use. </param>
+        /// <param name="complexBody"> The <see cref="Salmon"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="complexBody"/> is null. </exception>
         public Response PutComplicated(Salmon complexBody, CancellationToken cancellationToken = default)
@@ -484,7 +487,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -494,7 +497,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/missingdiscriminator", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -506,7 +509,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types that are polymorphic, omitting the discriminator. </summary>
-        /// <param name="complexBody"> The Salmon to use. </param>
+        /// <param name="complexBody"> The <see cref="Salmon"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="complexBody"/> is null. </exception>
         public async Task<Response<Salmon>> PutMissingDiscriminatorAsync(Salmon complexBody, CancellationToken cancellationToken = default)
@@ -528,12 +531,12 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Put complex types that are polymorphic, omitting the discriminator. </summary>
-        /// <param name="complexBody"> The Salmon to use. </param>
+        /// <param name="complexBody"> The <see cref="Salmon"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="complexBody"/> is null. </exception>
         public Response<Salmon> PutMissingDiscriminator(Salmon complexBody, CancellationToken cancellationToken = default)
@@ -555,7 +558,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -565,7 +568,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphism/missingrequired/invalid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -576,31 +579,31 @@ namespace body_complex
             return message;
         }
 
-        /// <summary> Put complex types that are polymorphic, attempting to omit required &apos;birthday&apos; field - the request should not be allowed from the client. </summary>
+        /// <summary> Put complex types that are polymorphic, attempting to omit required 'birthday' field - the request should not be allowed from the client. </summary>
         /// <param name="complexBody">
         /// Please attempt put a sawshark that looks like this, the client should not allow this data to be sent:
         /// {
-        ///     &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///     &quot;species&quot;: &quot;snaggle toothed&quot;,
-        ///     &quot;length&quot;: 18.5,
-        ///     &quot;age&quot;: 2,
-        ///     &quot;birthday&quot;: &quot;2013-06-01T01:00:00Z&quot;,
-        ///     &quot;location&quot;: &quot;alaska&quot;,
-        ///     &quot;picture&quot;: base64(FF FF FF FF FE),
-        ///     &quot;siblings&quot;: [
+        ///     "fishtype": "sawshark",
+        ///     "species": "snaggle toothed",
+        ///     "length": 18.5,
+        ///     "age": 2,
+        ///     "birthday": "2013-06-01T01:00:00Z",
+        ///     "location": "alaska",
+        ///     "picture": base64(FF FF FF FF FE),
+        ///     "siblings": [
         ///         {
-        ///             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///             &quot;species&quot;: &quot;predator&quot;,
-        ///             &quot;birthday&quot;: &quot;2012-01-05T01:00:00Z&quot;,
-        ///             &quot;length&quot;: 20,
-        ///             &quot;age&quot;: 6
+        ///             "fishtype": "shark",
+        ///             "species": "predator",
+        ///             "birthday": "2012-01-05T01:00:00Z",
+        ///             "length": 20,
+        ///             "age": 6
         ///         },
         ///         {
-        ///             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///             &quot;species&quot;: &quot;dangerous&quot;,
-        ///             &quot;picture&quot;: base64(FF FF FF FF FE),
-        ///             &quot;length&quot;: 10,
-        ///             &quot;age&quot;: 105
+        ///             "fishtype": "sawshark",
+        ///             "species": "dangerous",
+        ///             "picture": base64(FF FF FF FF FE),
+        ///             "length": 10,
+        ///             "age": 105
         ///         }
         ///     ]
         /// }
@@ -621,35 +624,35 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Put complex types that are polymorphic, attempting to omit required &apos;birthday&apos; field - the request should not be allowed from the client. </summary>
+        /// <summary> Put complex types that are polymorphic, attempting to omit required 'birthday' field - the request should not be allowed from the client. </summary>
         /// <param name="complexBody">
         /// Please attempt put a sawshark that looks like this, the client should not allow this data to be sent:
         /// {
-        ///     &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///     &quot;species&quot;: &quot;snaggle toothed&quot;,
-        ///     &quot;length&quot;: 18.5,
-        ///     &quot;age&quot;: 2,
-        ///     &quot;birthday&quot;: &quot;2013-06-01T01:00:00Z&quot;,
-        ///     &quot;location&quot;: &quot;alaska&quot;,
-        ///     &quot;picture&quot;: base64(FF FF FF FF FE),
-        ///     &quot;siblings&quot;: [
+        ///     "fishtype": "sawshark",
+        ///     "species": "snaggle toothed",
+        ///     "length": 18.5,
+        ///     "age": 2,
+        ///     "birthday": "2013-06-01T01:00:00Z",
+        ///     "location": "alaska",
+        ///     "picture": base64(FF FF FF FF FE),
+        ///     "siblings": [
         ///         {
-        ///             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///             &quot;species&quot;: &quot;predator&quot;,
-        ///             &quot;birthday&quot;: &quot;2012-01-05T01:00:00Z&quot;,
-        ///             &quot;length&quot;: 20,
-        ///             &quot;age&quot;: 6
+        ///             "fishtype": "shark",
+        ///             "species": "predator",
+        ///             "birthday": "2012-01-05T01:00:00Z",
+        ///             "length": 20,
+        ///             "age": 6
         ///         },
         ///         {
-        ///             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///             &quot;species&quot;: &quot;dangerous&quot;,
-        ///             &quot;picture&quot;: base64(FF FF FF FF FE),
-        ///             &quot;length&quot;: 10,
-        ///             &quot;age&quot;: 105
+        ///             "fishtype": "sawshark",
+        ///             "species": "dangerous",
+        ///             "picture": base64(FF FF FF FF FE),
+        ///             "length": 10,
+        ///             "age": 105
         ///         }
         ///     ]
         /// }
@@ -670,7 +673,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

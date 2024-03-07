@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace Azure.AI.FormRecognizer.Models
 {
@@ -14,38 +13,40 @@ namespace Azure.AI.FormRecognizer.Models
     {
         internal static Model DeserializeModel(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             ModelInfo modelInfo = default;
-            Optional<KeysResult> keys = default;
-            Optional<TrainResult> trainResult = default;
+            KeysResult keys = default;
+            TrainResult trainResult = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("modelInfo"))
+                if (property.NameEquals("modelInfo"u8))
                 {
                     modelInfo = ModelInfo.DeserializeModelInfo(property.Value);
                     continue;
                 }
-                if (property.NameEquals("keys"))
+                if (property.NameEquals("keys"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     keys = KeysResult.DeserializeKeysResult(property.Value);
                     continue;
                 }
-                if (property.NameEquals("trainResult"))
+                if (property.NameEquals("trainResult"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     trainResult = TrainResult.DeserializeTrainResult(property.Value);
                     continue;
                 }
             }
-            return new Model(modelInfo, keys.Value, trainResult.Value);
+            return new Model(modelInfo, keys, trainResult);
         }
     }
 }

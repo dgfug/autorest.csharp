@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -15,11 +16,11 @@ namespace CognitiveSearch.Models
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName("applicationId");
+            writer.WritePropertyName("applicationId"u8);
             writer.WriteStringValue(ApplicationId);
             if (Optional.IsDefined(ApplicationSecret))
             {
-                writer.WritePropertyName("applicationSecret");
+                writer.WritePropertyName("applicationSecret"u8);
                 writer.WriteStringValue(ApplicationSecret);
             }
             writer.WriteEndObject();
@@ -27,22 +28,26 @@ namespace CognitiveSearch.Models
 
         internal static AzureActiveDirectoryApplicationCredentials DeserializeAzureActiveDirectoryApplicationCredentials(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             string applicationId = default;
-            Optional<string> applicationSecret = default;
+            string applicationSecret = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("applicationId"))
+                if (property.NameEquals("applicationId"u8))
                 {
                     applicationId = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("applicationSecret"))
+                if (property.NameEquals("applicationSecret"u8))
                 {
                     applicationSecret = property.Value.GetString();
                     continue;
                 }
             }
-            return new AzureActiveDirectoryApplicationCredentials(applicationId, applicationSecret.Value);
+            return new AzureActiveDirectoryApplicationCredentials(applicationId, applicationSecret);
         }
     }
 }

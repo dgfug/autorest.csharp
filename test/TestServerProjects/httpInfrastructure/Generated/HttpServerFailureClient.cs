@@ -29,6 +29,7 @@ namespace httpInfrastructure
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal HttpServerFailureClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new HttpServerFailureRestClient(clientDiagnostics, pipeline, endpoint);
@@ -105,14 +106,15 @@ namespace httpInfrastructure
         }
 
         /// <summary> Return 505 status code - should be represented in the client as an error. </summary>
+        /// <param name="booleanValue"> Simple boolean value true. The default value is True. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> Post505Async(CancellationToken cancellationToken = default)
+        public virtual async Task<Response> Post505Async(bool? booleanValue = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("HttpServerFailureClient.Post505");
             scope.Start();
             try
             {
-                return await RestClient.Post505Async(cancellationToken).ConfigureAwait(false);
+                return await RestClient.Post505Async(booleanValue, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -122,14 +124,15 @@ namespace httpInfrastructure
         }
 
         /// <summary> Return 505 status code - should be represented in the client as an error. </summary>
+        /// <param name="booleanValue"> Simple boolean value true. The default value is True. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response Post505(CancellationToken cancellationToken = default)
+        public virtual Response Post505(bool? booleanValue = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("HttpServerFailureClient.Post505");
             scope.Start();
             try
             {
-                return RestClient.Post505(cancellationToken);
+                return RestClient.Post505(booleanValue, cancellationToken);
             }
             catch (Exception e)
             {
@@ -139,14 +142,15 @@ namespace httpInfrastructure
         }
 
         /// <summary> Return 505 status code - should be represented in the client as an error. </summary>
+        /// <param name="booleanValue"> Simple boolean value true. The default value is True. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> Delete505Async(CancellationToken cancellationToken = default)
+        public virtual async Task<Response> Delete505Async(bool? booleanValue = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("HttpServerFailureClient.Delete505");
             scope.Start();
             try
             {
-                return await RestClient.Delete505Async(cancellationToken).ConfigureAwait(false);
+                return await RestClient.Delete505Async(booleanValue, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -156,14 +160,15 @@ namespace httpInfrastructure
         }
 
         /// <summary> Return 505 status code - should be represented in the client as an error. </summary>
+        /// <param name="booleanValue"> Simple boolean value true. The default value is True. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response Delete505(CancellationToken cancellationToken = default)
+        public virtual Response Delete505(bool? booleanValue = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("HttpServerFailureClient.Delete505");
             scope.Start();
             try
             {
-                return RestClient.Delete505(cancellationToken);
+                return RestClient.Delete505(booleanValue, cancellationToken);
             }
             catch (Exception e)
             {

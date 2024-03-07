@@ -6,38 +6,37 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
+using multiple_inheritance;
 
 namespace multiple_inheritance.Models
 {
     /// <summary> The Kitten. </summary>
     public partial class Kitten : Cat
     {
-        /// <summary> Initializes a new instance of Kitten. </summary>
+        /// <summary> Initializes a new instance of <see cref="Kitten"/>. </summary>
         /// <param name="name"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
         public Kitten(string name) : base(name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            Argument.AssertNotNull(name, nameof(name));
         }
 
-        /// <summary> Initializes a new instance of Kitten. </summary>
+        /// <summary> Initializes a new instance of <see cref="Kitten"/>. </summary>
         /// <param name="name"></param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
         /// <param name="likesMilk"></param>
         /// <param name="meows"></param>
         /// <param name="hisses"></param>
         /// <param name="eatsMiceYet"></param>
-        /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
-        internal Kitten(string name, bool? likesMilk, bool? meows, bool? hisses, bool? eatsMiceYet) : base(name, likesMilk, meows, hisses)
+        internal Kitten(string name, IDictionary<string, BinaryData> serializedAdditionalRawData, bool? likesMilk, bool? meows, bool? hisses, bool? eatsMiceYet) : base(name, serializedAdditionalRawData, likesMilk, meows, hisses)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
             EatsMiceYet = eatsMiceYet;
+        }
+
+        /// <summary> Initializes a new instance of <see cref="Kitten"/> for deserialization. </summary>
+        internal Kitten()
+        {
         }
 
         /// <summary> Gets or sets the eats mice yet. </summary>

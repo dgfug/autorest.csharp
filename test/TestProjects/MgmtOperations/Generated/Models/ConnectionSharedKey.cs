@@ -7,37 +7,35 @@
 
 using System;
 using System.Collections.Generic;
-using Azure.ResourceManager;
+using Azure.Core;
 using Azure.ResourceManager.Models;
-using Azure.ResourceManager.Resources.Models;
+using MgmtOperations;
 
 namespace MgmtOperations.Models
 {
     /// <summary> Response for GetConnectionSharedKey API service call. </summary>
-    public partial class ConnectionSharedKey : TrackedResource
+    public partial class ConnectionSharedKey : TrackedResourceData
     {
-        /// <summary> Initializes a new instance of ConnectionSharedKey. </summary>
+        /// <summary> Initializes a new instance of <see cref="ConnectionSharedKey"/>. </summary>
         /// <param name="location"> The location. </param>
         /// <param name="value"> The virtual network connection shared key value. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
-        public ConnectionSharedKey(Location location, string value) : base(location)
+        public ConnectionSharedKey(AzureLocation location, string value) : base(location)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            Argument.AssertNotNull(value, nameof(value));
 
             Value = value;
         }
 
-        /// <summary> Initializes a new instance of ConnectionSharedKey. </summary>
+        /// <summary> Initializes a new instance of <see cref="ConnectionSharedKey"/>. </summary>
         /// <param name="id"> The id. </param>
         /// <param name="name"> The name. </param>
-        /// <param name="type"> The type. </param>
+        /// <param name="resourceType"> The resourceType. </param>
+        /// <param name="systemData"> The systemData. </param>
         /// <param name="tags"> The tags. </param>
         /// <param name="location"> The location. </param>
         /// <param name="value"> The virtual network connection shared key value. </param>
-        internal ConnectionSharedKey(ResourceIdentifier id, string name, ResourceType type, IDictionary<string, string> tags, Location location, string value) : base(id, name, type, tags, location)
+        internal ConnectionSharedKey(ResourceIdentifier id, string name, ResourceType resourceType, SystemData systemData, IDictionary<string, string> tags, AzureLocation location, string value) : base(id, name, resourceType, systemData, tags, location)
         {
             Value = value;
         }

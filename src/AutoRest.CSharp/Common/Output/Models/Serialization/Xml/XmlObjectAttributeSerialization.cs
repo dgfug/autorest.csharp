@@ -2,23 +2,18 @@
 // Licensed under the MIT License.
 
 using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Utilities;
 
 namespace AutoRest.CSharp.Output.Models.Serialization.Xml
 {
-    internal class XmlObjectAttributeSerialization
+    internal record XmlObjectAttributeSerialization : XmlPropertySerialization
     {
-        public XmlObjectAttributeSerialization(
-            string name,
-            ObjectTypeProperty property,
-            XmlValueSerialization valueSerialization)
+        public XmlObjectAttributeSerialization(string serializedName, ObjectTypeProperty property, XmlValueSerialization valueSerialization)
+            : base(serializedName, property)
         {
-            Name = name;
-            Property = property;
             ValueSerialization = valueSerialization;
         }
 
-        public string Name { get; }
-        public ObjectTypeProperty Property { get; }
         public XmlValueSerialization ValueSerialization { get; }
     }
 }

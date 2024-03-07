@@ -30,6 +30,7 @@ namespace body_complex
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal ArrayClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new ArrayRestClient(clientDiagnostics, pipeline, endpoint);
@@ -72,7 +73,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types with array property. </summary>
-        /// <param name="complexBody"> Please put an array with 4 items: &quot;1, 2, 3, 4&quot;, &quot;&quot;, null, &quot;&amp;S#$(*Y&quot;, &quot;The quick brown fox jumps over the lazy dog&quot;. </param>
+        /// <param name="complexBody"> Please put an array with 4 items: "1, 2, 3, 4", "", null, "&amp;S#$(*Y", "The quick brown fox jumps over the lazy dog". </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutValidAsync(ArrayWrapper complexBody, CancellationToken cancellationToken = default)
         {
@@ -90,7 +91,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types with array property. </summary>
-        /// <param name="complexBody"> Please put an array with 4 items: &quot;1, 2, 3, 4&quot;, &quot;&quot;, null, &quot;&amp;S#$(*Y&quot;, &quot;The quick brown fox jumps over the lazy dog&quot;. </param>
+        /// <param name="complexBody"> Please put an array with 4 items: "1, 2, 3, 4", "", null, "&amp;S#$(*Y", "The quick brown fox jumps over the lazy dog". </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutValid(ArrayWrapper complexBody, CancellationToken cancellationToken = default)
         {
@@ -177,7 +178,7 @@ namespace body_complex
             }
         }
 
-        /// <summary> Get complex types with array property while server doesn&apos;t provide a response payload. </summary>
+        /// <summary> Get complex types with array property while server doesn't provide a response payload. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<ArrayWrapper>> GetNotProvidedAsync(CancellationToken cancellationToken = default)
         {
@@ -194,7 +195,7 @@ namespace body_complex
             }
         }
 
-        /// <summary> Get complex types with array property while server doesn&apos;t provide a response payload. </summary>
+        /// <summary> Get complex types with array property while server doesn't provide a response payload. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<ArrayWrapper> GetNotProvided(CancellationToken cancellationToken = default)
         {

@@ -17,19 +17,22 @@ namespace body_formdata_urlencoded
 {
     internal partial class FormdataurlencodedRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of FormdataurlencodedRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public FormdataurlencodedRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateUpdatePetWithFormRequest(int petId, PetType petType, PetFood petFood, int petAge, string name, string status)
@@ -38,7 +41,7 @@ namespace body_formdata_urlencoded
             var request = message.Request;
             request.Method = RequestMethod.Post;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/formsdataurlencoded/pet/add/", false);
             uri.AppendPath(petId, true);
             request.Uri = uri;
@@ -77,7 +80,7 @@ namespace body_formdata_urlencoded
                 case 405:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -99,7 +102,79 @@ namespace body_formdata_urlencoded
                 case 405:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
+            }
+        }
+
+        internal HttpMessage CreatePartialConstantBodyRequest(string service, string accessToken)
+        {
+            var message = _pipeline.CreateMessage();
+            var request = message.Request;
+            request.Method = RequestMethod.Post;
+            var uri = new RawRequestUriBuilder();
+            uri.Reset(_endpoint);
+            uri.AppendPath("/formsdataurlencoded/partialConstantBody", false);
+            request.Uri = uri;
+            request.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            var content = new FormUrlEncodedContent();
+            content.Add("grant_type", PostContentSchemaGrantType.AccessToken.ToString());
+            content.Add("service", service);
+            content.Add("access_token", accessToken);
+            request.Content = content;
+            return message;
+        }
+
+        /// <summary> Test a partially constant formdata body. Pass in { grant_type: 'access_token', access_token: 'foo', service: 'bar' } to pass the test. </summary>
+        /// <param name="service"> Indicates the name of your Azure container registry. </param>
+        /// <param name="accessToken"> AAD access token, mandatory when grant_type is access_token_refresh_token or access_token. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="service"/> or <paramref name="accessToken"/> is null. </exception>
+        public async Task<Response> PartialConstantBodyAsync(string service, string accessToken, CancellationToken cancellationToken = default)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+            if (accessToken == null)
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            using var message = CreatePartialConstantBodyRequest(service, accessToken);
+            await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
+            switch (message.Response.Status)
+            {
+                case 200:
+                    return message.Response;
+                default:
+                    throw new RequestFailedException(message.Response);
+            }
+        }
+
+        /// <summary> Test a partially constant formdata body. Pass in { grant_type: 'access_token', access_token: 'foo', service: 'bar' } to pass the test. </summary>
+        /// <param name="service"> Indicates the name of your Azure container registry. </param>
+        /// <param name="accessToken"> AAD access token, mandatory when grant_type is access_token_refresh_token or access_token. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="service"/> or <paramref name="accessToken"/> is null. </exception>
+        public Response PartialConstantBody(string service, string accessToken, CancellationToken cancellationToken = default)
+        {
+            if (service == null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
+            if (accessToken == null)
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            using var message = CreatePartialConstantBodyRequest(service, accessToken);
+            _pipeline.Send(message, cancellationToken);
+            switch (message.Response.Status)
+            {
+                case 200:
+                    return message.Response;
+                default:
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

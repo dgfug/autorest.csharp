@@ -19,7 +19,7 @@ namespace AutoRest.TestServer.Tests
             ParameterInfo[] parameters = typeof(BodyAndPathClient).GetMethod("Create").GetParameters();
             Assert.AreEqual(typeof(string), parameters[0].ParameterType);
             Assert.AreEqual(typeof(RequestContent), parameters[1].ParameterType);
-            Assert.AreEqual(typeof(RequestOptions), parameters[2].ParameterType);
+            Assert.AreEqual(typeof(RequestContext), parameters[2].ParameterType);
         }
 
         [Test]
@@ -29,6 +29,40 @@ namespace AutoRest.TestServer.Tests
             Assert.AreEqual(typeof(string), parameters[0].ParameterType);
             Assert.AreEqual(typeof(RequestContent), parameters[1].ParameterType);
             Assert.AreEqual(typeof(ContentType), parameters[2].ParameterType);
+        }
+
+        [Test]
+        public void ListMethodsRenamed()
+        {
+            MethodInfo? m1 = typeof(BodyAndPathClient).GetMethod("GetBodyAndPaths");
+            MethodInfo? m2 = typeof(BodyAndPathClient).GetMethod("GetBodyAndPathsAsync");
+            MethodInfo? m3 = typeof(BodyAndPathClient).GetMethod("GetItems");
+            MethodInfo? m4 = typeof(BodyAndPathClient).GetMethod("GetItemsAsync");
+            MethodInfo? m5 = typeof(BodyAndPathClient).GetMethod("List");
+            MethodInfo? m6 = typeof(BodyAndPathClient).GetMethod("ListItems");
+            Assert.IsNotNull(m1);
+            Assert.IsNotNull(m2);
+            Assert.IsNotNull(m3);
+            Assert.IsNotNull(m4);
+            Assert.IsNull(m5);
+            Assert.IsNull(m6);
+        }
+
+        [Test]
+        public void Update([Values("Update", "UpdateAsync")] string methodName)
+        {
+            TypeAsserts.HasPublicInstanceMethod(
+                typeof(BodyAndPathClient),
+                methodName,
+                new TypeAsserts.Parameter[] {
+                    new("item3", typeof(string)),
+                    new("item2", typeof(string)),
+                    new("item1", typeof(string)),
+                    new("item4", typeof(string)),
+                    new("content", typeof(RequestContent)),
+                    new("item5", typeof(string), null),
+                    new("context", typeof(RequestContext), null)
+                });
         }
     }
 }

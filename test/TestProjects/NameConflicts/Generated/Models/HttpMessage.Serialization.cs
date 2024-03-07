@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using NameConflicts;
 
 namespace NameConflicts.Models
 {
@@ -17,7 +18,7 @@ namespace NameConflicts.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(Property))
             {
-                writer.WritePropertyName("property");
+                writer.WritePropertyName("property"u8);
                 writer.WriteStringValue(Property);
             }
             writer.WriteEndObject();
@@ -25,16 +26,20 @@ namespace NameConflicts.Models
 
         internal static HttpMessage DeserializeHttpMessage(JsonElement element)
         {
-            Optional<string> property = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string property = default;
             foreach (var property0 in element.EnumerateObject())
             {
-                if (property0.NameEquals("property"))
+                if (property0.NameEquals("property"u8))
                 {
                     property = property0.Value.GetString();
                     continue;
                 }
             }
-            return new HttpMessage(property.Value);
+            return new HttpMessage(property);
         }
     }
 }

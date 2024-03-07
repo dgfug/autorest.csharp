@@ -1,5 +1,7 @@
 # Azure.ResourceManager.Sample
-### AutoRest Configuration
+
+## AutoRest Configuration
+
 > see https://aka.ms/autorest
 
 ``` yaml
@@ -10,42 +12,59 @@ namespace: Azure.ResourceManager.Sample
 model-namespace: false
 public-clients: false
 head-as-boolean: false
-operation-group-to-resource-type:
-   VirtualMachineExtensionImages: Microsoft.Compute/locations/publishers/vmextension
-   VirtualMachineImages: Microsoft.Compute/locations/publishers/vmimage
-   Usage: Microsoft.Compute/locations/usages
-   VirtualMachineSizes: Microsoft.Compute/locations/vmSizes
-   VirtualMachineScaleSetRollingUpgrades: Microsoft.Compute/virtualMachineScaleSets/rollingUpgrades
-   LogAnalytics: Microsoft.Compute/locations/logAnalytics
-operation-group-to-resource:
-   VirtualMachineExtensionImages: NonResource
-   VirtualMachineImages: NonResource
-   VirtualMachineSizes: NonResource
-   VirtualMachineScaleSetRollingUpgrades: VirtualMachineScaleSetRollingUpgrade
-   LogAnalytics: NonResource
-operation-group-to-parent:
-   Usage: subscriptions
-   LogAnalytics: subscriptions
-   VirtualMachineExtensionImages: subscriptions
-   VirtualMachineImages: subscriptions
-   VirtualMachineSizes: subscriptions
-   VirtualMachineScaleSetVMExtensions: Microsoft.Compute/virtualMachineScaleSets
-   VirtualMachineScaleSetRollingUpgrades: Microsoft.Compute/virtualMachineScaleSets
-operation-group-is-tuple: VirtualMachineImages
-operation-group-is-extension: VirtualMachineScaleSetVMExtensions
 modelerfour:
   lenient-model-deduplication: true
+keep-orphaned-models: AvailabilitySetSkuType
+use-model-reader-writer: true
+enable-bicep-serialization: true
+
+acronym-mapping:
+  Os: OS
+  Ip: IP
+  Ips: IPs
+  ID: Id
+  IDs: Ids
+  VM: Vm
+  VMs: Vms
+  VMScaleSet: VmScaleSet
+  Ipsec: IPsec|ipsec
+  IPSec: IPsec|ipsec
+  P2s: P2S|p2s
+  P2S: P2S|p2s
+
+format-by-name-rules:
+  'tenantId': 'uuid'
+  'resourceType': 'resource-type'
+  'etag': 'etag'
+  'location': 'azure-location'
+  '*Uri': 'Uri'
+  '*Uris': 'Uri'
+
+prepend-rp-prefix:
+- UsageName
+
+rename-mapping:
+  SshPublicKey: SshPublicKeyInfo
+  SshPublicKeyResource: SshPublicKey
+  LogAnalyticsOperationResult: LogAnalytics
+  RollingUpgradeStatusInfo: VirtualMachineScaleSetRollingUpgrade
+  VirtualMachineExtension.properties.type: ExtensionType # the properties inside is required because this is a flattened property
+  VirtualMachineExtensionUpdate.properties.type: ExtensionType # the properties inside is required because this is a flattened property
+  VirtualMachineScaleSetExtension.properties.type: ExtensionType # the properties inside is required because this is a flattened property
+  HyperVGenerationType: HyperVGeneration
+  HyperVGenerationTypes: HyperVGeneration
+  ImageListResult.value: Images
+
+mgmt-debug:
+  show-serialized-names: true
+
+update-required-copy:
+  VirtualMachineExtension: Publisher
+
 directive:
-  - rename-model:
-      from: SshPublicKey
-      to: SshPublicKeyInfo
-  - rename-model:
-      from: LogAnalyticsOperationResult
-      to: LogAnalytics
-  - rename-model:
-      from: SshPublicKeyResource
-      to: SshPublicKey
-  - rename-model:
-      from: RollingUpgradeStatusInfo
-      to: VirtualMachineScaleSetRollingUpgrade
+  - from: sample.json
+    where: $.paths
+    transform: >
+      $['/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/skus'].get['x-ms-pageable']['itemName'] = 'VmssSkus';
+
 ```

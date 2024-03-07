@@ -5,30 +5,33 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
-using Azure.ResourceManager;
+using Azure.Core;
 using Azure.ResourceManager.Models;
-using Azure.ResourceManager.Resources.Models;
 using MgmtParamOrdering.Models;
 
 namespace MgmtParamOrdering
 {
-    /// <summary> A class representing the Workspace data model. </summary>
-    public partial class WorkspaceData : TrackedResource
+    /// <summary>
+    /// A class representing the Workspace data model.
+    /// An object that represents a machine learning workspace.
+    /// </summary>
+    public partial class WorkspaceData : TrackedResourceData
     {
-        /// <summary> Initializes a new instance of WorkspaceData. </summary>
+        /// <summary> Initializes a new instance of <see cref="WorkspaceData"/>. </summary>
         /// <param name="location"> The location. </param>
-        public WorkspaceData(Location location) : base(location)
+        public WorkspaceData(AzureLocation location) : base(location)
         {
         }
 
-        /// <summary> Initializes a new instance of WorkspaceData. </summary>
+        /// <summary> Initializes a new instance of <see cref="WorkspaceData"/>. </summary>
         /// <param name="id"> The id. </param>
         /// <param name="name"> The name. </param>
-        /// <param name="type"> The type. </param>
+        /// <param name="resourceType"> The resourceType. </param>
+        /// <param name="systemData"> The systemData. </param>
         /// <param name="tags"> The tags. </param>
         /// <param name="location"> The location. </param>
-        /// <param name="systemData"> Metadata pertaining to creation and last modification of the resource. </param>
         /// <param name="workspaceId"> The immutable id associated with this workspace. </param>
         /// <param name="description"> The description of this workspace. </param>
         /// <param name="friendlyName"> The friendly name for this workspace. This name in mutable. </param>
@@ -36,7 +39,7 @@ namespace MgmtParamOrdering
         /// <param name="applicationInsights"> ARM id of the application insights associated with this workspace. This cannot be changed once the workspace has been created. </param>
         /// <param name="containerRegistry"> ARM id of the container registry associated with this workspace. This cannot be changed once the workspace has been created. </param>
         /// <param name="storageAccount"> ARM id of the storage account associated with this workspace. This cannot be changed once the workspace has been created. </param>
-        /// <param name="discoveryUrl"> Url for the discovery service to identify regional endpoints for machine learning experimentation services. </param>
+        /// <param name="discoveryUri"> Url for the discovery service to identify regional endpoints for machine learning experimentation services. </param>
         /// <param name="provisioningState"> The current deployment state of workspace resource. The provisioningState is to indicate states for resource provisioning. </param>
         /// <param name="hbiWorkspace"> The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service. </param>
         /// <param name="serviceProvisionedResourceGroup"> The name of the managed resource group created by workspace RP in customer subscription if the workspace is CMK workspace. </param>
@@ -45,9 +48,8 @@ namespace MgmtParamOrdering
         /// <param name="allowPublicAccessWhenBehindVnet"> The flag to indicate whether to allow public access when behind VNet. </param>
         /// <param name="primaryUserAssignedIdentity"> The user assigned identity resource id that represents the workspace identity. </param>
         /// <param name="tenantId"> The tenant id associated with this workspace. </param>
-        internal WorkspaceData(ResourceIdentifier id, string name, ResourceType type, IDictionary<string, string> tags, Location location, SystemData systemData, string workspaceId, string description, string friendlyName, string keyVault, string applicationInsights, string containerRegistry, string storageAccount, string discoveryUrl, ProvisioningState? provisioningState, bool? hbiWorkspace, string serviceProvisionedResourceGroup, int? privateLinkCount, string imageBuildCompute, bool? allowPublicAccessWhenBehindVnet, string primaryUserAssignedIdentity, string tenantId) : base(id, name, type, tags, location)
+        internal WorkspaceData(ResourceIdentifier id, string name, ResourceType resourceType, SystemData systemData, IDictionary<string, string> tags, AzureLocation location, string workspaceId, string description, string friendlyName, string keyVault, string applicationInsights, string containerRegistry, string storageAccount, Uri discoveryUri, ProvisioningState? provisioningState, bool? hbiWorkspace, string serviceProvisionedResourceGroup, int? privateLinkCount, string imageBuildCompute, bool? allowPublicAccessWhenBehindVnet, string primaryUserAssignedIdentity, Guid? tenantId) : base(id, name, resourceType, systemData, tags, location)
         {
-            SystemData = systemData;
             WorkspaceId = workspaceId;
             Description = description;
             FriendlyName = friendlyName;
@@ -55,7 +57,7 @@ namespace MgmtParamOrdering
             ApplicationInsights = applicationInsights;
             ContainerRegistry = containerRegistry;
             StorageAccount = storageAccount;
-            DiscoveryUrl = discoveryUrl;
+            DiscoveryUri = discoveryUri;
             ProvisioningState = provisioningState;
             HbiWorkspace = hbiWorkspace;
             ServiceProvisionedResourceGroup = serviceProvisionedResourceGroup;
@@ -66,8 +68,6 @@ namespace MgmtParamOrdering
             TenantId = tenantId;
         }
 
-        /// <summary> Metadata pertaining to creation and last modification of the resource. </summary>
-        public SystemData SystemData { get; }
         /// <summary> The immutable id associated with this workspace. </summary>
         public string WorkspaceId { get; }
         /// <summary> The description of this workspace. </summary>
@@ -83,7 +83,7 @@ namespace MgmtParamOrdering
         /// <summary> ARM id of the storage account associated with this workspace. This cannot be changed once the workspace has been created. </summary>
         public string StorageAccount { get; set; }
         /// <summary> Url for the discovery service to identify regional endpoints for machine learning experimentation services. </summary>
-        public string DiscoveryUrl { get; set; }
+        public Uri DiscoveryUri { get; set; }
         /// <summary> The current deployment state of workspace resource. The provisioningState is to indicate states for resource provisioning. </summary>
         public ProvisioningState? ProvisioningState { get; }
         /// <summary> The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service. </summary>
@@ -99,6 +99,6 @@ namespace MgmtParamOrdering
         /// <summary> The user assigned identity resource id that represents the workspace identity. </summary>
         public string PrimaryUserAssignedIdentity { get; set; }
         /// <summary> The tenant id associated with this workspace. </summary>
-        public string TenantId { get; }
+        public Guid? TenantId { get; }
     }
 }

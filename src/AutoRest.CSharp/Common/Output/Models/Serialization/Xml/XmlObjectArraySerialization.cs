@@ -5,15 +5,14 @@ using AutoRest.CSharp.Output.Models.Types;
 
 namespace AutoRest.CSharp.Output.Models.Serialization.Xml
 {
-    internal class XmlObjectArraySerialization
+    internal record XmlObjectArraySerialization : XmlPropertySerialization
     {
         public XmlObjectArraySerialization(ObjectTypeProperty property, XmlArraySerialization arraySerialization)
+            : base(property.Declaration.Name, property)
         {
-            Property = property;
             ArraySerialization = arraySerialization;
         }
 
-        public ObjectTypeProperty Property { get; }
         public XmlArraySerialization ArraySerialization { get; }
     }
 }

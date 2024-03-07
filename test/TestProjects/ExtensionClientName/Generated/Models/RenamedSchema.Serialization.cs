@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using ExtensionClientName;
 
 namespace ExtensionClientName.Models
 {
@@ -18,7 +19,7 @@ namespace ExtensionClientName.Models
             writer.WriteStartObject();
             if (Optional.IsCollectionDefined(RenamedProperty))
             {
-                writer.WritePropertyName("originalProperty");
+                writer.WritePropertyName("originalProperty"u8);
                 writer.WriteStartObject();
                 foreach (var item in RenamedProperty)
                 {
@@ -29,7 +30,7 @@ namespace ExtensionClientName.Models
             }
             if (Optional.IsDefined(RenamedPropertyString))
             {
-                writer.WritePropertyName("originalPropertyString");
+                writer.WritePropertyName("originalPropertyString"u8);
                 writer.WriteStringValue(RenamedPropertyString);
             }
             writer.WriteEndObject();
@@ -37,15 +38,18 @@ namespace ExtensionClientName.Models
 
         internal static RenamedSchema DeserializeRenamedSchema(JsonElement element)
         {
-            Optional<IDictionary<string, string>> originalProperty = default;
-            Optional<string> originalPropertyString = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IDictionary<string, string> originalProperty = default;
+            string originalPropertyString = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("originalProperty"))
+                if (property.NameEquals("originalProperty"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     Dictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -56,13 +60,13 @@ namespace ExtensionClientName.Models
                     originalProperty = dictionary;
                     continue;
                 }
-                if (property.NameEquals("originalPropertyString"))
+                if (property.NameEquals("originalPropertyString"u8))
                 {
                     originalPropertyString = property.Value.GetString();
                     continue;
                 }
             }
-            return new RenamedSchema(Optional.ToDictionary(originalProperty), originalPropertyString.Value);
+            return new RenamedSchema(originalProperty ?? new ChangeTrackingDictionary<string, string>(), originalPropertyString);
         }
     }
 }

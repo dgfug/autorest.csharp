@@ -7,23 +7,20 @@
 
 using System;
 using System.Collections.Generic;
-using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
-    /// <summary> Allows you to take control over the process of converting text into indexable/searchable tokens. It&apos;s a user-defined configuration consisting of a single predefined tokenizer and one or more filters. The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens emitted by the tokenizer. </summary>
+    /// <summary> Allows you to take control over the process of converting text into indexable/searchable tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one or more filters. The tokenizer is responsible for breaking text into tokens, and the filters for modifying tokens emitted by the tokenizer. </summary>
     public partial class CustomAnalyzer : Analyzer
     {
-        /// <summary> Initializes a new instance of CustomAnalyzer. </summary>
+        /// <summary> Initializes a new instance of <see cref="CustomAnalyzer"/>. </summary>
         /// <param name="name"> The name of the analyzer. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="tokenizer"> The name of the tokenizer to use to divide continuous text into a sequence of tokens, such as breaking a sentence into words. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
         public CustomAnalyzer(string name, TokenizerName tokenizer) : base(name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            Argument.AssertNotNull(name, nameof(name));
 
             Tokenizer = tokenizer;
             TokenFilters = new ChangeTrackingList<TokenFilterName>();
@@ -31,7 +28,7 @@ namespace CognitiveSearch.Models
             OdataType = "#Microsoft.Azure.Search.CustomAnalyzer";
         }
 
-        /// <summary> Initializes a new instance of CustomAnalyzer. </summary>
+        /// <summary> Initializes a new instance of <see cref="CustomAnalyzer"/>. </summary>
         /// <param name="odataType"> Identifies the concrete type of the analyzer. </param>
         /// <param name="name"> The name of the analyzer. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="tokenizer"> The name of the tokenizer to use to divide continuous text into a sequence of tokens, such as breaking a sentence into words. </param>

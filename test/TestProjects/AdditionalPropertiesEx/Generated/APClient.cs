@@ -30,6 +30,7 @@ namespace AdditionalPropertiesEx
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal APClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new APRestClient(clientDiagnostics, pipeline, endpoint);
@@ -38,7 +39,7 @@ namespace AdditionalPropertiesEx
         }
 
         /// <summary> Create a Pet which contains more properties than what is defined. </summary>
-        /// <param name="createParameters"> The InputAdditionalPropertiesModel to use. </param>
+        /// <param name="createParameters"> The <see cref="InputAdditionalPropertiesModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> WriteOnlyAsync(InputAdditionalPropertiesModel createParameters, CancellationToken cancellationToken = default)
         {
@@ -56,7 +57,7 @@ namespace AdditionalPropertiesEx
         }
 
         /// <summary> Create a Pet which contains more properties than what is defined. </summary>
-        /// <param name="createParameters"> The InputAdditionalPropertiesModel to use. </param>
+        /// <param name="createParameters"> The <see cref="InputAdditionalPropertiesModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response WriteOnly(InputAdditionalPropertiesModel createParameters, CancellationToken cancellationToken = default)
         {
@@ -108,7 +109,7 @@ namespace AdditionalPropertiesEx
         }
 
         /// <summary> Create a Pet which contains more properties than what is defined. </summary>
-        /// <param name="createParameters"> The InputAdditionalPropertiesModelStruct to use. </param>
+        /// <param name="createParameters"> The <see cref="InputAdditionalPropertiesModelStruct"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> WriteOnlyStructAsync(InputAdditionalPropertiesModelStruct createParameters, CancellationToken cancellationToken = default)
         {
@@ -126,7 +127,7 @@ namespace AdditionalPropertiesEx
         }
 
         /// <summary> Create a Pet which contains more properties than what is defined. </summary>
-        /// <param name="createParameters"> The InputAdditionalPropertiesModelStruct to use. </param>
+        /// <param name="createParameters"> The <see cref="InputAdditionalPropertiesModelStruct"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response WriteOnlyStruct(InputAdditionalPropertiesModelStruct createParameters, CancellationToken cancellationToken = default)
         {

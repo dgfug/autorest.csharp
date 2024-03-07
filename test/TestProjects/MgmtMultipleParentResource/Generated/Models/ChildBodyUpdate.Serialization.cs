@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using MgmtMultipleParentResource;
 
 namespace MgmtMultipleParentResource.Models
 {
@@ -17,7 +18,7 @@ namespace MgmtMultipleParentResource.Models
             writer.WriteStartObject();
             if (Optional.IsCollectionDefined(Tags))
             {
-                writer.WritePropertyName("tags");
+                writer.WritePropertyName("tags"u8);
                 writer.WriteStartObject();
                 foreach (var item in Tags)
                 {
@@ -26,37 +27,37 @@ namespace MgmtMultipleParentResource.Models
                 }
                 writer.WriteEndObject();
             }
-            writer.WritePropertyName("properties");
+            writer.WritePropertyName("properties"u8);
             writer.WriteStartObject();
             if (Optional.IsDefined(AsyncExecution))
             {
-                writer.WritePropertyName("asyncExecution");
+                writer.WritePropertyName("asyncExecution"u8);
                 writer.WriteBooleanValue(AsyncExecution.Value);
             }
             if (Optional.IsDefined(RunAsUser))
             {
-                writer.WritePropertyName("runAsUser");
+                writer.WritePropertyName("runAsUser"u8);
                 writer.WriteStringValue(RunAsUser);
             }
             if (Optional.IsDefined(RunAsPassword))
             {
-                writer.WritePropertyName("runAsPassword");
+                writer.WritePropertyName("runAsPassword"u8);
                 writer.WriteStringValue(RunAsPassword);
             }
             if (Optional.IsDefined(TimeoutInSeconds))
             {
-                writer.WritePropertyName("timeoutInSeconds");
+                writer.WritePropertyName("timeoutInSeconds"u8);
                 writer.WriteNumberValue(TimeoutInSeconds.Value);
             }
             if (Optional.IsDefined(OutputBlobUri))
             {
-                writer.WritePropertyName("outputBlobUri");
-                writer.WriteStringValue(OutputBlobUri);
+                writer.WritePropertyName("outputBlobUri"u8);
+                writer.WriteStringValue(OutputBlobUri.AbsoluteUri);
             }
             if (Optional.IsDefined(ErrorBlobUri))
             {
-                writer.WritePropertyName("errorBlobUri");
-                writer.WriteStringValue(ErrorBlobUri);
+                writer.WritePropertyName("errorBlobUri"u8);
+                writer.WriteStringValue(ErrorBlobUri.AbsoluteUri);
             }
             writer.WriteEndObject();
             writer.WriteEndObject();

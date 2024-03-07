@@ -6,26 +6,21 @@
 #nullable disable
 
 using System;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
     /// <summary> Response from a get service statistics request. If successful, it includes service level counters and limits. </summary>
     public partial class ServiceStatistics
     {
-        /// <summary> Initializes a new instance of ServiceStatistics. </summary>
+        /// <summary> Initializes a new instance of <see cref="ServiceStatistics"/>. </summary>
         /// <param name="counters"> Service level resource counters. </param>
         /// <param name="limits"> Service level general limits. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="counters"/> or <paramref name="limits"/> is null. </exception>
         internal ServiceStatistics(ServiceCounters counters, ServiceLimits limits)
         {
-            if (counters == null)
-            {
-                throw new ArgumentNullException(nameof(counters));
-            }
-            if (limits == null)
-            {
-                throw new ArgumentNullException(nameof(limits));
-            }
+            Argument.AssertNotNull(counters, nameof(counters));
+            Argument.AssertNotNull(limits, nameof(limits));
 
             Counters = counters;
             Limits = limits;

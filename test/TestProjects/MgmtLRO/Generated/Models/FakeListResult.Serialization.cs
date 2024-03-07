@@ -7,20 +7,23 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 using MgmtLRO;
 
 namespace MgmtLRO.Models
 {
-    public partial class FakeListResult
+    internal partial class FakeListResult
     {
         internal static FakeListResult DeserializeFakeListResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IReadOnlyList<FakeData> value = default;
-            Optional<string> nextLink = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     List<FakeData> array = new List<FakeData>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -30,13 +33,13 @@ namespace MgmtLRO.Models
                     value = array;
                     continue;
                 }
-                if (property.NameEquals("nextLink"))
+                if (property.NameEquals("nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new FakeListResult(value, nextLink.Value);
+            return new FakeListResult(value, nextLink);
         }
     }
 }

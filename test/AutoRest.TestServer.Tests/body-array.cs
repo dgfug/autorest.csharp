@@ -30,7 +30,7 @@ namespace AutoRest.TestServer.Tests
         {
             var result = await new ArrayClient(ClientDiagnostics, pipeline, host).GetArrayItemEmptyAsync();
 
-            CollectionAssert.AreEqual(new[] { new object[] { "1", "2", "3" }, new object[] { }, new object[] { "7", "8", "9" } }, result.Value);
+            CollectionAssert.AreEqual(new[] { new object[] { "1", "2", "3" }, Enumerable.Empty<object>(), new object[] { "7", "8", "9" } }, result.Value);
         });
 
         [Test]
@@ -97,9 +97,11 @@ namespace AutoRest.TestServer.Tests
         });
 
         [Test]
-        public Task GetArrayByteWithNull() => Test((host, pipeline) =>
+        public Task GetArrayByteWithNull() => Test(async (host, pipeline) =>
         {
-            Assert.ThrowsAsync(Is.InstanceOf<InvalidOperationException>(), async () => await new ArrayClient(ClientDiagnostics, pipeline, host).GetByteInvalidNullAsync());
+            var result = await new ArrayClient(ClientDiagnostics, pipeline, host).GetByteInvalidNullAsync();
+
+            CollectionAssert.AreEqual(new[] { new[] { 0x0AB, 0x0AC, 0x0AD } , null }, result.Value);
         });
 
         [Test]
@@ -187,8 +189,8 @@ namespace AutoRest.TestServer.Tests
             CollectionAssert.AreEqual(new[]
             {
                 DateTimeOffset.Parse("2000-12-01 00:00:01+00:00"),
-                DateTimeOffset.Parse("1980-01-02 00:11:35+00:00"),
-                DateTimeOffset.Parse("1492-10-12 10:15:01+00:00"),
+                DateTimeOffset.Parse("1980-01-01 23:11:35+00:00"),
+                DateTimeOffset.Parse("1492-10-12 18:15:01+00:00"),
             }, result.Value);
         });
 
@@ -521,7 +523,7 @@ namespace AutoRest.TestServer.Tests
 
         [Test]
         public Task PutArrayEmpty() => TestStatus(async (host, pipeline) => await new ArrayClient(ClientDiagnostics, pipeline, host).PutEmptyAsync(
-            new string[] { }));
+            Enumerable.Empty<string>()));
 
         [Test]
         public Task PutArrayEnumValid() => TestStatus(async (host, pipeline) => await new ArrayClient(ClientDiagnostics, pipeline, host).PutEnumValidAsync(

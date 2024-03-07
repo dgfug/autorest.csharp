@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -18,7 +19,7 @@ namespace CognitiveSearch.Models
             writer.WriteStartObject();
             if (Optional.IsCollectionDefined(Stopwords))
             {
-                writer.WritePropertyName("stopwords");
+                writer.WritePropertyName("stopwords"u8);
                 writer.WriteStartArray();
                 foreach (var item in Stopwords)
                 {
@@ -28,41 +29,44 @@ namespace CognitiveSearch.Models
             }
             if (Optional.IsDefined(StopwordsList))
             {
-                writer.WritePropertyName("stopwordsList");
+                writer.WritePropertyName("stopwordsList"u8);
                 writer.WriteStringValue(StopwordsList.Value.ToSerialString());
             }
             if (Optional.IsDefined(IgnoreCase))
             {
-                writer.WritePropertyName("ignoreCase");
+                writer.WritePropertyName("ignoreCase"u8);
                 writer.WriteBooleanValue(IgnoreCase.Value);
             }
             if (Optional.IsDefined(RemoveTrailingStopWords))
             {
-                writer.WritePropertyName("removeTrailing");
+                writer.WritePropertyName("removeTrailing"u8);
                 writer.WriteBooleanValue(RemoveTrailingStopWords.Value);
             }
-            writer.WritePropertyName("@odata.type");
+            writer.WritePropertyName("@odata.type"u8);
             writer.WriteStringValue(OdataType);
-            writer.WritePropertyName("name");
+            writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             writer.WriteEndObject();
         }
 
         internal static StopwordsTokenFilter DeserializeStopwordsTokenFilter(JsonElement element)
         {
-            Optional<IList<string>> stopwords = default;
-            Optional<StopwordsList> stopwordsList = default;
-            Optional<bool> ignoreCase = default;
-            Optional<bool> removeTrailing = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IList<string> stopwords = default;
+            StopwordsList? stopwordsList = default;
+            bool? ignoreCase = default;
+            bool? removeTrailing = default;
             string odataType = default;
             string name = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("stopwords"))
+                if (property.NameEquals("stopwords"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<string> array = new List<string>();
@@ -73,48 +77,51 @@ namespace CognitiveSearch.Models
                     stopwords = array;
                     continue;
                 }
-                if (property.NameEquals("stopwordsList"))
+                if (property.NameEquals("stopwordsList"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     stopwordsList = property.Value.GetString().ToStopwordsList();
                     continue;
                 }
-                if (property.NameEquals("ignoreCase"))
+                if (property.NameEquals("ignoreCase"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     ignoreCase = property.Value.GetBoolean();
                     continue;
                 }
-                if (property.NameEquals("removeTrailing"))
+                if (property.NameEquals("removeTrailing"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     removeTrailing = property.Value.GetBoolean();
                     continue;
                 }
-                if (property.NameEquals("@odata.type"))
+                if (property.NameEquals("@odata.type"u8))
                 {
                     odataType = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
             }
-            return new StopwordsTokenFilter(odataType, name, Optional.ToList(stopwords), Optional.ToNullable(stopwordsList), Optional.ToNullable(ignoreCase), Optional.ToNullable(removeTrailing));
+            return new StopwordsTokenFilter(
+                odataType,
+                name,
+                stopwords ?? new ChangeTrackingList<string>(),
+                stopwordsList,
+                ignoreCase,
+                removeTrailing);
         }
     }
 }

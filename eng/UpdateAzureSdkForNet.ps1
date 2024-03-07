@@ -1,16 +1,16 @@
-param($Version, $SdkRepoRoot)
+param(
+    [Parameter(Mandatory)]
+    [string]$AutorestCSharpVersion,
 
-$SdkRepoRoot = Resolve-Path $SdkRepoRoot
+    [Parameter(Mandatory)]
+    [string]$SdkRepoRoot,
+    
+    [string[]]$ServiceDirectoryFilters = @("*"),
 
-Write-Host "Running $Version, $SdkRepoRoot"
+    [string]$ProjectListOverrideFile,
 
-$RepoRoot = Resolve-Path "$PSScriptRoot/.."
+    [switch]$ShowSummary)
 
-$PackagesProps = "$SdkRepoRoot\eng\Packages.Data.props"
+$ErrorActionPreference = 'Stop'
 
-(Get-Content -Raw $PackagesProps) -replace`
-    '<PackageReference Update="Microsoft.Azure.AutoRest.CSharp" Version=".*?" />',
-    "<PackageReference Update=`"Microsoft.Azure.AutoRest.CSharp`" Version=`"$Version`" PrivateAssets=`"All`" />" | `
-    Set-Content $PackagesProps -NoNewline
-
-dotnet msbuild /restore /t:GenerateCode "$SdkRepoRoot\eng\service.proj"
+Invoke-Expression "$PSScriptRoot\UpdateAzureSdkCodes.ps1 -SdkRepoRoot $SdkRepoRoot -ServiceDirectoryFilters $($ServiceDirectoryFilters -Join ',') -ProjectListOverrideFile $ProjectListOverrideFile $(if ($ShowSummary) {'-ShowSummary'})"

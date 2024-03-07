@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace Azure.Network.Management.Interface.Models
 {
@@ -14,21 +13,24 @@ namespace Azure.Network.Management.Interface.Models
     {
         internal static CloudError DeserializeCloudError(JsonElement element)
         {
-            Optional<CloudErrorBody> error = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            CloudErrorBody error = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("error"))
+                if (property.NameEquals("error"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     error = CloudErrorBody.DeserializeCloudErrorBody(property.Value);
                     continue;
                 }
             }
-            return new CloudError(error.Value);
+            return new CloudError(error);
         }
     }
 }

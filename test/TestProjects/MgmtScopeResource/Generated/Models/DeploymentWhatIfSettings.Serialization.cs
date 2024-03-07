@@ -7,17 +7,18 @@
 
 using System.Text.Json;
 using Azure.Core;
+using MgmtScopeResource;
 
 namespace MgmtScopeResource.Models
 {
-    public partial class DeploymentWhatIfSettings : IUtf8JsonSerializable
+    internal partial class DeploymentWhatIfSettings : IUtf8JsonSerializable
     {
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
             if (Optional.IsDefined(ResultFormat))
             {
-                writer.WritePropertyName("resultFormat");
+                writer.WritePropertyName("resultFormat"u8);
                 writer.WriteStringValue(ResultFormat.Value.ToSerialString());
             }
             writer.WriteEndObject();

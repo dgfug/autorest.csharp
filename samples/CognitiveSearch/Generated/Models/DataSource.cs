@@ -6,32 +6,24 @@
 #nullable disable
 
 using System;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
     /// <summary> Represents a datasource definition, which can be used to configure an indexer. </summary>
     public partial class DataSource
     {
-        /// <summary> Initializes a new instance of DataSource. </summary>
+        /// <summary> Initializes a new instance of <see cref="DataSource"/>. </summary>
         /// <param name="name"> The name of the datasource. </param>
         /// <param name="type"> The type of the datasource. </param>
         /// <param name="credentials"> Credentials for the datasource. </param>
         /// <param name="container"> The data container for the datasource. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="name"/>, <paramref name="credentials"/>, or <paramref name="container"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/>, <paramref name="credentials"/> or <paramref name="container"/> is null. </exception>
         public DataSource(string name, DataSourceType type, DataSourceCredentials credentials, DataContainer container)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (credentials == null)
-            {
-                throw new ArgumentNullException(nameof(credentials));
-            }
-            if (container == null)
-            {
-                throw new ArgumentNullException(nameof(container));
-            }
+            Argument.AssertNotNull(name, nameof(name));
+            Argument.AssertNotNull(credentials, nameof(credentials));
+            Argument.AssertNotNull(container, nameof(container));
 
             Name = name;
             Type = type;
@@ -39,14 +31,22 @@ namespace CognitiveSearch.Models
             Container = container;
         }
 
-        /// <summary> Initializes a new instance of DataSource. </summary>
+        /// <summary> Initializes a new instance of <see cref="DataSource"/>. </summary>
         /// <param name="name"> The name of the datasource. </param>
         /// <param name="description"> The description of the datasource. </param>
         /// <param name="type"> The type of the datasource. </param>
         /// <param name="credentials"> Credentials for the datasource. </param>
         /// <param name="container"> The data container for the datasource. </param>
-        /// <param name="dataChangeDetectionPolicy"> The data change detection policy for the datasource. </param>
-        /// <param name="dataDeletionDetectionPolicy"> The data deletion detection policy for the datasource. </param>
+        /// <param name="dataChangeDetectionPolicy">
+        /// The data change detection policy for the datasource.
+        /// Please note <see cref="Models.DataChangeDetectionPolicy"/> is the base class. According to the scenario, a derived class of the base class might need to be assigned here, or this property needs to be casted to one of the possible derived classes.
+        /// The available derived classes include <see cref="HighWaterMarkChangeDetectionPolicy"/> and <see cref="SqlIntegratedChangeTrackingPolicy"/>.
+        /// </param>
+        /// <param name="dataDeletionDetectionPolicy">
+        /// The data deletion detection policy for the datasource.
+        /// Please note <see cref="Models.DataDeletionDetectionPolicy"/> is the base class. According to the scenario, a derived class of the base class might need to be assigned here, or this property needs to be casted to one of the possible derived classes.
+        /// The available derived classes include <see cref="SoftDeleteColumnDeletionDetectionPolicy"/>.
+        /// </param>
         /// <param name="eTag"> The ETag of the DataSource. </param>
         internal DataSource(string name, string description, DataSourceType type, DataSourceCredentials credentials, DataContainer container, DataChangeDetectionPolicy dataChangeDetectionPolicy, DataDeletionDetectionPolicy dataDeletionDetectionPolicy, string eTag)
         {
@@ -70,9 +70,17 @@ namespace CognitiveSearch.Models
         public DataSourceCredentials Credentials { get; set; }
         /// <summary> The data container for the datasource. </summary>
         public DataContainer Container { get; set; }
-        /// <summary> The data change detection policy for the datasource. </summary>
+        /// <summary>
+        /// The data change detection policy for the datasource.
+        /// Please note <see cref="Models.DataChangeDetectionPolicy"/> is the base class. According to the scenario, a derived class of the base class might need to be assigned here, or this property needs to be casted to one of the possible derived classes.
+        /// The available derived classes include <see cref="HighWaterMarkChangeDetectionPolicy"/> and <see cref="SqlIntegratedChangeTrackingPolicy"/>.
+        /// </summary>
         public DataChangeDetectionPolicy DataChangeDetectionPolicy { get; set; }
-        /// <summary> The data deletion detection policy for the datasource. </summary>
+        /// <summary>
+        /// The data deletion detection policy for the datasource.
+        /// Please note <see cref="Models.DataDeletionDetectionPolicy"/> is the base class. According to the scenario, a derived class of the base class might need to be assigned here, or this property needs to be casted to one of the possible derived classes.
+        /// The available derived classes include <see cref="SoftDeleteColumnDeletionDetectionPolicy"/>.
+        /// </summary>
         public DataDeletionDetectionPolicy DataDeletionDetectionPolicy { get; set; }
         /// <summary> The ETag of the DataSource. </summary>
         public string ETag { get; set; }

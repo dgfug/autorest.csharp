@@ -1,0 +1,57 @@
+# Update `autorest.csharp` and TypeSpec emitter versions
+
+parameters:
+  - name: Name
+    type: string
+  - name: AutorestCSharpVersion
+    type: string
+  - name: BranchName
+    type: string
+
+jobs:
+- job: ${{ parameters.Name }}
+  pool:
+    name: azsdk-pool-mms-ubuntu-2004-general
+    vmImage: ubuntu-20.04
+  steps:
+  - checkout: self
+    fetchDepth: 1
+  - checkout: azure-sdk-tools
+    fetchDepth: 1
+  - template: eng/common/pipelines/templates/steps/sparse-checkout.yml@azure-sdk-tools
+    parameters:
+      Paths:
+      - "/*"
+      - "!SessionRecords"
+      Repositories:
+      - Name: Azure/azure-sdk-for-net
+        WorkingDirectory: $(Build.SourcesDirectory)/azure-sdk-for-net
+      SkipCheckoutNone: true
+  - download: current
+    artifact: build_artifacts
+  - pwsh: |
+        Write-Host "Deleting existing emitter-package files"
+        Remove-Item emitter-package*.json -Force
+
+        Write-Host "Copying emitter-package files"
+        Copy-Item $(Pipeline.Workspace)/build_artifacts/emitter-package*.json .
+    displayName: Copy emitter-package files
+    workingDirectory: $(Build.SourcesDirectory)/azure-sdk-for-net/eng
+  - task: Powershell@2
+    displayName: Update SDK Generator Versions
+    inputs:
+      pwsh: true
+      filePath: $(Build.SourcesDirectory)/autorest.csharp/eng/UpdateGeneratorMetadata.ps1
+      arguments: >
+        -AutorestCSharpVersion ${{parameters.AutorestCSharpVersion}}
+        -SdkRepoRoot $(Build.SourcesDirectory)/azure-sdk-for-net
+      workingDirectory: $(Build.SourcesDirectory)/autorest.csharp
+  - template: /eng/common/pipelines/templates/steps/git-push-changes.yml@azure-sdk-tools
+    parameters:
+      BaseRepoBranch: ${{ parameters.BranchName }}
+      BaseRepoOwner: azure-sdk
+      CommitMsg: Update Generator Version ${{parameters.AutorestCSharpVersion}}
+      TargetRepoOwner: Azure
+      TargetRepoName: azure-sdk-for-net
+      WorkingDirectory: $(Build.SourcesDirectory)/azure-sdk-for-net
+      ScriptDirectory: $(Build.SourcesDirectory)/azure-sdk-tools/eng/common/scripts

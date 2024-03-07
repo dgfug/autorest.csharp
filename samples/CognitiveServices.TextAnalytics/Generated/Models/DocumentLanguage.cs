@@ -8,38 +8,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The DocumentLanguage. </summary>
     public partial class DocumentLanguage
     {
-        /// <summary> Initializes a new instance of DocumentLanguage. </summary>
+        /// <summary> Initializes a new instance of <see cref="DocumentLanguage"/>. </summary>
         /// <param name="id"> Unique, non-empty document identifier. </param>
         /// <param name="detectedLanguage"> Detected Language. </param>
         /// <param name="warnings"> Warnings encountered while processing document. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="id"/>, <paramref name="detectedLanguage"/>, or <paramref name="warnings"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="id"/>, <paramref name="detectedLanguage"/> or <paramref name="warnings"/> is null. </exception>
         internal DocumentLanguage(string id, DetectedLanguage detectedLanguage, IEnumerable<TextAnalyticsWarning> warnings)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-            if (detectedLanguage == null)
-            {
-                throw new ArgumentNullException(nameof(detectedLanguage));
-            }
-            if (warnings == null)
-            {
-                throw new ArgumentNullException(nameof(warnings));
-            }
+            Argument.AssertNotNull(id, nameof(id));
+            Argument.AssertNotNull(detectedLanguage, nameof(detectedLanguage));
+            Argument.AssertNotNull(warnings, nameof(warnings));
 
             Id = id;
             DetectedLanguage = detectedLanguage;
             Warnings = warnings.ToList();
         }
 
-        /// <summary> Initializes a new instance of DocumentLanguage. </summary>
+        /// <summary> Initializes a new instance of <see cref="DocumentLanguage"/>. </summary>
         /// <param name="id"> Unique, non-empty document identifier. </param>
         /// <param name="detectedLanguage"> Detected Language. </param>
         /// <param name="warnings"> Warnings encountered while processing document. </param>

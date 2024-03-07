@@ -2,146 +2,140 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoRest.CSharp.Generation.Types;
+using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Generation.Writers;
-using AutoRest.CSharp.Mgmt.Output;
-using AutoRest.CSharp.Output.Models.Requests;
-using Azure;
+using AutoRest.CSharp.Mgmt.AutoRest;
 using Azure.Core;
-using Azure.Core.Pipeline;
-using Azure.ResourceManager.Core;
+using Azure.ResourceManager;
 using Request = Azure.Core.Request;
 
 namespace AutoRest.CSharp.Mgmt.Generation
 {
-    internal class MgmtLongRunningOperationWriter : LongRunningOperationWriter
+    internal class MgmtLongRunningOperationWriter
     {
-        private const string _operationBaseField = "_operationBase";
+        private readonly CodeWriter _writer;
+        private readonly string _name;
+        private readonly string _genericString;
+        private readonly bool _isGeneric;
+        private readonly string _waitMethod;
+        private readonly Type _operationType;
+        private readonly Type _responseType;
+        private readonly Type _operationInternalType;
+        private readonly FormattableString _operationSourceString;
+        private readonly string _responseString;
+        private readonly string _sourceString;
 
-        protected override CSharpType GetBaseType(LongRunningOperation operation)
+        public string Filename { get; }
+
+        public MgmtLongRunningOperationWriter(bool isGeneric)
         {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-            return mgmtOperation.WrapperType != null ? new CSharpType(typeof(Operation<>), mgmtOperation.WrapperType) : base.GetBaseType(operation);
+            _writer = new CodeWriter();
+            _isGeneric = isGeneric;
+            _name = $"{MgmtContext.Context.DefaultNamespace.Split('.').Last()}ArmOperation";
+            _genericString = isGeneric ? "<T>" : string.Empty;
+            Filename = isGeneric ? $"LongRunningOperation/{_name}OfT.cs" : $"LongRunningOperation/{_name}.cs";
+            _waitMethod = isGeneric ? "WaitForCompletion" : "WaitForCompletionResponse";
+            _operationType = isGeneric ? typeof(ArmOperation<>) : typeof(ArmOperation);
+            _responseType = isGeneric ? Configuration.ApiTypes.ResponseOfTType : Configuration.ApiTypes.ResponseType;
+            _operationInternalType = isGeneric ? typeof(OperationInternal<>) : typeof(OperationInternal);
+            _operationSourceString = isGeneric ? (FormattableString)$"{typeof(IOperationSource<>)} source, " : (FormattableString)$"";
+            _responseString = isGeneric ? $"{Configuration.ApiTypes.ResponseParameterName}.{Configuration.ApiTypes.GetRawResponseName}(), {Configuration.ApiTypes.ResponseParameterName}.Value" : $"{Configuration.ApiTypes.ResponseParameterName}";
+            _sourceString = isGeneric ? "source, " : string.Empty;
         }
 
-        protected override CSharpType? GetInterfaceType(LongRunningOperation operation)
+        public void Write()
         {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-            return mgmtOperation.WrapperType != null ? new CSharpType(typeof(IOperationSource<>), mgmtOperation.WrapperType) : base.GetInterfaceType(operation);
-        }
-
-        protected override CSharpType GetHelperType(LongRunningOperation operation)
-        {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-            return mgmtOperation.WrapperType != null ? new CSharpType(typeof(OperationInternals<>), mgmtOperation.WrapperType) : base.GetHelperType(operation);
-        }
-
-        protected override CSharpType GetValueTaskType(LongRunningOperation operation)
-        {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-            return mgmtOperation.WrapperType != null ? new CSharpType(typeof(Response<>), mgmtOperation.WrapperType) : base.GetValueTaskType(operation);
-        }
-
-        protected override void WriteFields(CodeWriter writer, LongRunningOperation operation, PagingResponseInfo? pagingResponse, CSharpType helperType)
-        {
-            base.WriteFields(writer, operation, pagingResponse, helperType);
-
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-
-            if (mgmtOperation.WrapperType != null)
+            using (_writer.Namespace(MgmtContext.Context.DefaultNamespace))
             {
-                writer.Line();
-                writer.Line($"private readonly {typeof(ArmResource)} {_operationBaseField};");
-            }
-        }
-
-        protected override void WriteConstructor(CodeWriter writer, LongRunningOperation operation, PagingResponseInfo? pagingResponse, CSharpType cs, CSharpType helperType)
-        {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-
-            if (mgmtOperation.WrapperType != null)
-            {
-                // pass operationsBase in so that the construction of [Resource] is possible
-                writer.Append($"internal {cs.Name}({typeof(ArmResource)} operationsBase, {typeof(ClientDiagnostics)} clientDiagnostics, {typeof(HttpPipeline)} pipeline, {typeof(Request)} request, {typeof(Response)} response");
-
-                if (pagingResponse != null)
+                _writer.Line($"#pragma warning disable SA1649 // File name should match first type name");
+                _writer.Line($"internal class {_name}{_genericString} : {_operationType}");
+                _writer.Line($"#pragma warning restore SA1649 // File name should match first type name");
+                using (_writer.Scope())
                 {
-                    writer.Append($", {typeof(Func<string, Task<Response>>)} nextPageFunc");
-                }
-                writer.Line($")");
+                    _writer.Line($"private readonly {_operationInternalType} _operation;");
+                    _writer.Line();
 
-                using (writer.Scope())
-                {
-                    writer.Append($"_operation = new {helperType}(");
-                    if (operation.ResultType != null)
+                    _writer.WriteXmlDocumentationSummary($"Initializes a new instance of {_name} for mocking.");
+                    using (_writer.Scope($"protected {_name}()"))
                     {
-                        writer.Append($"this, ");
                     }
-                    writer.Line($"clientDiagnostics, pipeline, request, response, { typeof(OperationFinalStateVia)}.{ operation.FinalStateVia}, { operation.Diagnostics.ScopeName:L});");
+                    _writer.Line();
 
-                    if (pagingResponse != null)
+                    using (_writer.Scope($"internal {_name}({_responseType} {Configuration.ApiTypes.ResponseParameterName})"))
                     {
-                        writer.Line($"_nextPageFunc = nextPageFunc;");
+                        _writer.Line($"_operation = {_operationInternalType}.Succeeded({_responseString});");
+                    }
+                    _writer.Line();
+
+                    using (_writer.Scope($"internal {_name}({_operationSourceString}{Configuration.ApiTypes.ClientDiagnosticsType} clientDiagnostics, {Configuration.ApiTypes.HttpPipelineType} pipeline, {typeof(Request)} request, {Configuration.ApiTypes.ResponseType} {Configuration.ApiTypes.ResponseParameterName}, {typeof(OperationFinalStateVia)} finalStateVia, bool skipApiVersionOverride = false, string apiVersionOverrideValue = null)"))
+                    {
+                        var nextLinkOperation = new CodeWriterDeclaration("nextLinkOperation");
+                        _writer.Line($"var {nextLinkOperation:D} = {typeof(NextLinkOperationImplementation)}.{nameof(NextLinkOperationImplementation.Create)}({_sourceString}pipeline, request.Method, request.Uri.ToUri(), {Configuration.ApiTypes.ResponseParameterName}, finalStateVia, skipApiVersionOverride, apiVersionOverrideValue);");
+                        _writer.Line($"_operation = new {_operationInternalType}({nextLinkOperation}, clientDiagnostics, {Configuration.ApiTypes.ResponseParameterName}, {_name:L}, fallbackStrategy: new {typeof(SequentialDelayStrategy)}());");
+                    }
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer
+                        .LineRaw("#pragma warning disable CA1822")
+                        .LineRaw($"[{typeof(EditorBrowsableAttribute)}({typeof(EditorBrowsableState)}.{nameof(EditorBrowsableState.Never)})]")
+                        .LineRaw("public override string Id => throw new NotImplementedException();")
+                        .LineRaw("#pragma warning restore CA1822")
+                        .Line();
+
+                    if (_isGeneric)
+                    {
+                        _writer.WriteXmlDocumentationInheritDoc();
+                        _writer.Line($"public override T Value => _operation.Value;");
+                        _writer.Line();
+
+                        _writer.WriteXmlDocumentationInheritDoc();
+                        _writer.Line($"public override bool HasValue => _operation.HasValue;");
+                        _writer.Line();
                     }
 
-                    writer.Line($"{_operationBaseField} = operationsBase;");
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override bool HasCompleted => _operation.HasCompleted;");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {Configuration.ApiTypes.ResponseType} {Configuration.ApiTypes.GetRawResponseName}() => _operation.RawResponse;");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {Configuration.ApiTypes.ResponseType} UpdateStatus({typeof(CancellationToken)} cancellationToken = default) => _operation.UpdateStatus(cancellationToken);");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {typeof(ValueTask<>).MakeGenericType(Configuration.ApiTypes.ResponseType)} UpdateStatusAsync({typeof(CancellationToken)} cancellationToken = default) => _operation.UpdateStatusAsync(cancellationToken);");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {_responseType} {_waitMethod}({typeof(CancellationToken)} cancellationToken = default) => _operation.{_waitMethod}(cancellationToken);");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {_responseType} {_waitMethod}({typeof(TimeSpan)} pollingInterval, {typeof(CancellationToken)} cancellationToken = default) => _operation.{_waitMethod}(pollingInterval, cancellationToken);");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {typeof(ValueTask<>).MakeGenericType(_responseType)} {_waitMethod}Async({typeof(CancellationToken)} cancellationToken = default) => _operation.{_waitMethod}Async(cancellationToken);");
+                    _writer.Line();
+
+                    _writer.WriteXmlDocumentationInheritDoc();
+                    _writer.Line($"public override {typeof(ValueTask<>).MakeGenericType(_responseType)} {_waitMethod}Async({typeof(TimeSpan)} pollingInterval, {typeof(CancellationToken)} cancellationToken = default) => _operation.{_waitMethod}Async(pollingInterval, cancellationToken);");
+                    _writer.Line();
                 }
-            }
-            else
-            {
-                base.WriteConstructor(writer, operation, pagingResponse, cs, helperType);
             }
         }
 
-        protected override void WriteValueProperty(CodeWriter writer, LongRunningOperation operation)
+        public override string ToString()
         {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-
-            if (mgmtOperation.WrapperType != null)
-            {
-                writer.WriteXmlDocumentationInheritDoc();
-                writer.Line($"public override {mgmtOperation.WrapperType} Value => _operation.Value;");
-                writer.Line();
-            }
-            else
-            {
-                base.WriteValueProperty(writer, operation);
-            }
-        }
-
-        protected override void WriteCreateResult(CodeWriter writer, LongRunningOperation operation, string responseVariable, PagingResponseInfo? pagingResponse, CSharpType? interfaceType)
-        {
-            MgmtLongRunningOperation mgmtOperation = AsMgmtOperation(operation);
-
-            if (mgmtOperation.WrapperType != null)
-            {
-                Action<CodeWriter, CodeWriterDelegate> valueCallback = (w, v) => w.Line($"return new {mgmtOperation.WrapperType}({_operationBaseField}, {v});");
-
-                using (writer.Scope($"{mgmtOperation.WrapperType} {interfaceType}.CreateResult({typeof(Response)} {responseVariable:D}, {typeof(CancellationToken)} cancellationToken)"))
-                {
-                    WriteCreateResultImpl(false, writer, operation, responseVariable, pagingResponse, valueCallback);
-                }
-                writer.Line();
-
-                using (writer.Scope($"async {new CSharpType(typeof(ValueTask<>), mgmtOperation.WrapperType)} {interfaceType}.CreateResultAsync({typeof(Response)} {responseVariable:D}, {typeof(CancellationToken)} cancellationToken)"))
-                {
-                    WriteCreateResultImpl(true, writer, operation, responseVariable, pagingResponse, valueCallback);
-                }
-            }
-            else
-            {
-                base.WriteCreateResult(writer, operation, responseVariable, pagingResponse, interfaceType);
-            }
-        }
-
-        private MgmtLongRunningOperation AsMgmtOperation(LongRunningOperation operation)
-        {
-            var mgmtOperation = operation as MgmtLongRunningOperation;
-            Debug.Assert(mgmtOperation != null);
-            return mgmtOperation;
+            return _writer.ToString();
         }
     }
 }

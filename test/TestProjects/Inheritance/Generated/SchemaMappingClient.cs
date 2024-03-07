@@ -30,6 +30,7 @@ namespace Inheritance
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal SchemaMappingClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new SchemaMappingRestClient(clientDiagnostics, pipeline, endpoint);
@@ -37,7 +38,7 @@ namespace Inheritance
             _pipeline = pipeline;
         }
 
-        /// <param name="value"> The BaseClass to use. </param>
+        /// <param name="value"> The <see cref="BaseClass"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<BaseClass>> MixedAsync(BaseClass value, CancellationToken cancellationToken = default)
         {
@@ -54,7 +55,7 @@ namespace Inheritance
             }
         }
 
-        /// <param name="value"> The BaseClass to use. </param>
+        /// <param name="value"> The <see cref="BaseClass"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<BaseClass> Mixed(BaseClass value, CancellationToken cancellationToken = default)
         {

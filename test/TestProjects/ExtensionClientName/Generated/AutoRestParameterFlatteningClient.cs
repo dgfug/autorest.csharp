@@ -30,6 +30,7 @@ namespace ExtensionClientName
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal AutoRestParameterFlatteningClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new AutoRestParameterFlatteningRestClient(clientDiagnostics, pipeline, endpoint);
@@ -37,9 +38,9 @@ namespace ExtensionClientName
             _pipeline = pipeline;
         }
 
-        /// <param name="renamedPathParameter"> The String to use. </param>
-        /// <param name="renamedQueryParameter"> The String to use. </param>
-        /// <param name="renamedBodyParameter"> The RenamedSchema to use. </param>
+        /// <param name="renamedPathParameter"> The <see cref="string"/> to use. </param>
+        /// <param name="renamedQueryParameter"> The <see cref="string"/> to use. </param>
+        /// <param name="renamedBodyParameter"> The <see cref="RenamedSchema"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<RenamedSchema>> RenamedOperationAsync(string renamedPathParameter, string renamedQueryParameter, RenamedSchema renamedBodyParameter, CancellationToken cancellationToken = default)
         {
@@ -56,9 +57,9 @@ namespace ExtensionClientName
             }
         }
 
-        /// <param name="renamedPathParameter"> The String to use. </param>
-        /// <param name="renamedQueryParameter"> The String to use. </param>
-        /// <param name="renamedBodyParameter"> The RenamedSchema to use. </param>
+        /// <param name="renamedPathParameter"> The <see cref="string"/> to use. </param>
+        /// <param name="renamedQueryParameter"> The <see cref="string"/> to use. </param>
+        /// <param name="renamedBodyParameter"> The <see cref="RenamedSchema"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<RenamedSchema> RenamedOperation(string renamedPathParameter, string renamedQueryParameter, RenamedSchema renamedBodyParameter, CancellationToken cancellationToken = default)
         {

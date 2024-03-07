@@ -5,15 +5,19 @@
 
 #nullable disable
 
+using System;
+using System.ClientModel.Primitives;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using Azure.Core;
+using xml_service;
 
 namespace xml_service.Models
 {
-    public partial class ComplexTypeWithMeta : IXmlSerializable
+    public partial class ComplexTypeWithMeta : IXmlSerializable, IPersistableModel<ComplexTypeWithMeta>
     {
-        void IXmlSerializable.Write(XmlWriter writer, string nameHint)
+        private void WriteInternal(XmlWriter writer, string nameHint, ModelReaderWriterOptions options)
         {
             writer.WriteStartElement(nameHint ?? "XMLComplexTypeWithMeta");
             if (Optional.IsDefined(ID))
@@ -25,14 +29,52 @@ namespace xml_service.Models
             writer.WriteEndElement();
         }
 
-        internal static ComplexTypeWithMeta DeserializeComplexTypeWithMeta(XElement element)
+        void IXmlSerializable.Write(XmlWriter writer, string nameHint) => WriteInternal(writer, nameHint, new ModelReaderWriterOptions("W"));
+
+        internal static ComplexTypeWithMeta DeserializeComplexTypeWithMeta(XElement element, ModelReaderWriterOptions options = null)
         {
-            string iD = default;
-            if (element.Element("ID") is XElement iDElement)
+            options ??= new ModelReaderWriterOptions("W");
+
+            string id = default;
+            if (element.Element("ID") is XElement idElement)
             {
-                iD = (string)iDElement;
+                id = (string)idElement;
             }
-            return new ComplexTypeWithMeta(iD);
+            return new ComplexTypeWithMeta(id, serializedAdditionalRawData: null);
         }
+
+        BinaryData IPersistableModel<ComplexTypeWithMeta>.Write(ModelReaderWriterOptions options)
+        {
+            var format = options.Format == "W" ? ((IPersistableModel<ComplexTypeWithMeta>)this).GetFormatFromOptions(options) : options.Format;
+
+            switch (format)
+            {
+                case "X":
+                    {
+                        using MemoryStream stream = new MemoryStream();
+                        using XmlWriter writer = XmlWriter.Create(stream);
+                        WriteInternal(writer, null, options);
+                        writer.Flush();
+                        return new BinaryData(stream.GetBuffer().AsMemory(0, (int)stream.Position));
+                    }
+                default:
+                    throw new FormatException($"The model {nameof(ComplexTypeWithMeta)} does not support '{options.Format}' format.");
+            }
+        }
+
+        ComplexTypeWithMeta IPersistableModel<ComplexTypeWithMeta>.Create(BinaryData data, ModelReaderWriterOptions options)
+        {
+            var format = options.Format == "W" ? ((IPersistableModel<ComplexTypeWithMeta>)this).GetFormatFromOptions(options) : options.Format;
+
+            switch (format)
+            {
+                case "X":
+                    return DeserializeComplexTypeWithMeta(XElement.Load(data.ToStream()), options);
+                default:
+                    throw new FormatException($"The model {nameof(ComplexTypeWithMeta)} does not support '{options.Format}' format.");
+            }
+        }
+
+        string IPersistableModel<ComplexTypeWithMeta>.GetFormatFromOptions(ModelReaderWriterOptions options) => "X";
     }
 }

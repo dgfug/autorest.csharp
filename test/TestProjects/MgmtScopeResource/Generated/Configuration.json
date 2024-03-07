@@ -1,36 +1,62 @@
 {
-  "OutputFolder": ".",
-  "Namespace": "MgmtScopeResource",
-  "LibraryName": null,
-  "SharedSourceFolders": [
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Generator.Shared",
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Azure.Core.Shared"
+  "output-folder": ".",
+  "namespace": "MgmtScopeResource",
+  "library-name": "ResourceManagementClient",
+  "shared-source-folders": [
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Generator.Shared",
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Azure.Core.Shared"
   ],
   "azure-arm": true,
   "public-clients": true,
   "head-as-boolean": true,
   "skip-csproj-packagereference": true,
-  "OperationGroupToResourceType": {
-    "Deployments": "Microsoft.Resources/deployments",
-    "DeploymentOperations": "Microsoft.Resources/deployments/operations",
-    "ResourceLinks": "Microsoft.Resources/links"
+  "ListException": [
+    "/{linkId}"
+  ],
+  "GenerateArmResourceExtensions": [
+    "/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}",
+    "/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default",
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{guestConfigurationAssignmentName}"
+  ],
+  "RequestPathToParent": {
+    "/{scope}/providers/Microsoft.Resources/links": "/{linkId}",
+    "/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}",
+    "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}",
+    "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}",
+    "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
   },
-  "OperationGroupToResource": {
-    "DeploymentOperations": "DeploymentOperation",
-    "Deployments": "DeploymentExtended",
-    "ResourceLinks": "ResourceLink"
-  },
-  "OperationGroupToParent": {
-    "Deployments": "tenant",
-    "PolicyAssignments": "tenant",
-    "ResourceLinks": "tenant"
-  },
-  "MergeOperations": {
-    "WhatIf": [
-      "Deployments_WhatIf_POST",
-      "Deployments_WhatIfAtTenantScope_POST",
-      "Deployments_WhatIfAtManagementGroupScope_POST",
-      "Deployments_WhatIfAtSubscriptionScope_POST"
+  "OperationPositions": {
+    "ResourceLinks_ListAtSourceScope": [
+      "collection"
     ]
-  }
+  },
+  "RequestPathToResourceData": {
+    "/{linkId}": "ResourceLink"
+  },
+  "RequestPathToResourceType": {
+    "/{linkId}": "Microsoft.Resources/links"
+  },
+  "RequestPathToScopeResourceTypes": {
+    "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}": [
+      "subscriptions",
+      "resourceGroups",
+      "managementGroups",
+      "tenant"
+    ],
+    "/{scope}/providers/Microsoft.Resources/deployments": [
+      "subscriptions",
+      "resourceGroups",
+      "managementGroups",
+      "tenant"
+    ]
+  },
+  "OverrideOperationName": {
+    "ResourceLinks_ListAtSourceScope": "GetAll"
+  },
+  "PatchInitializerCustomization": {
+    "Deployment": {
+      "Properties": "new DeploymentProperties(current.Properties.Mode.HasValue ? current.Properties.Mode.Value : DeploymentMode.Incremental)"
+    }
+  },
+  "helper-namespace": "MgmtScopeResource"
 }

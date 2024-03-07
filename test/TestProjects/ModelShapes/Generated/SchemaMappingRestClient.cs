@@ -18,19 +18,22 @@ namespace ModelShapes
 {
     internal partial class SchemaMappingRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of SchemaMappingRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public SchemaMappingRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateInputRequest(InputModel value)
@@ -39,7 +42,7 @@ namespace ModelShapes
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/op", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -50,7 +53,7 @@ namespace ModelShapes
             return message;
         }
 
-        /// <param name="value"> The InputModel to use. </param>
+        /// <param name="value"> The <see cref="InputModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public async Task<Response> InputAsync(InputModel value, CancellationToken cancellationToken = default)
@@ -67,11 +70,11 @@ namespace ModelShapes
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <param name="value"> The InputModel to use. </param>
+        /// <param name="value"> The <see cref="InputModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public Response Input(InputModel value, CancellationToken cancellationToken = default)
@@ -88,7 +91,7 @@ namespace ModelShapes
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -98,7 +101,7 @@ namespace ModelShapes
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/op", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -109,7 +112,7 @@ namespace ModelShapes
             return message;
         }
 
-        /// <param name="value"> The MixedModel to use. </param>
+        /// <param name="value"> The <see cref="MixedModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public async Task<Response<MixedModel>> MixedAsync(MixedModel value, CancellationToken cancellationToken = default)
@@ -131,11 +134,11 @@ namespace ModelShapes
                         return Response.FromValue(value0, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <param name="value"> The MixedModel to use. </param>
+        /// <param name="value"> The <see cref="MixedModel"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public Response<MixedModel> Mixed(MixedModel value, CancellationToken cancellationToken = default)
@@ -157,7 +160,7 @@ namespace ModelShapes
                         return Response.FromValue(value0, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -167,7 +170,7 @@ namespace ModelShapes
             var request = message.Request;
             request.Method = RequestMethod.Post;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/op", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -189,7 +192,7 @@ namespace ModelShapes
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -208,7 +211,7 @@ namespace ModelShapes
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -218,7 +221,7 @@ namespace ModelShapes
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/op2", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -229,7 +232,7 @@ namespace ModelShapes
             return message;
         }
 
-        /// <param name="value"> The MixedModelWithReadonlyProperty to use. </param>
+        /// <param name="value"> The <see cref="MixedModelWithReadonlyProperty"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public async Task<Response<MixedModelWithReadonlyProperty>> MixedreadonlyAsync(MixedModelWithReadonlyProperty value, CancellationToken cancellationToken = default)
@@ -251,11 +254,11 @@ namespace ModelShapes
                         return Response.FromValue(value0, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <param name="value"> The MixedModelWithReadonlyProperty to use. </param>
+        /// <param name="value"> The <see cref="MixedModelWithReadonlyProperty"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         public Response<MixedModelWithReadonlyProperty> Mixedreadonly(MixedModelWithReadonlyProperty value, CancellationToken cancellationToken = default)
@@ -277,7 +280,7 @@ namespace ModelShapes
                         return Response.FromValue(value0, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -287,7 +290,7 @@ namespace ModelShapes
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/op3", false);
             request.Uri = uri;
             request.Headers.Add("Content-Type", "application/json");
@@ -302,8 +305,8 @@ namespace ModelShapes
             return message;
         }
 
-        /// <param name="code"> The ParametersModelCode to use. </param>
-        /// <param name="status"> The ParametersModelStatus to use. </param>
+        /// <param name="code"> The <see cref="string"/> to use. </param>
+        /// <param name="status"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> FlattenedParameterOperationAsync(string code = null, string status = null, CancellationToken cancellationToken = default)
         {
@@ -314,12 +317,12 @@ namespace ModelShapes
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <param name="code"> The ParametersModelCode to use. </param>
-        /// <param name="status"> The ParametersModelStatus to use. </param>
+        /// <param name="code"> The <see cref="string"/> to use. </param>
+        /// <param name="status"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response FlattenedParameterOperation(string code = null, string status = null, CancellationToken cancellationToken = default)
         {
@@ -330,7 +333,7 @@ namespace ModelShapes
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

@@ -8,32 +8,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
     /// <summary> Marks terms as keywords. This token filter is implemented using Apache Lucene. </summary>
     public partial class KeywordMarkerTokenFilter : TokenFilter
     {
-        /// <summary> Initializes a new instance of KeywordMarkerTokenFilter. </summary>
+        /// <summary> Initializes a new instance of <see cref="KeywordMarkerTokenFilter"/>. </summary>
         /// <param name="name"> The name of the token filter. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="keywords"> A list of words to mark as keywords. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="keywords"/> is null. </exception>
         public KeywordMarkerTokenFilter(string name, IEnumerable<string> keywords) : base(name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (keywords == null)
-            {
-                throw new ArgumentNullException(nameof(keywords));
-            }
+            Argument.AssertNotNull(name, nameof(name));
+            Argument.AssertNotNull(keywords, nameof(keywords));
 
             Keywords = keywords.ToList();
             OdataType = "#Microsoft.Azure.Search.KeywordMarkerTokenFilter";
         }
 
-        /// <summary> Initializes a new instance of KeywordMarkerTokenFilter. </summary>
+        /// <summary> Initializes a new instance of <see cref="KeywordMarkerTokenFilter"/>. </summary>
         /// <param name="odataType"> Identifies the concrete type of the token filter. </param>
         /// <param name="name"> The name of the token filter. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="keywords"> A list of words to mark as keywords. </param>

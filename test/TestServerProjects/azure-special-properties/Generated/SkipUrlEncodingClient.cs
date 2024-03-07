@@ -29,6 +29,7 @@ namespace azure_special_properties
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal SkipUrlEncodingClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new SkipUrlEncodingRestClient(clientDiagnostics, pipeline, endpoint);
@@ -36,8 +37,8 @@ namespace azure_special_properties
             _pipeline = pipeline;
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
-        /// <param name="unencodedPathParam"> Unencoded path parameter with value &apos;path1/path2/path3&apos;. </param>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
+        /// <param name="unencodedPathParam"> Unencoded path parameter with value 'path1/path2/path3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetMethodPathValidAsync(string unencodedPathParam, CancellationToken cancellationToken = default)
         {
@@ -54,8 +55,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
-        /// <param name="unencodedPathParam"> Unencoded path parameter with value &apos;path1/path2/path3&apos;. </param>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
+        /// <param name="unencodedPathParam"> Unencoded path parameter with value 'path1/path2/path3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetMethodPathValid(string unencodedPathParam, CancellationToken cancellationToken = default)
         {
@@ -72,8 +73,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
-        /// <param name="unencodedPathParam"> Unencoded path parameter with value &apos;path1/path2/path3&apos;. </param>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
+        /// <param name="unencodedPathParam"> Unencoded path parameter with value 'path1/path2/path3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetPathValidAsync(string unencodedPathParam, CancellationToken cancellationToken = default)
         {
@@ -90,8 +91,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
-        /// <param name="unencodedPathParam"> Unencoded path parameter with value &apos;path1/path2/path3&apos;. </param>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
+        /// <param name="unencodedPathParam"> Unencoded path parameter with value 'path1/path2/path3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetPathValid(string unencodedPathParam, CancellationToken cancellationToken = default)
         {
@@ -108,7 +109,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetSwaggerPathValidAsync(CancellationToken cancellationToken = default)
         {
@@ -125,7 +126,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded path parameter with value &apos;path1/path2/path3&apos;. </summary>
+        /// <summary> Get method with unencoded path parameter with value 'path1/path2/path3'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetSwaggerPathValid(CancellationToken cancellationToken = default)
         {
@@ -142,8 +143,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
-        /// <param name="q1"> Unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </param>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
+        /// <param name="q1"> Unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetMethodQueryValidAsync(string q1, CancellationToken cancellationToken = default)
         {
@@ -160,8 +161,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
-        /// <param name="q1"> Unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </param>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
+        /// <param name="q1"> Unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetMethodQueryValid(string q1, CancellationToken cancellationToken = default)
         {
@@ -214,8 +215,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
-        /// <param name="q1"> Unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </param>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
+        /// <param name="q1"> Unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetPathQueryValidAsync(string q1, CancellationToken cancellationToken = default)
         {
@@ -232,8 +233,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
-        /// <param name="q1"> Unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </param>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
+        /// <param name="q1"> Unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetPathQueryValid(string q1, CancellationToken cancellationToken = default)
         {
@@ -250,7 +251,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetSwaggerQueryValidAsync(CancellationToken cancellationToken = default)
         {
@@ -267,7 +268,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with unencoded query parameter with value &apos;value1&amp;q2=value2&amp;q3=value3&apos;. </summary>
+        /// <summary> Get method with unencoded query parameter with value 'value1&amp;q2=value2&amp;q3=value3'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetSwaggerQueryValid(CancellationToken cancellationToken = default)
         {

@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -17,53 +18,55 @@ namespace CognitiveSearch.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(K1))
             {
-                writer.WritePropertyName("k1");
+                writer.WritePropertyName("k1"u8);
                 writer.WriteNumberValue(K1.Value);
             }
             if (Optional.IsDefined(B))
             {
-                writer.WritePropertyName("b");
+                writer.WritePropertyName("b"u8);
                 writer.WriteNumberValue(B.Value);
             }
-            writer.WritePropertyName("@odata.type");
+            writer.WritePropertyName("@odata.type"u8);
             writer.WriteStringValue(OdataType);
             writer.WriteEndObject();
         }
 
         internal static BM25Similarity DeserializeBM25Similarity(JsonElement element)
         {
-            Optional<double> k1 = default;
-            Optional<double> b = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            double? k1 = default;
+            double? b = default;
             string odataType = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("k1"))
+                if (property.NameEquals("k1"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     k1 = property.Value.GetDouble();
                     continue;
                 }
-                if (property.NameEquals("b"))
+                if (property.NameEquals("b"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     b = property.Value.GetDouble();
                     continue;
                 }
-                if (property.NameEquals("@odata.type"))
+                if (property.NameEquals("@odata.type"u8))
                 {
                     odataType = property.Value.GetString();
                     continue;
                 }
             }
-            return new BM25Similarity(odataType, Optional.ToNullable(k1), Optional.ToNullable(b));
+            return new BM25Similarity(odataType, k1, b);
         }
     }
 }

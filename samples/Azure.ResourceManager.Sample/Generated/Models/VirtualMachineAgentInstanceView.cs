@@ -5,37 +5,96 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
-using Azure.Core;
+using Azure.ResourceManager.Sample;
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> The instance view of the VM Agent running on the virtual machine. </summary>
+    /// <summary>
+    /// The instance view of the VM Agent running on the virtual machine.
+    /// Serialized Name: VirtualMachineAgentInstanceView
+    /// </summary>
     public partial class VirtualMachineAgentInstanceView
     {
-        /// <summary> Initializes a new instance of VirtualMachineAgentInstanceView. </summary>
+        /// <summary>
+        /// Keeps track of any properties unknown to the library.
+        /// <para>
+        /// To assign an object to the value of this property use <see cref="BinaryData.FromObjectAsJson{T}(T, System.Text.Json.JsonSerializerOptions?)"/>.
+        /// </para>
+        /// <para>
+        /// To assign an already formatted json string to this property use <see cref="BinaryData.FromString(string)"/>.
+        /// </para>
+        /// <para>
+        /// Examples:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson("foo")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("\"foo\"")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson(new { key = "value" })</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("{\"key\": \"value\"}")</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        private IDictionary<string, BinaryData> _serializedAdditionalRawData;
+
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineAgentInstanceView"/>. </summary>
         internal VirtualMachineAgentInstanceView()
         {
             ExtensionHandlers = new ChangeTrackingList<VirtualMachineExtensionHandlerInstanceView>();
             Statuses = new ChangeTrackingList<InstanceViewStatus>();
         }
 
-        /// <summary> Initializes a new instance of VirtualMachineAgentInstanceView. </summary>
-        /// <param name="vmAgentVersion"> The VM Agent full version. </param>
-        /// <param name="extensionHandlers"> The virtual machine extension handler instance view. </param>
-        /// <param name="statuses"> The resource status information. </param>
-        internal VirtualMachineAgentInstanceView(string vmAgentVersion, IReadOnlyList<VirtualMachineExtensionHandlerInstanceView> extensionHandlers, IReadOnlyList<InstanceViewStatus> statuses)
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineAgentInstanceView"/>. </summary>
+        /// <param name="vmAgentVersion">
+        /// The VM Agent full version.
+        /// Serialized Name: VirtualMachineAgentInstanceView.vmAgentVersion
+        /// </param>
+        /// <param name="extensionHandlers">
+        /// The virtual machine extension handler instance view.
+        /// Serialized Name: VirtualMachineAgentInstanceView.extensionHandlers
+        /// </param>
+        /// <param name="statuses">
+        /// The resource status information.
+        /// Serialized Name: VirtualMachineAgentInstanceView.statuses
+        /// </param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
+        internal VirtualMachineAgentInstanceView(string vmAgentVersion, IReadOnlyList<VirtualMachineExtensionHandlerInstanceView> extensionHandlers, IReadOnlyList<InstanceViewStatus> statuses, IDictionary<string, BinaryData> serializedAdditionalRawData)
         {
             VmAgentVersion = vmAgentVersion;
             ExtensionHandlers = extensionHandlers;
             Statuses = statuses;
+            _serializedAdditionalRawData = serializedAdditionalRawData;
         }
 
-        /// <summary> The VM Agent full version. </summary>
+        /// <summary>
+        /// The VM Agent full version.
+        /// Serialized Name: VirtualMachineAgentInstanceView.vmAgentVersion
+        /// </summary>
+        [WirePath("vmAgentVersion")]
         public string VmAgentVersion { get; }
-        /// <summary> The virtual machine extension handler instance view. </summary>
+        /// <summary>
+        /// The virtual machine extension handler instance view.
+        /// Serialized Name: VirtualMachineAgentInstanceView.extensionHandlers
+        /// </summary>
+        [WirePath("extensionHandlers")]
         public IReadOnlyList<VirtualMachineExtensionHandlerInstanceView> ExtensionHandlers { get; }
-        /// <summary> The resource status information. </summary>
+        /// <summary>
+        /// The resource status information.
+        /// Serialized Name: VirtualMachineAgentInstanceView.statuses
+        /// </summary>
+        [WirePath("statuses")]
         public IReadOnlyList<InstanceViewStatus> Statuses { get; }
     }
 }

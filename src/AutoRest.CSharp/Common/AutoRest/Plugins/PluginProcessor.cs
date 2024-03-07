@@ -8,7 +8,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoRest.CSharp.AutoRest.Communication;
-using AutoRest.CSharp.Input;
+using AutoRest.CSharp.Common.Input;
+using AutoRest.CSharp.Common.Utilities;
 using AutoRest.CSharp.Utilities;
 
 namespace AutoRest.CSharp.AutoRest.Plugins
@@ -28,14 +29,14 @@ namespace AutoRest.CSharp.AutoRest.Plugins
             try
             {
                 IPlugin plugin = Plugins[autoRest.PluginName]();
-                var shouldAttach = await autoRest.GetValue<JsonElement?>($"{autoRest.PluginName}.attach");
+                var shouldAttach = await autoRest.GetValue<JsonElement?>(string.Format(Configuration.Options.AttachDebuggerFormat, autoRest.PluginName));
                 if (shouldAttach.ToBoolean() ?? false)
                 {
                     Console.Error.WriteLine("Attempting to attach debugger.");
                     System.Diagnostics.Debugger.Launch();
                 }
-                await plugin.Execute(autoRest);
-                return true;
+                AutoRestLogger.Initialize(autoRest);
+                return await plugin.Execute(autoRest);
             }
             catch (Exception e)
             {

@@ -2,26 +2,83 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoRest.CSharp.AutoRest.Plugins;
+using AutoRest.CSharp.Common.AutoRest.Plugins;
+using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Input;
+using Microsoft.CodeAnalysis;
 
 namespace AutoRest.CSharp.AutoRest.Communication
 {
     internal class StandaloneGeneratorRunner
     {
-        public static async Task RunAsync(string[] args)
+        private static readonly string[] keepFiles = new string[] { "CodeModel.yaml", "Configuration.json", "tspCodeModel.json" };
+        public static async Task RunAsync(CommandLineOptions options)
         {
-            var basePath = args.Single(a => !a.StartsWith("--"));
+            string? projectPath = null;
+            string outputPath;
+            string generatedTestOutputPath;
+            bool wasProjectPathPassedIn = options.ProjectPath is not null;
+            if (options.Standalone is not null)
+            {
+                //TODO this is only here for back compat we should consider removing it
+                outputPath = options.Standalone;
+            }
+            else
+            {
+                projectPath = options.ProjectPath!;
+                if (!projectPath!.EndsWith("src", StringComparison.Ordinal))
+                    projectPath = Path.Combine(projectPath, "src");
+                outputPath = Path.Combine(projectPath, "Generated");
+            }
+            generatedTestOutputPath = Path.Combine(outputPath, "..", "..", "tests", "Generated");
 
-            var configuration = LoadConfiguration(basePath, File.ReadAllText(Path.Combine(basePath, "Configuration.json")));
-            var codeModelTask = Task.Run(() => CodeModelSerialization.DeserializeCodeModel(File.ReadAllText(Path.Combine(basePath, "CodeModel.yaml"))));
-            var workspace = await new CSharpGen().ExecuteAsync(codeModelTask, configuration);
+            var configurationPath = options.ConfigurationPath ?? Path.Combine(outputPath, "Configuration.json");
+            LoadConfiguration(projectPath, outputPath, options.ExistingProjectFolder, File.ReadAllText(configurationPath));
+
+            var codeModelInputPath = Path.Combine(outputPath, "CodeModel.yaml");
+            var tspInputFile = Path.Combine(outputPath, "tspCodeModel.json");
+
+            GeneratedCodeWorkspace workspace;
+            if (File.Exists(tspInputFile))
+            {
+                var json = await File.ReadAllTextAsync(tspInputFile);
+                var rootNamespace = TypeSpecSerialization.Deserialize(json) ?? throw new InvalidOperationException($"Deserializing {tspInputFile} has failed.");
+                workspace = await new CSharpGen().ExecuteAsync(rootNamespace);
+                if (options.IsNewProject)
+                {
+                    bool needAzureKeyAuth = rootNamespace.Auth?.ApiKey != null;
+                    // TODO - add support for DataFactoryElement lookup
+                    await new NewProjectScaffolding(needAzureKeyAuth).Execute();
+                }
+            }
+            else if (File.Exists(codeModelInputPath))
+            {
+                var yaml = await File.ReadAllTextAsync(codeModelInputPath);
+                var codeModel = CodeModelSerialization.DeserializeCodeModel(yaml);
+                workspace = await new CSharpGen().ExecuteAsync(codeModel);
+                if (options.IsNewProject)
+                {
+                    bool needAzureKeyAuth = codeModel.Security.Schemes.Any(scheme => scheme is KeySecurityScheme);
+                    bool includeDfe = yaml.Contains("x-ms-format: dfe-", StringComparison.Ordinal);
+                    //await new NewProjectScaffolding(needAzureKeyAuth).Execute();
+                    new CSharpProj(needAzureKeyAuth, includeDfe).Execute();
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"Neither CodeModel.yaml nor tspCodeModel.json exist in {outputPath} folder.");
+            }
+
+            if (options.ClearOutputFolder)
+            {
+                DeleteDirectory(outputPath, keepFiles);
+                DeleteDirectory(generatedTestOutputPath, keepFiles);
+            }
 
             await foreach (var file in workspace.GetGeneratedFilesAsync())
             {
@@ -29,98 +86,44 @@ namespace AutoRest.CSharp.AutoRest.Communication
                 {
                     continue;
                 }
-                var filename = Path.Combine(basePath, file.Name);
+                var filename = Path.Combine(outputPath, file.Name);
                 Console.WriteLine($"Writing {filename}");
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
+                Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
                 await File.WriteAllTextAsync(filename, file.Text);
             }
         }
 
-        private static void WriteIfNotDefault(Utf8JsonWriter writer, string option, bool value)
+        private static void DeleteDirectory(string path, string[] keepFiles)
         {
-            var defaultValue = Configuration.GetDefaultOptionValue (option);
-            if (!defaultValue.HasValue || defaultValue.Value != value)
+            var directoryInfo = new DirectoryInfo(path);
+            if (!directoryInfo.Exists)
             {
-                writer.WriteBoolean(option, value);
+                return;
             }
-        }
-
-        internal static string SaveConfiguration(Configuration configuration)
-        {
-            using (var memoryStream = new MemoryStream())
+            foreach (FileInfo file in directoryInfo.GetFiles())
             {
-                JsonWriterOptions options = new JsonWriterOptions();
-                options.Indented = true;
-                using (Utf8JsonWriter writer = new Utf8JsonWriter(memoryStream, options))
+                if (keepFiles.Contains(file.Name))
                 {
-                    writer.WriteStartObject();
-                    writer.WriteString(nameof(Configuration.OutputFolder), Path.GetRelativePath(configuration.OutputFolder, configuration.OutputFolder));
-                    writer.WriteString(nameof(Configuration.Namespace), configuration.Namespace);
-                    writer.WriteString(nameof(Configuration.LibraryName), configuration.LibraryName);
-                    writer.WriteStartArray(nameof(Configuration.SharedSourceFolders));
-                    foreach (var sharedSourceFolder in configuration.SharedSourceFolders)
-                    {
-                        writer.WriteStringValue(NormalizePath(configuration, sharedSourceFolder));
-                    }
-                    writer.WriteEndArray();
-                    WriteIfNotDefault(writer, "azure-arm", configuration.AzureArm);
-                    WriteIfNotDefault(writer, "public-clients", configuration.PublicClients);
-                    WriteIfNotDefault(writer, "model-namespace", configuration.ModelNamespace);
-                    WriteIfNotDefault(writer, "head-as-boolean", configuration.HeadAsBoolean);
-                    WriteIfNotDefault(writer, "skip-csproj-packagereference", configuration.SkipCSProjPackageReference);
-                    WriteIfNotDefault(writer, "low-level-client", configuration.LowLevelClient);
-
-                    configuration.MgmtConfiguration.SaveConfiguration(writer);
-
-                    writer.WriteEndObject();
+                    continue;
                 }
+                file.Delete();
+            }
 
-                return Encoding.UTF8.GetString(memoryStream.ToArray());
+            foreach (DirectoryInfo directory in directoryInfo.GetDirectories())
+            {
+                DeleteDirectory(directory.FullName, keepFiles);
+            }
+
+            if (!directoryInfo.EnumerateFileSystemInfos().Any())
+            {
+                directoryInfo.Delete();
             }
         }
 
-        private static string NormalizePath(Configuration configuration, string sharedSourceFolder)
+        internal static void LoadConfiguration(string? projectPath, string outputPath, string? existingProjectFolder, string json)
         {
-            return Path.GetRelativePath(configuration.OutputFolder, sharedSourceFolder);
-        }
-
-        private static bool ReadOption(JsonElement root, string option)
-        {
-            if (root.TryGetProperty(option, out JsonElement value))
-            {
-                return value.GetBoolean();
-            }
-            else
-            {
-                return Configuration.GetDefaultOptionValue(option)!.Value;
-            }
-        }
-
-        internal static Configuration LoadConfiguration(string basePath, string json)
-        {
-            JsonDocument document = JsonDocument.Parse(json);
-            var root = document.RootElement;
-            var sharedSourceFolders = new List<string>();
-
-            foreach (var sharedSourceFolder in root.GetProperty(nameof(Configuration.SharedSourceFolders)).EnumerateArray())
-            {
-                sharedSourceFolders.Add(Path.Combine(basePath, sharedSourceFolder.GetString()));
-            }
-
-            return new Configuration(
-                Path.Combine(basePath, root.GetProperty(nameof(Configuration.OutputFolder)).GetString()),
-                root.GetProperty(nameof(Configuration.Namespace)).GetString(),
-                root.GetProperty(nameof(Configuration.LibraryName)).GetString(),
-                sharedSourceFolders.ToArray(),
-                saveInputs: false,
-                ReadOption(root, "azure-arm"),
-                ReadOption(root, "public-clients"),
-                ReadOption(root, "model-namespace"),
-                ReadOption(root, "head-as-boolean"),
-                ReadOption(root, "skip-csproj-packagereference"),
-                ReadOption(root, "low-level-client"),
-                MgmtConfiguration.LoadConfiguration(root)
-            );
+            var root = JsonDocument.Parse(json).RootElement;
+            Configuration.LoadConfiguration(root, projectPath, outputPath, existingProjectFolder);
         }
     }
 }

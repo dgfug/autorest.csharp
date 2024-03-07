@@ -29,6 +29,7 @@ namespace azure_special_properties
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal SubscriptionInMethodClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new SubscriptionInMethodRestClient(clientDiagnostics, pipeline, endpoint);
@@ -36,8 +37,8 @@ namespace azure_special_properties
             _pipeline = pipeline;
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> This should appear as a method parameter, use value &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> This should appear as a method parameter, use value '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PostMethodLocalValidAsync(string subscriptionId, CancellationToken cancellationToken = default)
         {
@@ -54,8 +55,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> This should appear as a method parameter, use value &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> This should appear as a method parameter, use value '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PostMethodLocalValid(string subscriptionId, CancellationToken cancellationToken = default)
         {
@@ -108,8 +109,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> Should appear as a method parameter -use value &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> Should appear as a method parameter -use value '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PostPathLocalValidAsync(string subscriptionId, CancellationToken cancellationToken = default)
         {
@@ -126,8 +127,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> Should appear as a method parameter -use value &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> Should appear as a method parameter -use value '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PostPathLocalValid(string subscriptionId, CancellationToken cancellationToken = default)
         {
@@ -144,8 +145,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> The subscriptionId, which appears in the path, the value is always &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> The subscriptionId, which appears in the path, the value is always '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PostSwaggerLocalValidAsync(string subscriptionId, CancellationToken cancellationToken = default)
         {
@@ -162,8 +163,8 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = &apos;1234-5678-9012-3456&apos; to succeed. </summary>
-        /// <param name="subscriptionId"> The subscriptionId, which appears in the path, the value is always &apos;1234-5678-9012-3456&apos;. </param>
+        /// <summary> POST method with subscriptionId modeled in the method.  pass in subscription id = '1234-5678-9012-3456' to succeed. </summary>
+        /// <param name="subscriptionId"> The subscriptionId, which appears in the path, the value is always '1234-5678-9012-3456'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PostSwaggerLocalValid(string subscriptionId, CancellationToken cancellationToken = default)
         {

@@ -7,12 +7,21 @@
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> The scale type applicable to the sku. </summary>
+    /// <summary>
+    /// The scale type applicable to the sku.
+    /// Serialized Name: VirtualMachineScaleSetSkuScaleType
+    /// </summary>
     public enum VirtualMachineScaleSetSkuScaleType
     {
-        /// <summary> Automatic. </summary>
-        Automatic,
-        /// <summary> None. </summary>
-        None
+        /// <summary>
+        /// None
+        /// Serialized Name: VirtualMachineScaleSetSkuScaleType.None
+        /// </summary>
+        None,
+        /// <summary>
+        /// Automatic
+        /// Serialized Name: VirtualMachineScaleSetSkuScaleType.Automatic
+        /// </summary>
+        Automatic
     }
 }

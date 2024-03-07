@@ -37,24 +37,6 @@ namespace AutoRest.CSharp.Input
     {
     }
 
-    /// <summary>Represent information about a deprecation</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class Deprecation
-    {
-        /// <summary>Reason why this was deprecated.</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "reason")]
-        public string? Reason { get; set; }
-    }
-
-    /// <summary>A dictionary of open-ended 'x-*' extensions propogated from the original source document.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class Extensions
-    {
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions1 { get; set; }
-    }
-
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal partial class Schema
     {
@@ -108,7 +90,25 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    /// <summary>Represent information about a deprecation</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class Deprecation
+    {
+        /// <summary>Reason why this was deprecated.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "reason")]
+        public string? Reason { get; set; }
+    }
+
+    /// <summary>A dictionary of open-ended 'x-*' extensions propogated from the original source document.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class Extensions
+    {
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions1 { get; set; }
     }
 
     /// <summary>a reference to external documentation</summary>
@@ -125,7 +125,7 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     /// <summary>custom extensible metadata for individual language generators</summary>
@@ -209,7 +209,7 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     /// <summary>the bare-minimum fields for per-language metadata on a given aspect</summary>
@@ -238,333 +238,75 @@ namespace AutoRest.CSharp.Input
     {
     }
 
-    /// <summary>possible schema types that indicate the type of schema.</summary>
+    /// <summary>contact information</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum SchemaType
+    internal partial class Contact
     {
-        [System.Runtime.Serialization.EnumMember(Value = @"any")]
-        Any = 0,
+        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
+        public string? Name { get; set; }
 
-        [System.Runtime.Serialization.EnumMember(Value = @"any-object")]
-        AnyObject = 1,
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "url")]
+        public string? Url { get; set; }
 
-        [System.Runtime.Serialization.EnumMember(Value = @"array")]
-        Array = 2,
+        [YamlDotNet.Serialization.YamlMember(Alias = "email")]
+        public string? Email { get; set; }
 
-        [System.Runtime.Serialization.EnumMember(Value = @"binary")]
-        Binary = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
-        Boolean = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
-        ByteArray = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"char")]
-        Char = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
-        Choice = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
-        Conditional = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"constant")]
-        Constant = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
-        Credential = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date")]
-        Date = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
-        DateTime = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
-        Dictionary = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
-        Duration = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
-        Flag = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"group")]
-        Group = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
-        Integer = 17,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"not")]
-        Not = 18,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"number")]
-        Number = 19,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"object")]
-        Object = 20,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"odata-query")]
-        OdataQuery = 21,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 22,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
-        SealedChoice = 23,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
-        SealedConditional = 24,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"string")]
-        String = 25,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"time")]
-        Time = 26,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
-        Unixtime = 27,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
-        Unknown = 28,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
-        Uri = 29,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
-        Uuid = 30,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
-        Xor = 31,
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
+    /// <summary>license information</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum CompoundSchemaTypes
+    internal partial class License
     {
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 0,
+        /// <summary>the nameof the license</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; }
 
-        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
-        Xor = 1,
+        /// <summary>an uri pointing to the full license text</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "url")]
+        public string? Url { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
+    /// <summary>code model information</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum PrimitiveSchemaTypes
+    internal partial class Info
     {
-        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
-        Boolean = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"char")]
-        Char = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
-        Credential = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date")]
-        Date = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
-        DateTime = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
-        Duration = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
-        Integer = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"number")]
-        Number = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"string")]
-        String = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"time")]
-        Time = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
-        Unixtime = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
-        Uri = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
-        Uuid = 12,
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum ValueSchemaTypes
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"array")]
-        Array = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
-        Boolean = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
-        ByteArray = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"char")]
-        Char = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
-        Choice = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
-        Conditional = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
-        Credential = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date")]
-        Date = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
-        DateTime = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
-        Duration = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
-        Flag = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
-        Integer = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"number")]
-        Number = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
-        SealedChoice = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
-        SealedConditional = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"string")]
-        String = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"time")]
-        Time = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
-        Unixtime = 17,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
-        Uri = 18,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
-        Uuid = 19,
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum ObjectSchemaTypes
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
-        Dictionary = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"object")]
-        Object = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 2,
-    }
-
-    /// <summary>all schema types</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum AllSchemaTypes
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"any")]
-        Any = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"any-object")]
-        AnyObject = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"array")]
-        Array = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"binary")]
-        Binary = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
-        Boolean = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
-        ByteArray = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"char")]
-        Char = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
-        Choice = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
-        Conditional = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"constant")]
-        Constant = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
-        Credential = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date")]
-        Date = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
-        DateTime = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
-        Dictionary = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
-        Duration = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
-        Flag = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"group")]
-        Group = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
-        Integer = 17,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"not")]
-        Not = 18,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"number")]
-        Number = 19,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"object")]
-        Object = 20,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"odata-query")]
-        OdataQuery = 21,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 22,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
-        SealedChoice = 23,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
-        SealedConditional = 24,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"string")]
-        String = 25,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"time")]
-        Time = 26,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
-        Unixtime = 27,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
-        Uri = 28,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
-        Uuid = 29,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
-        Xor = 30,
+        /// <summary>the title of this service.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "title")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Title { get; set; }
+
+        /// <summary>a text description of the service</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        /// <summary>an uri to the terms of service specified to access the service</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "termsOfService")]
+        public string? TermsOfService { get; set; }
+
+        /// <summary>contact information for the service</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "contact")]
+        public Contact? Contact { get; set; }
+
+        /// <summary>license information for th service</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "license")]
+        public License? License { get; set; }
+
+        /// <summary>External Documentation</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "externalDocs")]
+        public ExternalDocumentation? ExternalDocs { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
@@ -606,12 +348,359 @@ namespace AutoRest.CSharp.Input
         public SerializationFormatMetadata? Binary { get; set; }
     }
 
+    /// <summary>possible schema types that indicate the type of schema.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum SchemaType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"any")]
+        Any = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"any-object")]
+        AnyObject = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"arm-id")]
+        ArmId = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"array")]
+        Array = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"binary")]
+        Binary = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
+        Boolean = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
+        ByteArray = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"char")]
+        Char = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
+        Choice = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
+        Conditional = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"constant")]
+        Constant = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
+        Credential = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date")]
+        Date = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
+        DateTime = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
+        Dictionary = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
+        Duration = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
+        Flag = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"group")]
+        Group = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
+        Integer = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"not")]
+        Not = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"number")]
+        Number = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"object")]
+        Object = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"odata-query")]
+        OdataQuery = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"or")]
+        Or = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
+        SealedChoice = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
+        SealedConditional = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string")]
+        String = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"time")]
+        Time = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
+        Unixtime = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unknown")]
+        Unknown = 29,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 30,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
+        Uuid = 31,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
+        Xor = 32,
+    }
+
+    /// <summary>Compound schemas are used to construct complex objects or offer choices of a set of schemas.
+    ///
+    /// (ie, allOf, anyOf, oneOf )</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum CompoundSchemaTypes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"or")]
+        Or = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
+        Xor = 1,
+    }
+
+    /// <summary>Schema types that are primitive language values</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum PrimitiveSchemaTypes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"arm-id")]
+        ArmId = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
+        Boolean = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"char")]
+        Char = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
+        Credential = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date")]
+        Date = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
+        DateTime = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
+        Duration = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
+        Integer = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"number")]
+        Number = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string")]
+        String = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"time")]
+        Time = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
+        Unixtime = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
+        Uuid = 13,
+    }
+
+    /// <summary>schema types that are non-object or complex types</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum ValueSchemaTypes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"arm-id")]
+        ArmId = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"array")]
+        Array = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
+        Boolean = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
+        ByteArray = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"char")]
+        Char = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
+        Choice = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
+        Conditional = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
+        Credential = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date")]
+        Date = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
+        DateTime = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
+        Duration = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
+        Flag = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
+        Integer = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"number")]
+        Number = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
+        SealedChoice = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
+        SealedConditional = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string")]
+        String = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"time")]
+        Time = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
+        Unixtime = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
+        Uuid = 20,
+    }
+
+    /// <summary>schema types that can be objects</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum ObjectSchemaTypes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
+        Dictionary = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"object")]
+        Object = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"or")]
+        Or = 2,
+    }
+
+    /// <summary>all schema types</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum AllSchemaTypes
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"any")]
+        Any = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"any-object")]
+        AnyObject = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"arm-id")]
+        ArmId = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"array")]
+        Array = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"binary")]
+        Binary = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"boolean")]
+        Boolean = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"byte-array")]
+        ByteArray = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"char")]
+        Char = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"choice")]
+        Choice = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conditional")]
+        Conditional = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"constant")]
+        Constant = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"credential")]
+        Credential = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date")]
+        Date = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"date-time")]
+        DateTime = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"dictionary")]
+        Dictionary = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"duration")]
+        Duration = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"flag")]
+        Flag = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"group")]
+        Group = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"integer")]
+        Integer = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"not")]
+        Not = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"number")]
+        Number = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"object")]
+        Object = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"odata-query")]
+        OdataQuery = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"or")]
+        Or = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-choice")]
+        SealedChoice = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"sealed-conditional")]
+        SealedConditional = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"string")]
+        String = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"time")]
+        Time = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unixtime")]
+        Unixtime = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 29,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uuid")]
+        Uuid = 30,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"xor")]
+        Xor = 31,
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal partial class SerializationFormatMetadata
     {
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     /// <summary>schema types that are non-object or complex types</summary>
@@ -630,209 +719,6 @@ namespace AutoRest.CSharp.Input
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal partial class ComplexSchema : Schema
     {
-    }
-
-    /// <summary>a Schema that represents a string value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class StringSchema : PrimitiveSchema
-    {
-        /// <summary>the maximum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
-        public double? MaxLength { get; set; }
-
-        /// <summary>the minimum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
-        public double? MinLength { get; set; }
-
-        /// <summary>a regular expression that the string must be validated against</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
-        public string? Pattern { get; set; }
-    }
-
-    /// <summary>a schema that represents a ODataQuery value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ODataQuerySchema : Schema
-    {
-    }
-
-    /// <summary>a schema that represents a Credential value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class CredentialSchema : PrimitiveSchema
-    {
-        /// <summary>the maximum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
-        public double? MaxLength { get; set; }
-
-        /// <summary>the minimum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
-        public double? MinLength { get; set; }
-
-        /// <summary>a regular expression that the string must be validated against</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
-        public string? Pattern { get; set; }
-    }
-
-    /// <summary>a schema that represents a Uri value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class UriSchema : PrimitiveSchema
-    {
-        /// <summary>the maximum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
-        public double? MaxLength { get; set; }
-
-        /// <summary>the minimum length of the string</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
-        public double? MinLength { get; set; }
-
-        /// <summary>a regular expression that the string must be validated against</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
-        public string? Pattern { get; set; }
-    }
-
-    /// <summary>a schema that represents a Uuid value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class UuidSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a schema that represents a choice of several values (ie, an 'enum')</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ChoiceSchema : ValueSchema
-    {
-        /// <summary>the primitive type for the choices</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "choiceType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public PrimitiveSchema ChoiceType { get; set; } = new PrimitiveSchema();
-
-        /// <summary>the possible choices for in the set</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ChoiceValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<ChoiceValue>();
-    }
-
-    /// <summary>an individual choice in a ChoiceSchema</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ChoiceValue
-    {
-        /// <summary>per-language information for this value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Languages Language { get; set; } = new Languages();
-
-        /// <summary>the actual value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Value { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>a schema that represents a choice of several values (ie, an 'enum')</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class SealedChoiceSchema : ValueSchema
-    {
-        /// <summary>the primitive type for the choices</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "choiceType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public PrimitiveSchema ChoiceType { get; set; } = new PrimitiveSchema();
-
-        /// <summary>the possible choices for in the set</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ChoiceValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<ChoiceValue>();
-    }
-
-    /// <summary>a Schema that represents and array of values</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ArraySchema : ValueSchema
-    {
-        /// <summary>elementType of the array</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "elementType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Schema ElementType { get; set; } = new Schema();
-
-        /// <summary>maximum number of elements in the array</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "maxItems")]
-        public double? MaxItems { get; set; }
-
-        /// <summary>minimum number of elements in the array</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "minItems")]
-        public double? MinItems { get; set; }
-
-        /// <summary>if the elements in the array should be unique</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "uniqueItems")]
-        public bool? UniqueItems { get; set; }
-
-        /// <summary>if elements in the array should be nullable</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "nullableItems")]
-        public bool? NullableItems { get; set; }
-    }
-
-    /// <summary>a schema that represents a ByteArray value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ByteArraySchema : ValueSchema
-    {
-        /// <summary>date-time format</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "format")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public ByteArraySchemaFormat Format { get; set; }
-    }
-
-    /// <summary>a schema that represents a key-value collection</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DictionarySchema : ComplexSchema
-    {
-        /// <summary>the element type of the dictionary. (Keys are always strings)</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "elementType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Schema ElementType { get; set; } = new Schema();
-
-        /// <summary>if elements in the dictionary should be nullable</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "nullableItems")]
-        public bool? NullableItems { get; set; }
-    }
-
-    /// <summary>a schema that represents a boolean value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class BooleanSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a schema that represents a Char value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class CharSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a Schema that represents a Number value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class NumberSchema : PrimitiveSchema
-    {
-        /// <summary>precision (# of bits?) of the number</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "precision")]
-        public double? Precision { get; set; }
-
-        /// <summary>if present, the number must be an exact multiple of this value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "multipleOf")]
-        public double? MultipleOf { get; set; }
-
-        /// <summary>if present, the value must be lower than or equal to this (unless exclusiveMaximum is true)</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "maximum")]
-        public double? Maximum { get; set; }
-
-        /// <summary>if present, the value must be lower than maximum</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "exclusiveMaximum")]
-        public bool? ExclusiveMaximum { get; set; }
-
-        /// <summary>if present, the value must be highter than or equal to this (unless exclusiveMinimum is true)</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "minimum")]
-        public double? Minimum { get; set; }
-
-        /// <summary>if present, the value must be higher than minimum</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "exclusiveMinimum")]
-        public bool? ExclusiveMinimum { get; set; }
     }
 
     /// <summary>common base interface for properties, parameters and the like.</summary>
@@ -893,7 +779,7 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     /// <summary>a property is a child value in an object</summary>
@@ -976,6 +862,481 @@ namespace AutoRest.CSharp.Input
         public Property TargetProperty { get; set; } = new Property();
     }
 
+    /// <summary>a response from a service.</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ServiceResponse : Metadata
+    {
+    }
+
+    /// <summary>a response where the content should be treated as a binary instead of a value or object</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class BinaryResponse : ServiceResponse
+    {
+        /// <summary>indicates that this response is a binary stream</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "binary")]
+        public bool? Binary { get; set; }
+    }
+
+    /// <summary>a response that should be deserialized into a result of type(schema)</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class SchemaResponse : ServiceResponse
+    {
+        /// <summary>the content returned by the service for a given operaiton</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "schema")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Schema Schema { get; set; } = new Schema();
+
+        /// <summary>indicates whether the response can be 'null'</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "nullable")]
+        public bool? Nullable { get; set; }
+    }
+
+    /// <summary>represents a single callable endpoint with a discrete set of inputs, and any number of output possibilities (responses or exceptions)</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class Operation
+    {
+        /// <summary>Original Operation ID if present.
+        /// This can be used to identify the original id of an operation before it is styled.
+        /// THIS IS NOT the name of the operation that should be used in the generator. Use `.language.default.name` for this</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "operationId")]
+        public string? OperationId { get; set; }
+
+        /// <summary>common parameters when there are multiple requests</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "parameters")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<RequestParameter> Parameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
+
+        /// <summary>a common filtered list of parameters that is (assumably) the actual method signature parameters</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "signatureParameters")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<RequestParameter> SignatureParameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
+
+        /// <summary>Mapping of all the content types available for this operation to the coresponding request.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "requestMediaTypes")]
+        public RecordOfStringAndRequest? RequestMediaTypes { get; set; }
+
+        /// <summary>List of headers that parameters should not handle as parameters but with special logic.
+        /// See https://github.com/Azure/autorest/tree/main/packages/extensions/modelerfour for configuration `skip-special-headers` to exclude headers.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "specialHeaders")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> SpecialHeaders { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+
+        /// <summary>the different possibilities to build the request.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "requests")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ServiceRequest> Requests { get; set; } = new System.Collections.ObjectModel.Collection<ServiceRequest>();
+
+        /// <summary>responses that indicate a successful call</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "responses")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ServiceResponse> Responses { get; set; } = new System.Collections.ObjectModel.Collection<ServiceResponse>();
+
+        /// <summary>responses that indicate a failed call</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "exceptions")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ServiceResponse> Exceptions { get; set; } = new System.Collections.ObjectModel.Collection<ServiceResponse>();
+
+        /// <summary>the apiVersion to use for a given profile name</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "profile")]
+        public RecordOfStringAndApiVersion? Profile { get; set; }
+
+        /// <summary>a short description</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "summary")]
+        public string? Summary { get; set; }
+
+        /// <summary>API versions that this applies to. Undefined means all versions</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "apiVersions")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ApiVersion> ApiVersions { get; set; } = new System.Collections.ObjectModel.Collection<ApiVersion>();
+
+        /// <summary>Represent the deprecation information if api is deprecated.</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "deprecated")]
+        public Deprecation? Deprecated { get; set; }
+
+        /// <summary>where did this aspect come from (jsonpath or 'modelerfour:&lt;soemthing&gt;')</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "origin")]
+        public string? Origin { get; set; }
+
+        /// <summary>External Documentation Links</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "externalDocs")]
+        public ExternalDocumentation? ExternalDocs { get; set; }
+
+        /// <summary>per-language information for this aspect</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Languages Language { get; set; } = new Languages();
+
+        /// <summary>per-protocol information for this aspect</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "protocol")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Protocols Protocol { get; set; } = new Protocols();
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ServiceRequest : Metadata
+    {
+        /// <summary>the parameter inputs to the operation</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "parameters")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<RequestParameter> Parameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
+
+        /// <summary>a filtered list of parameters that is (assumably) the actual method signature parameters</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "signatureParameters")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<RequestParameter> SignatureParameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
+    }
+
+    /// <summary>an operation group represents a container around set of operations</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class OperationGroup : Metadata
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "$key")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Key { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "operations")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<Operation> Operations { get; set; } = new System.Collections.ObjectModel.Collection<Operation>();
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class AnySchema : Schema
+    {
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class AnyObjectSchema : Schema
+    {
+    }
+
+    /// <summary>a Schema that represents and array of values</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ArraySchema : ValueSchema
+    {
+        /// <summary>elementType of the array</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "elementType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Schema ElementType { get; set; } = new Schema();
+
+        /// <summary>maximum number of elements in the array</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "maxItems")]
+        public double? MaxItems { get; set; }
+
+        /// <summary>minimum number of elements in the array</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "minItems")]
+        public double? MinItems { get; set; }
+
+        /// <summary>if the elements in the array should be unique</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "uniqueItems")]
+        public bool? UniqueItems { get; set; }
+
+        /// <summary>if elements in the array should be nullable</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "nullableItems")]
+        public bool? NullableItems { get; set; }
+    }
+
+    /// <summary>a schema that represents a ByteArray value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ByteArraySchema : ValueSchema
+    {
+        /// <summary>date-time format</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "format")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public ByteArraySchemaFormat Format { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class BinarySchema : Schema
+    {
+    }
+
+    /// <summary>a Schema that represents a string value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class StringSchema : PrimitiveSchema
+    {
+        /// <summary>the maximum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
+        public double? MaxLength { get; set; }
+
+        /// <summary>the minimum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
+        public double? MinLength { get; set; }
+
+        /// <summary>a regular expression that the string must be validated against</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
+        public string? Pattern { get; set; }
+    }
+
+    /// <summary>a schema that represents a ODataQuery value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ODataQuerySchema : Schema
+    {
+    }
+
+    /// <summary>a schema that represents a Credential value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class CredentialSchema : PrimitiveSchema
+    {
+        /// <summary>the maximum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
+        public double? MaxLength { get; set; }
+
+        /// <summary>the minimum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
+        public double? MinLength { get; set; }
+
+        /// <summary>a regular expression that the string must be validated against</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
+        public string? Pattern { get; set; }
+    }
+
+    /// <summary>a schema that represents a Uri value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class UriSchema : PrimitiveSchema
+    {
+        /// <summary>the maximum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "maxLength")]
+        public double? MaxLength { get; set; }
+
+        /// <summary>the minimum length of the string</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "minLength")]
+        public double? MinLength { get; set; }
+
+        /// <summary>a regular expression that the string must be validated against</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "pattern")]
+        public string? Pattern { get; set; }
+    }
+
+    /// <summary>a schema that represents a Uuid value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class UuidSchema : PrimitiveSchema
+    {
+    }
+
+    /// <summary>a schema that represents a Uuid value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ArmIdSchema : PrimitiveSchema
+    {
+    }
+
+    /// <summary>a schema that represents a choice of several values (ie, an 'enum')</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ChoiceSchema : ValueSchema
+    {
+        /// <summary>the primitive type for the choices</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "choiceType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public PrimitiveSchema ChoiceType { get; set; } = new PrimitiveSchema();
+
+        /// <summary>the possible choices for in the set</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ChoiceValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<ChoiceValue>();
+    }
+
+    /// <summary>an individual choice in a ChoiceSchema</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ChoiceValue
+    {
+        /// <summary>per-language information for this value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Languages Language { get; set; } = new Languages();
+
+        /// <summary>the actual value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Value { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    /// <summary>a schema that represents a choice of several values (ie, an 'enum')</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class SealedChoiceSchema : ValueSchema
+    {
+        /// <summary>the primitive type for the choices</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "choiceType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public PrimitiveSchema ChoiceType { get; set; } = new PrimitiveSchema();
+
+        /// <summary>the possible choices for in the set</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ChoiceValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<ChoiceValue>();
+    }
+
+    /// <summary>a schema that represents a value dependent on another</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ConditionalSchema : ValueSchema
+    {
+        /// <summary>the primitive type for the conditional</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "conditionalType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public PrimitiveSchema ConditionalType { get; set; } = new PrimitiveSchema();
+
+        /// <summary>the possible conditinal values</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "conditions")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ConditionalValue> Conditions { get; set; } = new System.Collections.ObjectModel.Collection<ConditionalValue>();
+
+        /// <summary>the source value that drives the target value (property or parameter)</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "sourceValue")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Value SourceValue { get; set; } = new Value();
+    }
+
+    /// <summary>an individual value in a ConditionalSchema</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ConditionalValue
+    {
+        /// <summary>per-language information for this value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Languages Language { get; set; } = new Languages();
+
+        /// <summary>the actual value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "target")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Target { get; set; }
+
+        /// <summary>the actual value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "source")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Source { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    /// <summary>a schema that represents a value dependent on another (not overridable)</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class SealedConditionalSchema : ValueSchema
+    {
+        /// <summary>the primitive type for the condition</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "conditionalType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public PrimitiveSchema ConditionalType { get; set; } = new PrimitiveSchema();
+
+        /// <summary>the possible conditional values</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "conditions")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ConditionalValue> Conditions { get; set; } = new System.Collections.ObjectModel.Collection<ConditionalValue>();
+
+        /// <summary>the source value that drives the target value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "sourceValue")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Value SourceValue { get; set; } = new Value();
+    }
+
+    /// <summary>a container for the actual constant value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ConstantValue
+    {
+        /// <summary>per-language information for this value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
+        public Languages? Language { get; set; }
+
+        /// <summary>the actual constant value to use</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public object Value { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    /// <summary>a schema that represents a constant value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ConstantSchema : Schema
+    {
+        /// <summary>the schema type of the constant value (ie, StringSchema, NumberSchema, etc)</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "valueType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Schema ValueType { get; set; } = new Schema();
+
+        /// <summary>the actual constant value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public ConstantValue Value { get; set; } = new ConstantValue();
+    }
+
+    /// <summary>a schema that represents a key-value collection</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class DictionarySchema : ComplexSchema
+    {
+        /// <summary>the element type of the dictionary. (Keys are always strings)</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "elementType")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Schema ElementType { get; set; } = new Schema();
+
+        /// <summary>if elements in the dictionary should be nullable</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "nullableItems")]
+        public bool? NullableItems { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class FlagValue
+    {
+        /// <summary>per-language information for this value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public Languages Language { get; set; } = new Languages();
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
+        public double? Value { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class FlagSchema : ValueSchema
+    {
+        /// <summary>the possible choices for in the set</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<FlagValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<FlagValue>();
+    }
+
+    /// <summary>a Schema that represents a Number value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class NumberSchema : PrimitiveSchema
+    {
+        /// <summary>precision (# of bits?) of the number</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "precision")]
+        public double? Precision { get; set; }
+
+        /// <summary>if present, the number must be an exact multiple of this value</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "multipleOf")]
+        public double? MultipleOf { get; set; }
+
+        /// <summary>if present, the value must be lower than or equal to this (unless exclusiveMaximum is true)</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "maximum")]
+        public double? Maximum { get; set; }
+
+        /// <summary>if present, the value must be lower than maximum</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "exclusiveMaximum")]
+        public bool? ExclusiveMaximum { get; set; }
+
+        /// <summary>if present, the value must be highter than or equal to this (unless exclusiveMinimum is true)</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "minimum")]
+        public double? Minimum { get; set; }
+
+        /// <summary>if present, the value must be higher than minimum</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "exclusiveMinimum")]
+        public bool? ExclusiveMinimum { get; set; }
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal enum SchemaContext
     {
@@ -1024,11 +1385,11 @@ namespace AutoRest.CSharp.Input
 
         [YamlDotNet.Serialization.YamlMember(Alias = "immediate")]
         [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfComplexSchema Immediate { get; set; } = new DictionaryOfComplexSchema();
+        public RecordOfStringAndComplexSchema Immediate { get; set; } = new RecordOfStringAndComplexSchema();
 
         [YamlDotNet.Serialization.YamlMember(Alias = "all")]
         [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfComplexSchema All { get; set; } = new DictionaryOfComplexSchema();
+        public RecordOfStringAndComplexSchema All { get; set; } = new RecordOfStringAndComplexSchema();
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
@@ -1080,160 +1441,16 @@ namespace AutoRest.CSharp.Input
         public System.Collections.Generic.ICollection<KnownMediaType> SerializationFormats { get; set; } = new System.Collections.ObjectModel.Collection<KnownMediaType>();
     }
 
-    /// <summary>a schema that represents a Duration value</summary>
+    /// <summary>a schema that represents a boolean value</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DurationSchema : PrimitiveSchema
+    internal partial class BooleanSchema : PrimitiveSchema
     {
     }
 
-    /// <summary>a schema that represents a DateTime value</summary>
+    /// <summary>a schema that represents a Char value</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DateTimeSchema : PrimitiveSchema
+    internal partial class CharSchema : PrimitiveSchema
     {
-        /// <summary>date-time format</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "format")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public DateTimeSchemaFormat Format { get; set; }
-    }
-
-    /// <summary>a schema that represents a Date value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DateSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a schema that represents a Date value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class TimeSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a schema that represents a UnixTime value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class UnixTimeSchema : PrimitiveSchema
-    {
-    }
-
-    /// <summary>a schema that represents a value dependent on another</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ConditionalSchema : ValueSchema
-    {
-        /// <summary>the primitive type for the conditional</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "conditionalType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public PrimitiveSchema ConditionalType { get; set; } = new PrimitiveSchema();
-
-        /// <summary>the possible conditinal values</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "conditions")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ConditionalValue> Conditions { get; set; } = new System.Collections.ObjectModel.Collection<ConditionalValue>();
-
-        /// <summary>the source value that drives the target value (property or parameter)</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "sourceValue")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Value SourceValue { get; set; } = new Value();
-    }
-
-    /// <summary>an individual value in a ConditionalSchema</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ConditionalValue
-    {
-        /// <summary>per-language information for this value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Languages Language { get; set; } = new Languages();
-
-        /// <summary>the actual value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "target")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Target { get; set; }
-
-        /// <summary>the actual value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "source")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Source { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>a schema that represents a value dependent on another (not overridable)</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class SealedConditionalSchema : ValueSchema
-    {
-        /// <summary>the primitive type for the condition</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "conditionalType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public PrimitiveSchema ConditionalType { get; set; } = new PrimitiveSchema();
-
-        /// <summary>the possible conditional values</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "conditions")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ConditionalValue> Conditions { get; set; } = new System.Collections.ObjectModel.Collection<ConditionalValue>();
-
-        /// <summary>the source value that drives the target value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "sourceValue")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Value SourceValue { get; set; } = new Value();
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class FlagValue
-    {
-        /// <summary>per-language information for this value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Languages Language { get; set; } = new Languages();
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
-        public double? Value { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class FlagSchema : ValueSchema
-    {
-        /// <summary>the possible choices for in the set</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "choices")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<FlagValue> Choices { get; set; } = new System.Collections.ObjectModel.Collection<FlagValue>();
-    }
-
-    /// <summary>a container for the actual constant value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ConstantValue
-    {
-        /// <summary>per-language information for this value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
-        public Languages? Language { get; set; }
-
-        /// <summary>the actual constant value to use</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public object Value { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>a schema that represents a constant value</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ConstantSchema : Schema
-    {
-        /// <summary>the schema type of the constant value (ie, StringSchema, NumberSchema, etc)</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "valueType")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Schema ValueType { get; set; } = new Schema();
-
-        /// <summary>the actual constant value</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "value")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public ConstantValue Value { get; set; } = new ConstantValue();
     }
 
     /// <summary>an OR relationship between several schemas</summary>
@@ -1266,18 +1483,37 @@ namespace AutoRest.CSharp.Input
         public Schema Not { get; set; } = new Schema();
     }
 
+    /// <summary>a schema that represents a Duration value</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class BinarySchema : Schema
+    internal partial class DurationSchema : PrimitiveSchema
     {
     }
 
+    /// <summary>a schema that represents a DateTime value</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class AnySchema : Schema
+    internal partial class DateTimeSchema : PrimitiveSchema
+    {
+        /// <summary>date-time format</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "format")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public DateTimeSchemaFormat Format { get; set; }
+    }
+
+    /// <summary>a schema that represents a Date value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class DateSchema : PrimitiveSchema
     {
     }
 
+    /// <summary>a schema that represents a Date value</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class AnyObjectSchema : Schema
+    internal partial class TimeSchema : PrimitiveSchema
+    {
+    }
+
+    /// <summary>a schema that represents a UnixTime value</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class UnixTimeSchema : PrimitiveSchema
     {
     }
 
@@ -1364,6 +1600,11 @@ namespace AutoRest.CSharp.Input
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<UriSchema> Uris { get; set; } = new System.Collections.ObjectModel.Collection<UriSchema>();
 
+        /// <summary>an URI of some kind</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "armIds")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ArmIdSchema> ArmIds { get; set; } = new System.Collections.ObjectModel.Collection<ArmIdSchema>();
+
         /// <summary>a password or credential</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "credentials")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -1435,202 +1676,6 @@ namespace AutoRest.CSharp.Input
         public System.Collections.Generic.ICollection<AnyObjectSchema> AnyObjects { get; set; } = new System.Collections.ObjectModel.Collection<AnyObjectSchema>();
     }
 
-    /// <summary>contact information</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class Contact
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
-        public string? Name { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "url")]
-        public string? Url { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "email")]
-        public string? Email { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>license information</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class License
-    {
-        /// <summary>the nameof the license</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Name { get; set; }
-
-        /// <summary>an uri pointing to the full license text</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "url")]
-        public string? Url { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>code model information</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class Info
-    {
-        /// <summary>the title of this service.</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "title")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Title { get; set; }
-
-        /// <summary>a text description of the service</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        /// <summary>an uri to the terms of service specified to access the service</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "termsOfService")]
-        public string? TermsOfService { get; set; }
-
-        /// <summary>contact information for the service</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "contact")]
-        public Contact? Contact { get; set; }
-
-        /// <summary>license information for th service</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "license")]
-        public License? License { get; set; }
-
-        /// <summary>External Documentation</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "externalDocs")]
-        public ExternalDocumentation? ExternalDocs { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>a response from a service.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ServiceResponse : Metadata
-    {
-    }
-
-    /// <summary>a response where the content should be treated as a binary instead of a value or object</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class BinaryResponse : ServiceResponse
-    {
-        /// <summary>indicates that this response is a binary stream</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "binary")]
-        public bool? Binary { get; set; }
-    }
-
-    /// <summary>a response that should be deserialized into a result of type(schema)</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class SchemaResponse : ServiceResponse
-    {
-        /// <summary>the content returned by the service for a given operaiton</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "schema")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Schema Schema { get; set; } = new Schema();
-
-        /// <summary>indicates whether the response can be 'null'</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "nullable")]
-        public bool? Nullable { get; set; }
-    }
-
-    /// <summary>represents a single callable endpoint with a discrete set of inputs, and any number of output possibilities (responses or exceptions)</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class Operation
-    {
-        /// <summary>common parameters when there are multiple requests</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "parameters")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<RequestParameter> Parameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
-
-        /// <summary>a common filtered list of parameters that is (assumably) the actual method signature parameters</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "signatureParameters")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<RequestParameter> SignatureParameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
-
-        /// <summary>the different possibilities to build the request.</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "requests")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ServiceRequest> Requests { get; set; } = new System.Collections.ObjectModel.Collection<ServiceRequest>();
-
-        /// <summary>responses that indicate a successful call</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "responses")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ServiceResponse> Responses { get; set; } = new System.Collections.ObjectModel.Collection<ServiceResponse>();
-
-        /// <summary>responses that indicate a failed call</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "exceptions")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ServiceResponse> Exceptions { get; set; } = new System.Collections.ObjectModel.Collection<ServiceResponse>();
-
-        /// <summary>the apiVersion to use for a given profile name</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "profile")]
-        public DictionaryOfApiVersion? Profile { get; set; }
-
-        /// <summary>a short description</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "summary")]
-        public string? Summary { get; set; }
-
-        /// <summary>API versions that this applies to. Undefined means all versions</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "apiVersions")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<ApiVersion> ApiVersions { get; set; } = new System.Collections.ObjectModel.Collection<ApiVersion>();
-
-        /// <summary>Represent the deprecation information if api is deprecated.</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "deprecated")]
-        public Deprecation? Deprecated { get; set; }
-
-        /// <summary>where did this aspect come from (jsonpath or 'modelerfour:&lt;soemthing&gt;')</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "origin")]
-        public string? Origin { get; set; }
-
-        /// <summary>External Documentation Links</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "externalDocs")]
-        public ExternalDocumentation? ExternalDocs { get; set; }
-
-        /// <summary>per-language information for this aspect</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "language")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Languages Language { get; set; } = new Languages();
-
-        /// <summary>per-protocol information for this aspect</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "protocol")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public Protocols Protocol { get; set; } = new Protocols();
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ServiceRequest : Metadata
-    {
-        /// <summary>the parameter inputs to the operation</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "parameters")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<RequestParameter> Parameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
-
-        /// <summary>a filtered list of parameters that is (assumably) the actual method signature parameters</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "signatureParameters")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<RequestParameter> SignatureParameters { get; set; } = new System.Collections.ObjectModel.Collection<RequestParameter>();
-    }
-
-    /// <summary>an operation group represents a container around set of operations</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class OperationGroup : Metadata
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "$key")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Key { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "operations")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<Operation> Operations { get; set; } = new System.Collections.ObjectModel.Collection<Operation>();
-    }
-
     /// <summary>The security information for the API surface</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal partial class Security
@@ -1641,7 +1686,7 @@ namespace AutoRest.CSharp.Input
 
         [YamlDotNet.Serialization.YamlMember(Alias = "schemes")]
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<SecurityScheme> Schemes { get; set; } = new System.Collections.ObjectModel.Collection<SecurityScheme>();
+        public System.Collections.Generic.ICollection<object> Schemes { get; set; } = new System.Collections.ObjectModel.Collection<object>();
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
@@ -1653,7 +1698,7 @@ namespace AutoRest.CSharp.Input
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class AADTokenSecurityScheme : SecurityScheme
+    internal partial class OAuth2SecurityScheme : SecurityScheme
     {
         [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -1661,11 +1706,20 @@ namespace AutoRest.CSharp.Input
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class AzureKeySecurityScheme : SecurityScheme
+    internal partial class KeySecurityScheme : SecurityScheme
     {
-        [YamlDotNet.Serialization.YamlMember(Alias = "headerName")]
+        [YamlDotNet.Serialization.YamlMember(Alias = "in")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string HeaderName { get; set; }
+        public KeySecuritySchemeIn In { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ValueOrFactory
+    {
     }
 
     /// <summary>example data [UNFINISHED]</summary>
@@ -1684,6 +1738,22 @@ namespace AutoRest.CSharp.Input
         /// <summary>an URI</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "externalValue")]
         public string? ExternalValue { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class AADTokenSecurityScheme : SecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<string> Scopes { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class AzureKeySecurityScheme : SecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "headerName")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string HeaderName { get; set; }
     }
 
     /// <summary>standard HTTP protocol methods</summary>
@@ -1713,6 +1783,262 @@ namespace AutoRest.CSharp.Input
 
         [System.Runtime.Serialization.EnumMember(Value = @"trace")]
         Trace = 7,
+    }
+
+    /// <summary>the location that this parameter is placed in the http request</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum ParameterLocation
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"body")]
+        Body = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"cookie")]
+        Cookie = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"header")]
+        Header = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"none")]
+        None = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"path")]
+        Path = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"query")]
+        Query = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"virtual")]
+        Virtual = 7,
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum Scheme
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"bearer")]
+        Bearer = 0,
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum SecurityType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"apiKey")]
+        ApiKey = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"http")]
+        Http = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"oauth2")]
+        Oauth2 = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"openIdConnect")]
+        OpenIdConnect = 3,
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class AuthorizationCodeOAuthFlow
+    {
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string AuthorizationUrl { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TokenUrl { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
+        public string? RefreshUrl { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public RecordOfStringAndString Scopes { get; set; } = new RecordOfStringAndString();
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class BearerHTTPSecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "scheme")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public BearerHTTPSecuritySchemeScheme Scheme { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "bearerFormat")]
+        public string? BearerFormat { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public BearerHTTPSecuritySchemeType Type { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ClientCredentialsFlow
+    {
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TokenUrl { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
+        public string? RefreshUrl { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public RecordOfStringAndString Scopes { get; set; } = new RecordOfStringAndString();
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class ImplicitOAuthFlow
+    {
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string AuthorizationUrl { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
+        public string? RefreshUrl { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public RecordOfStringAndString Scopes { get; set; } = new RecordOfStringAndString();
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class NonBearerHTTPSecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "scheme")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Scheme { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public NonBearerHTTPSecuritySchemeType Type { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class OAuthFlows
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "implicit")]
+        public ImplicitOAuthFlow? Implicit { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "password")]
+        public PasswordOAuthFlow? Password { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "clientCredentials")]
+        public ClientCredentialsFlow? ClientCredentials { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationCode")]
+        public AuthorizationCodeOAuthFlow? AuthorizationCode { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class HTTPSecurityScheme
+    {
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class APIKeySecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public APIKeySecuritySchemeType Type { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "in")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public ParameterLocation In { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class OpenIdConnectSecurityScheme
+    {
+        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public OpenIdConnectSecuritySchemeType Type { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "openIdConnectUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string OpenIdConnectUrl { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class PasswordOAuthFlow
+    {
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string TokenUrl { get; set; }
+
+        /// <summary>an URI</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
+        public string? RefreshUrl { get; set; }
+
+        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public RecordOfStringAndString Scopes { get; set; } = new RecordOfStringAndString();
+
+        /// <summary>additional metadata extensions dictionary</summary>
+        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
+        public RecordOfStringAndAny? Extensions { get; set; }
+    }
+
+    /// <summary>common ways of serializing simple parameters</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class SecurityRequirement
+    {
     }
 
     /// <summary>The Serialization Style used for the parameter.
@@ -1782,35 +2108,6 @@ namespace AutoRest.CSharp.Input
 
         [System.Runtime.Serialization.EnumMember(Value = @"simple")]
         Simple = 2,
-    }
-
-    /// <summary>the location that this parameter is placed in the http request</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum ParameterLocation
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"body")]
-        Body = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"cookie")]
-        Cookie = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"header")]
-        Header = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"none")]
-        None = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"path")]
-        Path = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"query")]
-        Query = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
-        Uri = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"virtual")]
-        Virtual = 7,
     }
 
     /// <summary>A catch-all for all un-handled response codes.</summary>
@@ -2017,252 +2314,6 @@ namespace AutoRest.CSharp.Input
         Default = 63,
     }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum Scheme
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"bearer")]
-        Bearer = 0,
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum SecurityType
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"apiKey")]
-        ApiKey = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"http")]
-        Http = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"oauth2")]
-        Oauth2 = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"openIdConnect")]
-        OpenIdConnect = 3,
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class AuthorizationCodeOAuthFlow
-    {
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string AuthorizationUrl { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string TokenUrl { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
-        public string? RefreshUrl { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfString Scopes { get; set; } = new DictionaryOfString();
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class BearerHTTPSecurityScheme
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "scheme")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public BearerHTTPSecuritySchemeScheme Scheme { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "bearerFormat")]
-        public string? BearerFormat { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public BearerHTTPSecuritySchemeType Type { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ClientCredentialsFlow
-    {
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string TokenUrl { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
-        public string? RefreshUrl { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfString Scopes { get; set; } = new DictionaryOfString();
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class ImplicitOAuthFlow
-    {
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string AuthorizationUrl { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
-        public string? RefreshUrl { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfString Scopes { get; set; } = new DictionaryOfString();
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class NonBearerHTTPSecurityScheme
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "scheme")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Scheme { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public NonBearerHTTPSecuritySchemeType Type { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class OAuth2SecurityScheme
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public OAuth2SecuritySchemeType Type { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "flows")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public OAuthFlows Flows { get; set; } = new OAuthFlows();
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class OAuthFlows
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "implicit")]
-        public ImplicitOAuthFlow? Implicit { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "password")]
-        public PasswordOAuthFlow? Password { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "clientCredentials")]
-        public ClientCredentialsFlow? ClientCredentials { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "authorizationCode")]
-        public AuthorizationCodeOAuthFlow? AuthorizationCode { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class HTTPSecurityScheme
-    {
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class APIKeySecurityScheme
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public APIKeySecuritySchemeType Type { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "name")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string Name { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "in")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public ParameterLocation In { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class OpenIdConnectSecurityScheme
-    {
-        [YamlDotNet.Serialization.YamlMember(Alias = "type")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public OpenIdConnectSecuritySchemeType Type { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "openIdConnectUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string OpenIdConnectUrl { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class PasswordOAuthFlow
-    {
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "tokenUrl")]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public string TokenUrl { get; set; }
-
-        /// <summary>an URI</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "refreshUrl")]
-        public string? RefreshUrl { get; set; }
-
-        [YamlDotNet.Serialization.YamlMember(Alias = "scopes")]
-        [System.ComponentModel.DataAnnotations.Required]
-        public DictionaryOfString Scopes { get; set; } = new DictionaryOfString();
-
-        /// <summary>additional metadata extensions dictionary</summary>
-        [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
-    }
-
-    /// <summary>common ways of serializing simple parameters</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class SecurityRequirement
-    {
-    }
-
     /// <summary>extended metadata for HTTP operation parameters</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal partial class HttpParameter : Protocol
@@ -2270,7 +2321,7 @@ namespace AutoRest.CSharp.Input
         /// <summary>the location that this parameter is placed in the http request</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "in")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public ParameterLocation In { get; set; }
+        public HttpParameterIn In { get; set; }
 
         /// <summary>the Serialization Style used for the parameter.</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "style")]
@@ -2359,7 +2410,7 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
@@ -2409,12 +2460,17 @@ namespace AutoRest.CSharp.Input
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DictionaryOfAny : System.Collections.Generic.Dictionary<string, object>
+    internal partial class RecordOfStringAndAny : System.Collections.Generic.Dictionary<string, object>
     {
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DictionaryOfComplexSchema : System.Collections.Generic.Dictionary<string, ComplexSchema>
+    internal partial class RecordOfStringAndRequest
+    {
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal partial class RecordOfStringAndApiVersion
     {
     }
 
@@ -2471,16 +2527,16 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DictionaryOfApiVersion : System.Collections.Generic.Dictionary<string, ApiVersion>
+    internal partial class RecordOfStringAndComplexSchema : System.Collections.Generic.Dictionary<string, ComplexSchema>
     {
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal partial class DictionaryOfString : System.Collections.Generic.Dictionary<string, string>
+    internal partial class RecordOfStringAndString : System.Collections.Generic.Dictionary<string, string>
     {
     }
 
@@ -2549,7 +2605,7 @@ namespace AutoRest.CSharp.Input
 
         /// <summary>additional metadata extensions dictionary</summary>
         [YamlDotNet.Serialization.YamlMember(Alias = "extensions")]
-        public DictionaryOfAny? Extensions { get; set; }
+        public RecordOfStringAndAny? Extensions { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
@@ -2583,6 +2639,13 @@ namespace AutoRest.CSharp.Input
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum KeySecuritySchemeIn
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"header")]
+        Header = 0,
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal enum BearerHTTPSecuritySchemeScheme
     {
         [System.Runtime.Serialization.EnumMember(Value = @"bearer")]
@@ -2604,13 +2667,6 @@ namespace AutoRest.CSharp.Input
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
-    internal enum OAuth2SecuritySchemeType
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"oauth2")]
-        Oauth2 = 0,
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
     internal enum APIKeySecuritySchemeType
     {
         [System.Runtime.Serialization.EnumMember(Value = @"apiKey")]
@@ -2622,6 +2678,34 @@ namespace AutoRest.CSharp.Input
     {
         [System.Runtime.Serialization.EnumMember(Value = @"openIdConnect")]
         OpenIdConnect = 0,
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]
+    internal enum HttpParameterIn
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"body")]
+        Body = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"cookie")]
+        Cookie = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"header")]
+        Header = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"none")]
+        None = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"path")]
+        Path = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"query")]
+        Query = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"uri")]
+        Uri = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"virtual")]
+        Virtual = 7,
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.23.0 (Newtonsoft.Json v9.0.0.0)")]

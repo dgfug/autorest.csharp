@@ -5,56 +5,120 @@
 
 #nullable disable
 
+using System;
+using System.ClientModel.Primitives;
 using System.Text.Json;
 using Azure.Core;
+using body_complex;
 
 namespace body_complex.Models
 {
-    public partial class MyBaseType
+    [PersistableModelProxy(typeof(UnknownMyBaseType))]
+    public partial class MyBaseType : IUtf8JsonSerializable, IJsonModel<MyBaseType>
     {
-        internal static MyBaseType DeserializeMyBaseType(JsonElement element)
+        void IUtf8JsonSerializable.Write(Utf8JsonWriter writer) => ((IJsonModel<MyBaseType>)this).Write(writer, new ModelReaderWriterOptions("W"));
+
+        void IJsonModel<MyBaseType>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options)
         {
+            var format = options.Format == "W" ? ((IPersistableModel<MyBaseType>)this).GetFormatFromOptions(options) : options.Format;
+            if (format != "J")
+            {
+                throw new FormatException($"The model {nameof(MyBaseType)} does not support '{format}' format.");
+            }
+
+            writer.WriteStartObject();
+            writer.WritePropertyName("kind"u8);
+            writer.WriteStringValue(Kind.ToString());
+            if (Optional.IsDefined(PropB1))
+            {
+                writer.WritePropertyName("propB1"u8);
+                writer.WriteStringValue(PropB1);
+            }
+            writer.WritePropertyName("helper"u8);
+            writer.WriteStartObject();
+            if (Optional.IsDefined(PropBH1))
+            {
+                writer.WritePropertyName("propBH1"u8);
+                writer.WriteStringValue(PropBH1);
+            }
+            writer.WriteEndObject();
+            if (options.Format != "W" && _serializedAdditionalRawData != null)
+            {
+                foreach (var item in _serializedAdditionalRawData)
+                {
+                    writer.WritePropertyName(item.Key);
+#if NET6_0_OR_GREATER
+				writer.WriteRawValue(item.Value);
+#else
+                    using (JsonDocument document = JsonDocument.Parse(item.Value))
+                    {
+                        JsonSerializer.Serialize(writer, document.RootElement);
+                    }
+#endif
+                }
+            }
+            writer.WriteEndObject();
+        }
+
+        MyBaseType IJsonModel<MyBaseType>.Create(ref Utf8JsonReader reader, ModelReaderWriterOptions options)
+        {
+            var format = options.Format == "W" ? ((IPersistableModel<MyBaseType>)this).GetFormatFromOptions(options) : options.Format;
+            if (format != "J")
+            {
+                throw new FormatException($"The model {nameof(MyBaseType)} does not support '{format}' format.");
+            }
+
+            using JsonDocument document = JsonDocument.ParseValue(ref reader);
+            return DeserializeMyBaseType(document.RootElement, options);
+        }
+
+        internal static MyBaseType DeserializeMyBaseType(JsonElement element, ModelReaderWriterOptions options = null)
+        {
+            options ??= new ModelReaderWriterOptions("W");
+
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             if (element.TryGetProperty("kind", out JsonElement discriminator))
             {
                 switch (discriminator.GetString())
                 {
-                    case "Kind1": return MyDerivedType.DeserializeMyDerivedType(element);
+                    case "Kind1": return MyDerivedType.DeserializeMyDerivedType(element, options);
                 }
             }
-            MyKind kind = default;
-            Optional<string> propB1 = default;
-            Optional<string> propBH1 = default;
-            foreach (var property in element.EnumerateObject())
-            {
-                if (property.NameEquals("kind"))
-                {
-                    kind = new MyKind(property.Value.GetString());
-                    continue;
-                }
-                if (property.NameEquals("propB1"))
-                {
-                    propB1 = property.Value.GetString();
-                    continue;
-                }
-                if (property.NameEquals("helper"))
-                {
-                    if (property.Value.ValueKind == JsonValueKind.Null)
-                    {
-                        property.ThrowNonNullablePropertyIsNull();
-                        continue;
-                    }
-                    foreach (var property0 in property.Value.EnumerateObject())
-                    {
-                        if (property0.NameEquals("propBH1"))
-                        {
-                            propBH1 = property0.Value.GetString();
-                            continue;
-                        }
-                    }
-                    continue;
-                }
-            }
-            return new MyBaseType(kind, propB1.Value, propBH1.Value);
+            return UnknownMyBaseType.DeserializeUnknownMyBaseType(element, options);
         }
+
+        BinaryData IPersistableModel<MyBaseType>.Write(ModelReaderWriterOptions options)
+        {
+            var format = options.Format == "W" ? ((IPersistableModel<MyBaseType>)this).GetFormatFromOptions(options) : options.Format;
+
+            switch (format)
+            {
+                case "J":
+                    return ModelReaderWriter.Write(this, options);
+                default:
+                    throw new FormatException($"The model {nameof(MyBaseType)} does not support '{options.Format}' format.");
+            }
+        }
+
+        MyBaseType IPersistableModel<MyBaseType>.Create(BinaryData data, ModelReaderWriterOptions options)
+        {
+            var format = options.Format == "W" ? ((IPersistableModel<MyBaseType>)this).GetFormatFromOptions(options) : options.Format;
+
+            switch (format)
+            {
+                case "J":
+                    {
+                        using JsonDocument document = JsonDocument.Parse(data);
+                        return DeserializeMyBaseType(document.RootElement, options);
+                    }
+                default:
+                    throw new FormatException($"The model {nameof(MyBaseType)} does not support '{options.Format}' format.");
+            }
+        }
+
+        string IPersistableModel<MyBaseType>.GetFormatFromOptions(ModelReaderWriterOptions options) => "J";
     }
 }

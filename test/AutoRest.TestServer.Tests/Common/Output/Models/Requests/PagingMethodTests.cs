@@ -56,10 +56,11 @@ namespace AutoRest.CSharp.Output.Models.Requests.Tests
         {
             return PagingMethod.IsPageSizeParameter(new Parameter(
                 name,
-                "test parameter",
+                $"test parameter",
                 inputType,
                 null,
-                false
+                ValidationType.None,
+                null
             ));
         }
     }

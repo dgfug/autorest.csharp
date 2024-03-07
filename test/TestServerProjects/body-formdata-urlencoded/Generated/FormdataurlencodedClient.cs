@@ -30,6 +30,7 @@ namespace body_formdata_urlencoded
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal FormdataurlencodedClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new FormdataurlencodedRestClient(clientDiagnostics, pipeline, endpoint);
@@ -75,6 +76,44 @@ namespace body_formdata_urlencoded
             try
             {
                 return RestClient.UpdatePetWithForm(petId, petType, petFood, petAge, name, status, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                scope.Failed(e);
+                throw;
+            }
+        }
+
+        /// <summary> Test a partially constant formdata body. Pass in { grant_type: 'access_token', access_token: 'foo', service: 'bar' } to pass the test. </summary>
+        /// <param name="service"> Indicates the name of your Azure container registry. </param>
+        /// <param name="accessToken"> AAD access token, mandatory when grant_type is access_token_refresh_token or access_token. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        public virtual async Task<Response> PartialConstantBodyAsync(string service, string accessToken, CancellationToken cancellationToken = default)
+        {
+            using var scope = _clientDiagnostics.CreateScope("FormdataurlencodedClient.PartialConstantBody");
+            scope.Start();
+            try
+            {
+                return await RestClient.PartialConstantBodyAsync(service, accessToken, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                scope.Failed(e);
+                throw;
+            }
+        }
+
+        /// <summary> Test a partially constant formdata body. Pass in { grant_type: 'access_token', access_token: 'foo', service: 'bar' } to pass the test. </summary>
+        /// <param name="service"> Indicates the name of your Azure container registry. </param>
+        /// <param name="accessToken"> AAD access token, mandatory when grant_type is access_token_refresh_token or access_token. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        public virtual Response PartialConstantBody(string service, string accessToken, CancellationToken cancellationToken = default)
+        {
+            using var scope = _clientDiagnostics.CreateScope("FormdataurlencodedClient.PartialConstantBody");
+            scope.Start();
+            try
+            {
+                return RestClient.PartialConstantBody(service, accessToken, cancellationToken);
             }
             catch (Exception e)
             {

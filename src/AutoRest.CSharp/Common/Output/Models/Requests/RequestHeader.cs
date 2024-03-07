@@ -24,18 +24,40 @@ namespace AutoRest.CSharp.Output.Models.Requests
             "Last-Modified",
         };
 
+        public const string RepeatabilityRequestId = "Repeatability-Request-ID";
+        public const string RepeatabilityFirstSent = "Repeatability-First-Sent";
+
+        public static HashSet<string> RepeatabilityRequestHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            RepeatabilityRequestId,
+            RepeatabilityFirstSent,
+        };
+        public static bool IsRepeatabilityRequestHeader(string headerName) => RepeatabilityRequestHeaders.Contains(headerName);
+
+        public static HashSet<string> ClientRequestIdHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "client-request-id",
+        };
+
+        public static HashSet<string> ReturnClientRequestIdResponseHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "return-client-request-id",
+        };
+
+        public static bool IsClientRequestIdHeader(string headerName) => ClientRequestIdHeaders.Contains(headerName) || ReturnClientRequestIdResponseHeaders.Contains(headerName);
+
         public string Name { get; }
         public ReferenceOrConstant Value { get; }
-        public RequestParameterSerializationStyle SerializationStyle { get; }
+        public string? Delimiter { get; }
         public SerializationFormat Format { get; }
         public bool IsContentHeader { get; }
 
-        public RequestHeader(string name, ReferenceOrConstant value, RequestParameterSerializationStyle serializationStyle, SerializationFormat format = SerializationFormat.Default)
+        public RequestHeader(string name, ReferenceOrConstant value, string? delimiter, SerializationFormat format = SerializationFormat.Default)
         {
             Name = name;
             Value = value;
-            SerializationStyle = serializationStyle;
             Format = format;
+            Delimiter = delimiter;
             IsContentHeader = ContentHeaders.Contains(name);
         }
     }

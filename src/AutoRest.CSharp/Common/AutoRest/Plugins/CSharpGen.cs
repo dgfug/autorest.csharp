@@ -2,122 +2,158 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoRest.CSharp.AutoRest.Communication;
-using AutoRest.CSharp.Generation.Types;
-using AutoRest.CSharp.Generation.Writers;
+using AutoRest.CSharp.Common.Input;
+using AutoRest.CSharp.Common.Utilities;
 using AutoRest.CSharp.Input;
 using AutoRest.CSharp.Input.Source;
-using AutoRest.CSharp.Output.Builders;
-using AutoRest.CSharp.Output.Models;
-using AutoRest.CSharp.Output.Models.Responses;
-using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Mgmt.Report;
 using AutoRest.CSharp.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Simplification;
-using Microsoft.CodeAnalysis.Text;
-using Diagnostic = Microsoft.CodeAnalysis.Diagnostic;
 
 namespace AutoRest.CSharp.AutoRest.Plugins
 {
     [PluginName("csharpgen")]
     internal class CSharpGen : IPlugin
     {
-        public async Task<GeneratedCodeWorkspace> ExecuteAsync(Task<CodeModel> codeModelTask, Configuration configuration)
+        public async Task<GeneratedCodeWorkspace> ExecuteAsync(CodeModel codeModel)
         {
-            ValidateConfiguration (configuration);
+            ValidateConfiguration();
 
-            Directory.CreateDirectory(configuration.OutputFolder);
-            var projectDirectory = Path.Combine(configuration.OutputFolder, Configuration.ProjectRelativeDirectory);
-            var project = await GeneratedCodeWorkspace.Create(projectDirectory, configuration.OutputFolder, configuration.SharedSourceFolders);
+            Directory.CreateDirectory(Configuration.OutputFolder);
+            var project = await GeneratedCodeWorkspace.Create(Configuration.AbsoluteProjectFolder, Configuration.OutputFolder, Configuration.SharedSourceFolders);
             var sourceInputModel = new SourceInputModel(await project.GetCompilationAsync());
 
-            var codeModel = await codeModelTask;
-
-            if (configuration.LowLevelClient)
+            if (Configuration.Generation1ConvenienceClient)
             {
-                LowLevelTarget.Execute(project, codeModel, sourceInputModel, configuration);
+                DataPlaneTarget.Execute(project, codeModel, sourceInputModel);
             }
-            else if (configuration.AzureArm)
+            else if (Configuration.AzureArm)
             {
-                MgmtTarget.Execute(project, codeModel, sourceInputModel, configuration);
+                if (Configuration.MgmtConfiguration.MgmtDebug.SkipCodeGen)
+                {
+                    await AutoRestLogger.Warning("skip generating sdk code because 'mgmt-debug.skip-codegen' is true.");
+                    if (Configuration.MgmtTestConfiguration is not null)
+                        await MgmtTestTarget.ExecuteAsync(project, codeModel, null);
+                }
+                else
+                {
+                    await MgmtTarget.ExecuteAsync(project, codeModel, sourceInputModel);
+                    if (Configuration.MgmtTestConfiguration is not null && !Configuration.MgmtConfiguration.MgmtDebug.ReportOnly)
+                        await MgmtTestTarget.ExecuteAsync(project, codeModel, sourceInputModel);
+                }
+                GenerateMgmtReport(project);
             }
             else
             {
-                DataPlaneTarget.Execute(project, codeModel, sourceInputModel, configuration);
+                await LowLevelTarget.ExecuteAsync(project, new CodeModelConverter().CreateNamespace(codeModel, new SchemaUsageProvider(codeModel)), sourceInputModel, false);
             }
             return project;
         }
 
-        private static void ValidateConfiguration (Configuration configuration)
+        private void GenerateMgmtReport(GeneratedCodeWorkspace project)
         {
-            if (configuration.LowLevelClient && configuration.AzureArm)
+            MgmtReport.Instance.TransformSection.ForEachTransform((t, usages) =>
             {
-                throw new Exception("Enabling both 'low-level-client' and 'azure-arm' at the same time is not supported.");
+                string[] ignoreNoUsage = new string[]
+                {
+                    TransformTypeName.AcronymMapping,
+                    TransformTypeName.FormatByNameRules
+                };
+                if (usages.Count == 0 && !ignoreNoUsage.Contains(t.TransformType))
+                    AutoRestLogger.Warning($"No usage transform detected: {t}").Wait();
+            });
+            if (Configuration.MgmtConfiguration.MgmtDebug.GenerateReport)
+            {
+                string report = MgmtReport.Instance.GenerateReport(Configuration.MgmtConfiguration.MgmtDebug.ReportFormat);
+                project.AddPlainFiles("_mgmt-codegen-report.log", report);
+            }
+        }
+
+        public async Task<GeneratedCodeWorkspace> ExecuteAsync(InputNamespace rootNamespace)
+        {
+            ValidateConfiguration();
+
+            Directory.CreateDirectory(Configuration.OutputFolder);
+            var project = await GeneratedCodeWorkspace.Create(Configuration.AbsoluteProjectFolder, Configuration.OutputFolder, Configuration.SharedSourceFolders);
+            var sourceInputModel = new SourceInputModel(await project.GetCompilationAsync(), await ProtocolCompilationInput.TryCreate());
+            await LowLevelTarget.ExecuteAsync(project, rootNamespace, sourceInputModel, true);
+            return project;
+        }
+
+        private static void ValidateConfiguration()
+        {
+            if (Configuration.Generation1ConvenienceClient && Configuration.AzureArm)
+            {
+                throw new Exception("Enabling both 'generation1-convenience-client' and 'azure-arm' at the same time is not supported.");
             }
         }
 
         public async Task<bool> Execute(IPluginCommunication autoRest)
         {
-            string codeModelFileName = (await autoRest.ListInputs()).FirstOrDefault();
+            Console.SetOut(Console.Error); //if you send anything to stdout there is an autorest error so this protects us against that happening
+            string? codeModelFileName = (await autoRest.ListInputs()).FirstOrDefault();
             if (string.IsNullOrEmpty(codeModelFileName))
                 throw new Exception("Generator did not receive the code model file.");
 
-            var configuration = Configuration.GetConfiguration(autoRest);
+            string codeModelYaml = await autoRest.ReadFile(codeModelFileName);
+            CodeModel codeModel = CodeModelSerialization.DeserializeCodeModel(codeModelYaml);
 
-            string codeModelYaml = string.Empty;
+            Configuration.Initialize(autoRest, codeModel.Language.Default.Name, codeModel.Language.Default.Name);
 
-            Task<CodeModel> codeModelTask = Task.Run(async () =>
+            if (!Path.IsPathRooted(Configuration.OutputFolder))
             {
-                codeModelYaml = await autoRest.ReadFile(codeModelFileName);
-                return CodeModelSerialization.DeserializeCodeModel(codeModelYaml);
-            });
-
-            if (!Path.IsPathRooted(configuration.OutputFolder))
-            {
-                await autoRest.Warning("output-folder path should be an absolute path");
+                await AutoRestLogger.Warning("output-folder path should be an absolute path");
             }
-            if (configuration.SaveInputs)
+            if (Configuration.SaveInputs)
             {
-                await codeModelTask;
-                await autoRest.WriteFile("Configuration.json", StandaloneGeneratorRunner.SaveConfiguration(configuration), "source-file-csharp");
+                await autoRest.WriteFile("Configuration.json", Configuration.SaveConfiguration(), "source-file-csharp");
                 await autoRest.WriteFile("CodeModel.yaml", codeModelYaml, "source-file-csharp");
             }
 
             try
             {
-                var project = await ExecuteAsync(codeModelTask, configuration);
+                // generate source code
+                var project = await ExecuteAsync(codeModel);
                 await foreach (var file in project.GetGeneratedFilesAsync())
                 {
-                    await autoRest.WriteFile(file.Name, file.Text, "source-file-csharp");
+                    // format all \ to / in filename, otherwise they will be treated as escape char when sending to autorest service
+                    var filename = file.Name.Replace('\\', '/');
+                    await autoRest.WriteFile(filename, file.Text, "source-file-csharp");
+                }
+
+                // generate csproj if necessary
+                if (!Configuration.SkipCSProj)
+                {
+                    bool needAzureKeyAuth = codeModel.Security.Schemes.Any(scheme => scheme is KeySecurityScheme);
+                    bool includeDfe = codeModelYaml.Contains("x-ms-format: dfe-", StringComparison.Ordinal);
+                    new CSharpProj(needAzureKeyAuth, includeDfe).Execute(autoRest);
                 }
             }
             catch (ErrorHelpers.ErrorException e)
             {
-                await autoRest.Fatal(e.ErrorText);
+                await AutoRestLogger.Fatal(e.ErrorText);
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 try
                 {
-                    // We are unsuspectingly crashing, so output anything that might help us reproduce the issue
-                    await autoRest.WriteFile("Configuration.json", StandaloneGeneratorRunner.SaveConfiguration(configuration), "source-file-csharp");
-                    await autoRest.WriteFile("CodeModel.yaml", codeModelYaml, "source-file-csharp");
+                    if (Configuration.SaveInputs)
+                    {
+                        // We are unsuspectingly crashing, so output anything that might help us reproduce the issue
+                        File.WriteAllText(Path.Combine(Configuration.OutputFolder, "Configuration.json"), Configuration.SaveConfiguration());
+                        File.WriteAllText(Path.Combine(Configuration.OutputFolder, "CodeModel.yaml"), codeModelYaml);
+                    }
                 }
                 catch
                 {
                     // Ignore any errors while trying to output crash information
                 }
-                await autoRest.Fatal($"Internal error in AutoRest.CSharp{ErrorHelpers.FileIssueText}\nException: {e.Message}\n{e.StackTrace}");
-                return false;
+                throw;
             }
 
             return true;

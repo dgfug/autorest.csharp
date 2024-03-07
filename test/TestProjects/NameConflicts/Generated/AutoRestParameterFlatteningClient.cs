@@ -31,6 +31,7 @@ namespace NameConflicts
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal AutoRestParameterFlatteningClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new AutoRestParameterFlatteningRestClient(clientDiagnostics, pipeline, endpoint);
@@ -38,13 +39,13 @@ namespace NameConflicts
             _pipeline = pipeline;
         }
 
-        /// <param name="request"> The String to use. </param>
-        /// <param name="message"> The String to use. </param>
-        /// <param name="scope"> The String to use. </param>
-        /// <param name="uri"> The String to use. </param>
-        /// <param name="pipeline"> The String to use. </param>
-        /// <param name="clientDiagnostics"> The String to use. </param>
-        /// <param name="class"> The Class to use. </param>
+        /// <param name="request"> The <see cref="string"/> to use. </param>
+        /// <param name="message"> The <see cref="string"/> to use. </param>
+        /// <param name="scope"> The <see cref="string"/> to use. </param>
+        /// <param name="uri"> The <see cref="string"/> to use. </param>
+        /// <param name="pipeline"> The <see cref="string"/> to use. </param>
+        /// <param name="clientDiagnostics"> The <see cref="string"/> to use. </param>
+        /// <param name="class"> The <see cref="Class"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<Struct>> OperationAsync(string request, string message, string scope, string uri, string pipeline, string clientDiagnostics, Class @class, CancellationToken cancellationToken = default)
         {
@@ -61,13 +62,13 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="request"> The String to use. </param>
-        /// <param name="message"> The String to use. </param>
-        /// <param name="scope"> The String to use. </param>
-        /// <param name="uri"> The String to use. </param>
-        /// <param name="pipeline"> The String to use. </param>
-        /// <param name="clientDiagnostics"> The String to use. </param>
-        /// <param name="class"> The Class to use. </param>
+        /// <param name="request"> The <see cref="string"/> to use. </param>
+        /// <param name="message"> The <see cref="string"/> to use. </param>
+        /// <param name="scope"> The <see cref="string"/> to use. </param>
+        /// <param name="uri"> The <see cref="string"/> to use. </param>
+        /// <param name="pipeline"> The <see cref="string"/> to use. </param>
+        /// <param name="clientDiagnostics"> The <see cref="string"/> to use. </param>
+        /// <param name="class"> The <see cref="Class"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<Struct> Operation(string request, string message, string scope, string uri, string pipeline, string clientDiagnostics, Class @class, CancellationToken cancellationToken = default)
         {
@@ -84,7 +85,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="httpMessage"> The HttpMessage to use. </param>
+        /// <param name="httpMessage"> The <see cref="Models.HttpMessage"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<HttpMessage>> HttpMessageAsync(HttpMessage httpMessage = null, CancellationToken cancellationToken = default)
         {
@@ -101,7 +102,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="httpMessage"> The HttpMessage to use. </param>
+        /// <param name="httpMessage"> The <see cref="Models.HttpMessage"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<HttpMessage> HttpMessage(HttpMessage httpMessage = null, CancellationToken cancellationToken = default)
         {
@@ -118,7 +119,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="request"> The Request to use. </param>
+        /// <param name="request"> The <see cref="Models.Request"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<Request>> RequestAsync(Request request = null, CancellationToken cancellationToken = default)
         {
@@ -135,7 +136,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="request"> The Request to use. </param>
+        /// <param name="request"> The <see cref="Models.Request"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<Request> Request(Request request = null, CancellationToken cancellationToken = default)
         {
@@ -152,7 +153,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="response"> The Response to use. </param>
+        /// <param name="response"> The <see cref="Models.Response"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<Models.Response>> ResponseAsync(Models.Response response = null, CancellationToken cancellationToken = default)
         {
@@ -169,7 +170,7 @@ namespace NameConflicts
             }
         }
 
-        /// <param name="response"> The Response to use. </param>
+        /// <param name="response"> The <see cref="Models.Response"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<Models.Response> Response(Models.Response response = null, CancellationToken cancellationToken = default)
         {
@@ -187,7 +188,7 @@ namespace NameConflicts
         }
 
         /// <summary> Analyze body, that could be different media types. </summary>
-        /// <param name="stringBody"> The binary to use. </param>
+        /// <param name="stringBody"> The <see cref="Stream"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<AutoRestParameterFlatteningAnalyzeBodyOperation> StartAnalyzeBodyAsync(Stream stringBody = null, CancellationToken cancellationToken = default)
         {
@@ -206,7 +207,7 @@ namespace NameConflicts
         }
 
         /// <summary> Analyze body, that could be different media types. </summary>
-        /// <param name="stringBody"> The binary to use. </param>
+        /// <param name="stringBody"> The <see cref="Stream"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AutoRestParameterFlatteningAnalyzeBodyOperation StartAnalyzeBody(Stream stringBody = null, CancellationToken cancellationToken = default)
         {
@@ -225,7 +226,7 @@ namespace NameConflicts
         }
 
         /// <summary> Analyze body, that could be different media types. </summary>
-        /// <param name="stringBody"> The String to use. </param>
+        /// <param name="stringBody"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<AutoRestParameterFlatteningAnalyzeBodyOperation> StartAnalyzeBodyAsync(string stringBody = null, CancellationToken cancellationToken = default)
         {
@@ -244,7 +245,7 @@ namespace NameConflicts
         }
 
         /// <summary> Analyze body, that could be different media types. </summary>
-        /// <param name="stringBody"> The String to use. </param>
+        /// <param name="stringBody"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AutoRestParameterFlatteningAnalyzeBodyOperation StartAnalyzeBody(string stringBody = null, CancellationToken cancellationToken = default)
         {

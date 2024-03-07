@@ -1,22 +1,25 @@
 {
-  "OutputFolder": ".",
-  "Namespace": "MgmtParamOrdering",
-  "LibraryName": null,
-  "SharedSourceFolders": [
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Generator.Shared",
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Azure.Core.Shared"
+  "output-folder": ".",
+  "namespace": "MgmtParamOrdering",
+  "library-name": "MgmtParamOrdering",
+  "shared-source-folders": [
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Generator.Shared",
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Azure.Core.Shared"
   ],
   "azure-arm": true,
   "public-clients": true,
   "head-as-boolean": true,
   "skip-csproj-packagereference": true,
-  "OperationGroupToResourceType": {
-    "VirtualMachineExtensionImages": "Microsoft.Compute/locations/publishers/vmextension"
+  "KeepOrphanedModels": [
+    "LocationFormatObject"
+  ],
+  "FormatByNameRules": {
+    "tenantId": "uuid",
+    "resourceType": "resource-type",
+    "etag": "etag",
+    "location": "azure-location",
+    "*Uri": "Uri",
+    "*Uris": "Uri"
   },
-  "OperationGroupToResource": {
-    "VirtualMachineExtensionImages": "NonResource"
-  },
-  "OperationGroupToParent": {
-    "VirtualMachineExtensionImages": "subscriptions"
-  }
+  "helper-namespace": "MgmtParamOrdering"
 }

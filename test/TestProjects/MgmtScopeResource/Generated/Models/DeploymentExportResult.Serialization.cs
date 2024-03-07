@@ -5,8 +5,8 @@
 
 #nullable disable
 
+using System;
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtScopeResource.Models
 {
@@ -14,21 +14,24 @@ namespace MgmtScopeResource.Models
     {
         internal static DeploymentExportResult DeserializeDeploymentExportResult(JsonElement element)
         {
-            Optional<object> template = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            BinaryData template = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("template"))
+                if (property.NameEquals("template"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    template = property.Value.GetObject();
+                    template = BinaryData.FromString(property.Value.GetRawText());
                     continue;
                 }
             }
-            return new DeploymentExportResult(template.Value);
+            return new DeploymentExportResult(template);
         }
     }
 }

@@ -5,37 +5,34 @@
 
 #nullable disable
 
+using Azure.Core;
+using Azure.ResourceManager.Models;
 using MgmtScopeResource.Models;
 
 namespace MgmtScopeResource
 {
-    /// <summary> A class representing the ResourceLink data model. </summary>
-    public partial class ResourceLinkData
+    /// <summary>
+    /// A class representing the ResourceLink data model.
+    /// The resource link.
+    /// </summary>
+    public partial class ResourceLinkData : ResourceData
     {
-        /// <summary> Initializes a new instance of ResourceLinkData. </summary>
+        /// <summary> Initializes a new instance of <see cref="ResourceLinkData"/>. </summary>
         public ResourceLinkData()
         {
         }
 
-        /// <summary> Initializes a new instance of ResourceLinkData. </summary>
-        /// <param name="id"> The fully qualified ID of the resource link. </param>
-        /// <param name="name"> The name of the resource link. </param>
-        /// <param name="type"> The resource link object. </param>
+        /// <summary> Initializes a new instance of <see cref="ResourceLinkData"/>. </summary>
+        /// <param name="id"> The id. </param>
+        /// <param name="name"> The name. </param>
+        /// <param name="resourceType"> The resourceType. </param>
+        /// <param name="systemData"> The systemData. </param>
         /// <param name="properties"> Properties for resource link. </param>
-        internal ResourceLinkData(string id, string name, object type, ResourceLinkProperties properties)
+        internal ResourceLinkData(ResourceIdentifier id, string name, ResourceType resourceType, SystemData systemData, ResourceLinkProperties properties) : base(id, name, resourceType, systemData)
         {
-            Id = id;
-            Name = name;
-            Type = type;
             Properties = properties;
         }
 
-        /// <summary> The fully qualified ID of the resource link. </summary>
-        public string Id { get; }
-        /// <summary> The name of the resource link. </summary>
-        public string Name { get; }
-        /// <summary> The resource link object. </summary>
-        public object Type { get; }
         /// <summary> Properties for resource link. </summary>
         public ResourceLinkProperties Properties { get; set; }
     }

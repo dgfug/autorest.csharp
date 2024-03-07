@@ -17,19 +17,22 @@ namespace body_time
 {
     internal partial class TimeRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of TimeRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public TimeRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateGetRequest()
@@ -38,14 +41,14 @@ namespace body_time
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/time/get", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Get time value &quot;11:34:56&quot;. </summary>
+        /// <summary> Get time value "11:34:56". </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<TimeSpan>> GetAsync(CancellationToken cancellationToken = default)
         {
@@ -61,11 +64,11 @@ namespace body_time
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Get time value &quot;11:34:56&quot;. </summary>
+        /// <summary> Get time value "11:34:56". </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<TimeSpan> Get(CancellationToken cancellationToken = default)
         {
@@ -81,7 +84,7 @@ namespace body_time
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -91,7 +94,7 @@ namespace body_time
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/time/put", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -102,8 +105,8 @@ namespace body_time
             return message;
         }
 
-        /// <summary> Put time value &quot;08:07:56&quot;. </summary>
-        /// <param name="timeBody"> Put time value &quot;08:07:56&quot; in parameter to pass testserver. </param>
+        /// <summary> Put time value "08:07:56". </summary>
+        /// <param name="timeBody"> Put time value "08:07:56" in parameter to pass testserver. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<string>> PutAsync(TimeSpan timeBody, CancellationToken cancellationToken = default)
         {
@@ -119,12 +122,12 @@ namespace body_time
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Put time value &quot;08:07:56&quot;. </summary>
-        /// <param name="timeBody"> Put time value &quot;08:07:56&quot; in parameter to pass testserver. </param>
+        /// <summary> Put time value "08:07:56". </summary>
+        /// <param name="timeBody"> Put time value "08:07:56" in parameter to pass testserver. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<string> Put(TimeSpan timeBody, CancellationToken cancellationToken = default)
         {
@@ -140,7 +143,7 @@ namespace body_time
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

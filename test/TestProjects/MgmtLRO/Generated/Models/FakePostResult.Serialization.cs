@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtLRO.Models
 {
@@ -14,21 +13,24 @@ namespace MgmtLRO.Models
     {
         internal static FakePostResult DeserializeFakePostResult(JsonElement element)
         {
-            Optional<FakePostResultProperties> properties = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            FakePostResultProperties properties = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("properties"))
+                if (property.NameEquals("properties"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     properties = FakePostResultProperties.DeserializeFakePostResultProperties(property.Value);
                     continue;
                 }
             }
-            return new FakePostResult(properties.Value);
+            return new FakePostResult(properties);
         }
     }
 }

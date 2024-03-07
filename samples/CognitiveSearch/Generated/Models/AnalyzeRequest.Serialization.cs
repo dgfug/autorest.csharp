@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -15,21 +16,21 @@ namespace CognitiveSearch.Models
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName("text");
+            writer.WritePropertyName("text"u8);
             writer.WriteStringValue(Text);
             if (Optional.IsDefined(Analyzer))
             {
-                writer.WritePropertyName("analyzer");
+                writer.WritePropertyName("analyzer"u8);
                 writer.WriteStringValue(Analyzer.Value.ToString());
             }
             if (Optional.IsDefined(Tokenizer))
             {
-                writer.WritePropertyName("tokenizer");
+                writer.WritePropertyName("tokenizer"u8);
                 writer.WriteStringValue(Tokenizer.Value.ToString());
             }
             if (Optional.IsCollectionDefined(TokenFilters))
             {
-                writer.WritePropertyName("tokenFilters");
+                writer.WritePropertyName("tokenFilters"u8);
                 writer.WriteStartArray();
                 foreach (var item in TokenFilters)
                 {
@@ -39,7 +40,7 @@ namespace CognitiveSearch.Models
             }
             if (Optional.IsCollectionDefined(CharFilters))
             {
-                writer.WritePropertyName("charFilters");
+                writer.WritePropertyName("charFilters"u8);
                 writer.WriteStartArray();
                 foreach (var item in CharFilters)
                 {

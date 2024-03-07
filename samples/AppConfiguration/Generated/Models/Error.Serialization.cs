@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace AppConfiguration.Models
 {
@@ -14,45 +13,48 @@ namespace AppConfiguration.Models
     {
         internal static Error DeserializeError(JsonElement element)
         {
-            Optional<string> type = default;
-            Optional<string> title = default;
-            Optional<string> name = default;
-            Optional<string> detail = default;
-            Optional<int> status = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string type = default;
+            string title = default;
+            string name = default;
+            string detail = default;
+            int? status = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("type"))
+                if (property.NameEquals("type"u8))
                 {
                     type = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("title"))
+                if (property.NameEquals("title"u8))
                 {
                     title = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("detail"))
+                if (property.NameEquals("detail"u8))
                 {
                     detail = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("status"))
+                if (property.NameEquals("status"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     status = property.Value.GetInt32();
                     continue;
                 }
             }
-            return new Error(type.Value, title.Value, name.Value, detail.Value, Optional.ToNullable(status));
+            return new Error(type, title, name, detail, status);
         }
     }
 }

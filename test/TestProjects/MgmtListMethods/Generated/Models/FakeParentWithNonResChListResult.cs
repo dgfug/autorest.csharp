@@ -15,20 +15,17 @@ namespace MgmtListMethods.Models
     /// <summary> The List operation response. </summary>
     internal partial class FakeParentWithNonResChListResult
     {
-        /// <summary> Initializes a new instance of FakeParentWithNonResChListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="FakeParentWithNonResChListResult"/>. </summary>
         /// <param name="value"> List. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
         internal FakeParentWithNonResChListResult(IEnumerable<FakeParentWithNonResChData> value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            Argument.AssertNotNull(value, nameof(value));
 
             Value = value.ToList();
         }
 
-        /// <summary> Initializes a new instance of FakeParentWithNonResChListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="FakeParentWithNonResChListResult"/>. </summary>
         /// <param name="value"> List. </param>
         /// <param name="nextLink"> The URI to fetch the next page. Call ListNext() with this URI to fetch the next page. </param>
         internal FakeParentWithNonResChListResult(IReadOnlyList<FakeParentWithNonResChData> value, string nextLink)

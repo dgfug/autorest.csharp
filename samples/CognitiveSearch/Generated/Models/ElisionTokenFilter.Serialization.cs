@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -18,7 +19,7 @@ namespace CognitiveSearch.Models
             writer.WriteStartObject();
             if (Optional.IsCollectionDefined(Articles))
             {
-                writer.WritePropertyName("articles");
+                writer.WritePropertyName("articles"u8);
                 writer.WriteStartArray();
                 foreach (var item in Articles)
                 {
@@ -26,25 +27,28 @@ namespace CognitiveSearch.Models
                 }
                 writer.WriteEndArray();
             }
-            writer.WritePropertyName("@odata.type");
+            writer.WritePropertyName("@odata.type"u8);
             writer.WriteStringValue(OdataType);
-            writer.WritePropertyName("name");
+            writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             writer.WriteEndObject();
         }
 
         internal static ElisionTokenFilter DeserializeElisionTokenFilter(JsonElement element)
         {
-            Optional<IList<string>> articles = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IList<string> articles = default;
             string odataType = default;
             string name = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("articles"))
+                if (property.NameEquals("articles"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<string> array = new List<string>();
@@ -55,18 +59,18 @@ namespace CognitiveSearch.Models
                     articles = array;
                     continue;
                 }
-                if (property.NameEquals("@odata.type"))
+                if (property.NameEquals("@odata.type"u8))
                 {
                     odataType = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
             }
-            return new ElisionTokenFilter(odataType, name, Optional.ToList(articles));
+            return new ElisionTokenFilter(odataType, name, articles ?? new ChangeTrackingList<string>());
         }
     }
 }

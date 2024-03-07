@@ -7,23 +7,26 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
+using MgmtListMethods;
 
 namespace MgmtListMethods.Models
 {
-    public partial class UpdateWorkspaceQuotasResult
+    internal partial class UpdateWorkspaceQuotasResult
     {
         internal static UpdateWorkspaceQuotasResult DeserializeUpdateWorkspaceQuotasResult(JsonElement element)
         {
-            Optional<IReadOnlyList<UpdateWorkspaceQuotas>> value = default;
-            Optional<string> nextLink = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IReadOnlyList<UpdateWorkspaceQuotas> value = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<UpdateWorkspaceQuotas> array = new List<UpdateWorkspaceQuotas>();
@@ -34,13 +37,13 @@ namespace MgmtListMethods.Models
                     value = array;
                     continue;
                 }
-                if (property.NameEquals("nextLink"))
+                if (property.NameEquals("nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new UpdateWorkspaceQuotasResult(Optional.ToList(value), nextLink.Value);
+            return new UpdateWorkspaceQuotasResult(value ?? new ChangeTrackingList<UpdateWorkspaceQuotas>(), nextLink);
         }
     }
 }

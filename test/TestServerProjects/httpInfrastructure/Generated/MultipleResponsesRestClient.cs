@@ -18,19 +18,22 @@ namespace httpInfrastructure
 {
     internal partial class MultipleResponsesRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of MultipleResponsesRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public MultipleResponsesRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateGet200Model204NoModelDefaultError200ValidRequest()
@@ -39,14 +42,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/204/none/default/Error/response/200/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200Model204NoModelDefaultError200ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -64,11 +67,11 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200Model204NoModelDefaultError200Valid(CancellationToken cancellationToken = default)
         {
@@ -86,7 +89,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -96,7 +99,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/204/none/default/Error/response/204/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -121,7 +124,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -143,7 +146,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -153,14 +156,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/204/none/default/Error/response/201/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 201 response with valid payload: {&apos;statusCode&apos;: &apos;201&apos;}. </summary>
+        /// <summary> Send a 201 response with valid payload: {'statusCode': '201'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200Model204NoModelDefaultError201InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -178,11 +181,11 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 201 response with valid payload: {&apos;statusCode&apos;: &apos;201&apos;}. </summary>
+        /// <summary> Send a 201 response with valid payload: {'statusCode': '201'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200Model204NoModelDefaultError201Invalid(CancellationToken cancellationToken = default)
         {
@@ -200,7 +203,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -210,7 +213,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/204/none/default/Error/response/202/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -235,7 +238,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -257,7 +260,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -267,14 +270,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/204/none/default/Error/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 400 response with valid error payload: {&apos;status&apos;: 400, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid error payload: {'status': 400, 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200Model204NoModelDefaultError400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -292,11 +295,11 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid error payload: {&apos;status&apos;: 400, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid error payload: {'status': 400, 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200Model204NoModelDefaultError400Valid(CancellationToken cancellationToken = default)
         {
@@ -314,7 +317,7 @@ namespace httpInfrastructure
                 case 204:
                     return Response.FromValue((MyException)null, message.Response);
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -324,14 +327,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/B/default/Error/response/200/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200Model201ModelDefaultError200ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -354,11 +357,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200Model201ModelDefaultError200Valid(CancellationToken cancellationToken = default)
         {
@@ -381,7 +384,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -391,14 +394,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/B/default/Error/response/201/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 201 response with valid payload: {&apos;statusCode&apos;: &apos;201&apos;, &apos;textStatusCode&apos;: &apos;Created&apos;}. </summary>
+        /// <summary> Send a 201 response with valid payload: {'statusCode': '201', 'textStatusCode': 'Created'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200Model201ModelDefaultError201ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -421,11 +424,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 201 response with valid payload: {&apos;statusCode&apos;: &apos;201&apos;, &apos;textStatusCode&apos;: &apos;Created&apos;}. </summary>
+        /// <summary> Send a 201 response with valid payload: {'statusCode': '201', 'textStatusCode': 'Created'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200Model201ModelDefaultError201Valid(CancellationToken cancellationToken = default)
         {
@@ -448,7 +451,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -458,14 +461,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/B/default/Error/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200Model201ModelDefaultError400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -488,11 +491,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200Model201ModelDefaultError400Valid(CancellationToken cancellationToken = default)
         {
@@ -515,7 +518,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -525,14 +528,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/C/404/D/default/Error/response/200/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200ModelA201ModelC404ModelDDefaultError200ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -562,11 +565,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200ModelA201ModelC404ModelDDefaultError200Valid(CancellationToken cancellationToken = default)
         {
@@ -596,7 +599,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -606,14 +609,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/C/404/D/default/Error/response/201/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;httpCode&apos;: &apos;201&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'httpCode': '201'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200ModelA201ModelC404ModelDDefaultError201ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -643,11 +646,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;httpCode&apos;: &apos;201&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'httpCode': '201'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200ModelA201ModelC404ModelDDefaultError201Valid(CancellationToken cancellationToken = default)
         {
@@ -677,7 +680,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -687,14 +690,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/C/404/D/default/Error/response/404/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;httpStatusCode&apos;: &apos;404&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'httpStatusCode': '404'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200ModelA201ModelC404ModelDDefaultError404ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -724,11 +727,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;httpStatusCode&apos;: &apos;404&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'httpStatusCode': '404'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200ModelA201ModelC404ModelDDefaultError404Valid(CancellationToken cancellationToken = default)
         {
@@ -758,7 +761,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -768,14 +771,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/201/C/404/D/default/Error/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<object>> Get200ModelA201ModelC404ModelDDefaultError400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -805,11 +808,11 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<object> Get200ModelA201ModelC404ModelDDefaultError400Valid(CancellationToken cancellationToken = default)
         {
@@ -839,7 +842,7 @@ namespace httpInfrastructure
                         return Response.FromValue<object>(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -849,7 +852,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/Error/response/202/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -868,7 +871,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -884,7 +887,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -894,7 +897,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/Error/response/204/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -913,7 +916,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -929,7 +932,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -939,14 +942,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/Error/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> Get202None204NoneDefaultError400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -958,11 +961,11 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;code&apos;: &apos;400&apos;, &apos;message&apos;: &apos;client error&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'code': '400', 'message': 'client error'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response Get202None204NoneDefaultError400Valid(CancellationToken cancellationToken = default)
         {
@@ -974,7 +977,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -984,13 +987,13 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/none/response/202/invalid", false);
             request.Uri = uri;
             return message;
         }
 
-        /// <summary> Send a 202 response with an unexpected payload {&apos;property&apos;: &apos;value&apos;}. </summary>
+        /// <summary> Send a 202 response with an unexpected payload {'property': 'value'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> Get202None204NoneDefaultNone202InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1002,11 +1005,11 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 202 response with an unexpected payload {&apos;property&apos;: &apos;value&apos;}. </summary>
+        /// <summary> Send a 202 response with an unexpected payload {'property': 'value'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response Get202None204NoneDefaultNone202Invalid(CancellationToken cancellationToken = default)
         {
@@ -1018,7 +1021,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1028,7 +1031,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/none/response/204/none", false);
             request.Uri = uri;
             return message;
@@ -1046,7 +1049,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1062,7 +1065,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1072,7 +1075,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/none/response/400/none", false);
             request.Uri = uri;
             return message;
@@ -1090,7 +1093,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1106,7 +1109,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1116,13 +1119,13 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/202/none/204/none/default/none/response/400/invalid", false);
             request.Uri = uri;
             return message;
         }
 
-        /// <summary> Send a 400 response with an unexpected payload {&apos;property&apos;: &apos;value&apos;}. </summary>
+        /// <summary> Send a 400 response with an unexpected payload {'property': 'value'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> Get202None204NoneDefaultNone400InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1134,11 +1137,11 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with an unexpected payload {&apos;property&apos;: &apos;value&apos;}. </summary>
+        /// <summary> Send a 400 response with an unexpected payload {'property': 'value'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response Get202None204NoneDefaultNone400Invalid(CancellationToken cancellationToken = default)
         {
@@ -1150,7 +1153,7 @@ namespace httpInfrastructure
                 case 204:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1160,14 +1163,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/A/response/200/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> GetDefaultModelA200ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -1183,11 +1186,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with valid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with valid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> GetDefaultModelA200Valid(CancellationToken cancellationToken = default)
         {
@@ -1203,7 +1206,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1213,7 +1216,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/A/response/200/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -1236,7 +1239,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1256,7 +1259,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1266,14 +1269,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/A/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> GetDefaultModelA400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -1284,11 +1287,11 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response GetDefaultModelA400Valid(CancellationToken cancellationToken = default)
         {
@@ -1299,7 +1302,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1309,7 +1312,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/A/response/400/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -1327,7 +1330,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1342,7 +1345,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1352,13 +1355,13 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/none/response/200/invalid", false);
             request.Uri = uri;
             return message;
         }
 
-        /// <summary> Send a 200 response with invalid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> GetDefaultNone200InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1369,11 +1372,11 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with invalid payload: {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload: {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response GetDefaultNone200Invalid(CancellationToken cancellationToken = default)
         {
@@ -1384,7 +1387,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1394,7 +1397,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/none/response/200/none", false);
             request.Uri = uri;
             return message;
@@ -1411,7 +1414,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1426,7 +1429,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1436,13 +1439,13 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/none/response/400/invalid", false);
             request.Uri = uri;
             return message;
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> GetDefaultNone400InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1453,11 +1456,11 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 400 response with valid payload: {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 400 response with valid payload: {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response GetDefaultNone400Invalid(CancellationToken cancellationToken = default)
         {
@@ -1468,7 +1471,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1478,7 +1481,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/default/none/response/400/none", false);
             request.Uri = uri;
             return message;
@@ -1495,7 +1498,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1510,7 +1513,7 @@ namespace httpInfrastructure
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1520,7 +1523,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/200/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -1543,7 +1546,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1563,7 +1566,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1573,14 +1576,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/200/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with payload {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with payload {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200ModelA200ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -1596,11 +1599,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with payload {&apos;statusCode&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with payload {'statusCode': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200ModelA200Valid(CancellationToken cancellationToken = default)
         {
@@ -1616,7 +1619,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1626,14 +1629,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/200/invalid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with invalid payload {&apos;statusCodeInvalid&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload {'statusCodeInvalid': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200ModelA200InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1649,11 +1652,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with invalid payload {&apos;statusCodeInvalid&apos;: &apos;200&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload {'statusCodeInvalid': '200'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200ModelA200Invalid(CancellationToken cancellationToken = default)
         {
@@ -1669,7 +1672,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1679,7 +1682,7 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/400/none", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -1702,7 +1705,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1722,7 +1725,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1732,14 +1735,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/400/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with payload {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 200 response with payload {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200ModelA400ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -1755,11 +1758,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with payload {&apos;statusCode&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 200 response with payload {'statusCode': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200ModelA400Valid(CancellationToken cancellationToken = default)
         {
@@ -1775,7 +1778,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1785,14 +1788,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/400/invalid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 200 response with invalid payload {&apos;statusCodeInvalid&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload {'statusCodeInvalid': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200ModelA400InvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -1808,11 +1811,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 200 response with invalid payload {&apos;statusCodeInvalid&apos;: &apos;400&apos;}. </summary>
+        /// <summary> Send a 200 response with invalid payload {'statusCodeInvalid': '400'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200ModelA400Invalid(CancellationToken cancellationToken = default)
         {
@@ -1828,7 +1831,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -1838,14 +1841,14 @@ namespace httpInfrastructure
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/http/payloads/200/A/response/202/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Send a 202 response with payload {&apos;statusCode&apos;: &apos;202&apos;}. </summary>
+        /// <summary> Send a 202 response with payload {'statusCode': '202'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<MyException>> Get200ModelA202ValidAsync(CancellationToken cancellationToken = default)
         {
@@ -1861,11 +1864,11 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Send a 202 response with payload {&apos;statusCode&apos;: &apos;202&apos;}. </summary>
+        /// <summary> Send a 202 response with payload {'statusCode': '202'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<MyException> Get200ModelA202Valid(CancellationToken cancellationToken = default)
         {
@@ -1881,7 +1884,7 @@ namespace httpInfrastructure
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

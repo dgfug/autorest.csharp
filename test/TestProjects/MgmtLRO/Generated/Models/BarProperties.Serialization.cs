@@ -8,17 +8,18 @@
 using System;
 using System.Text.Json;
 using Azure.Core;
+using MgmtLRO;
 
 namespace MgmtLRO.Models
 {
-    public partial class BarProperties : IUtf8JsonSerializable
+    internal partial class BarProperties : IUtf8JsonSerializable
     {
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
             if (Optional.IsDefined(Buzz))
             {
-                writer.WritePropertyName("buzz");
+                writer.WritePropertyName("buzz"u8);
                 writer.WriteStringValue(Buzz.Value);
             }
             writer.WriteEndObject();
@@ -26,21 +27,24 @@ namespace MgmtLRO.Models
 
         internal static BarProperties DeserializeBarProperties(JsonElement element)
         {
-            Optional<Guid> buzz = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            Guid? buzz = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("buzz"))
+                if (property.NameEquals("buzz"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     buzz = property.Value.GetGuid();
                     continue;
                 }
             }
-            return new BarProperties(Optional.ToNullable(buzz));
+            return new BarProperties(buzz);
         }
     }
 }

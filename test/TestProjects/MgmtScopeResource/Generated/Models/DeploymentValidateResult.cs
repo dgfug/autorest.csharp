@@ -10,22 +10,28 @@ namespace MgmtScopeResource.Models
     /// <summary> Information from validate template deployment response. </summary>
     public partial class DeploymentValidateResult
     {
-        /// <summary> Initializes a new instance of DeploymentValidateResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="DeploymentValidateResult"/>. </summary>
         internal DeploymentValidateResult()
         {
         }
 
-        /// <summary> Initializes a new instance of DeploymentValidateResult. </summary>
-        /// <param name="error"> The deployment validation error. </param>
+        /// <summary> Initializes a new instance of <see cref="DeploymentValidateResult"/>. </summary>
+        /// <param name="errorResponse"> The deployment validation error. </param>
         /// <param name="properties"> The template deployment properties. </param>
-        internal DeploymentValidateResult(ErrorResponse error, DeploymentPropertiesExtended properties)
+        internal DeploymentValidateResult(ErrorResponse errorResponse, DeploymentPropertiesExtended properties)
         {
-            Error = error;
+            ErrorResponse = errorResponse;
             Properties = properties;
         }
 
         /// <summary> The deployment validation error. </summary>
-        public ErrorResponse Error { get; }
+        internal ErrorResponse ErrorResponse { get; }
+        /// <summary> The details of the error. </summary>
+        public string Error
+        {
+            get => ErrorResponse?.Error;
+        }
+
         /// <summary> The template deployment properties. </summary>
         public DeploymentPropertiesExtended Properties { get; }
     }

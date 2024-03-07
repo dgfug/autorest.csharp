@@ -1,28 +1,39 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Output.Models.Shared;
 
 namespace AutoRest.CSharp.Output.Models.Types
 {
     internal class ObjectTypeConstructor
     {
-        public ObjectTypeConstructor(string name, string modifiers, Parameter[] parameters, ObjectPropertyInitializer[] initializers, ObjectTypeConstructor? baseConstructor = null)
+        public ObjectTypeConstructor(ConstructorSignature signature, IReadOnlyList<ObjectPropertyInitializer> initializers, ObjectTypeConstructor? baseConstructor = null)
         {
-            Signature = new MethodSignature(
-                name,
-                $"Initializes a new instance of {name}",
-                modifiers,
-                parameters,
-                baseConstructor?.Signature);
-
+            Signature = signature;
             Initializers = initializers;
             BaseConstructor = baseConstructor;
         }
 
-        public MethodSignature Signature { get; }
-        public ObjectPropertyInitializer[] Initializers { get; }
+        public ObjectTypeConstructor(CSharpType type, MethodSignatureModifiers modifiers, IReadOnlyList<Parameter> parameters, IReadOnlyList<ObjectPropertyInitializer> initializers, ObjectTypeConstructor? baseConstructor = null)
+            : this(
+                 new ConstructorSignature(
+                     type,
+                     $"Initializes a new instance of {type:C}",
+                     null,
+                     modifiers,
+                     parameters,
+                     Initializer: new(isBase: true, baseConstructor?.Signature.Parameters ?? Array.Empty<Parameter>())),
+                 initializers,
+                 baseConstructor)
+        {
+        }
+
+        public ConstructorSignature Signature { get; }
+        public IReadOnlyList<ObjectPropertyInitializer> Initializers { get; }
         public ObjectTypeConstructor? BaseConstructor { get; }
 
         public ObjectTypeProperty? FindPropertyInitializedByParameter(Parameter constructorParameter)
@@ -30,7 +41,8 @@ namespace AutoRest.CSharp.Output.Models.Types
             foreach (var propertyInitializer in Initializers)
             {
                 var value = propertyInitializer.Value;
-                if (value.IsConstant) continue;
+                if (value.IsConstant)
+                    continue;
 
                 if (value.Reference.Name == constructorParameter.Name)
                 {

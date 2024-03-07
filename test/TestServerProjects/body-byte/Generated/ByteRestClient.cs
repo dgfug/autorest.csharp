@@ -17,19 +17,22 @@ namespace body_byte
 {
     internal partial class ByteRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of ByteRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public ByteRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateGetNullRequest()
@@ -38,7 +41,7 @@ namespace body_byte
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/byte/null", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -61,7 +64,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -81,7 +84,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -91,14 +94,14 @@ namespace body_byte
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/byte/empty", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Get empty byte value &apos;&apos;. </summary>
+        /// <summary> Get empty byte value ''. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<byte[]>> GetEmptyAsync(CancellationToken cancellationToken = default)
         {
@@ -114,11 +117,11 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Get empty byte value &apos;&apos;. </summary>
+        /// <summary> Get empty byte value ''. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<byte[]> GetEmpty(CancellationToken cancellationToken = default)
         {
@@ -134,7 +137,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -144,7 +147,7 @@ namespace body_byte
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/byte/nonAscii", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -167,7 +170,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -187,7 +190,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -197,7 +200,7 @@ namespace body_byte
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/byte/nonAscii", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -226,7 +229,7 @@ namespace body_byte
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -248,7 +251,7 @@ namespace body_byte
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -258,14 +261,14 @@ namespace body_byte
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/byte/invalid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
         }
 
-        /// <summary> Get invalid byte value &apos;:::SWAGGER::::&apos;. </summary>
+        /// <summary> Get invalid byte value ':::SWAGGER::::'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response<byte[]>> GetInvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -281,11 +284,11 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> Get invalid byte value &apos;:::SWAGGER::::&apos;. </summary>
+        /// <summary> Get invalid byte value ':::SWAGGER::::'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response<byte[]> GetInvalid(CancellationToken cancellationToken = default)
         {
@@ -301,7 +304,7 @@ namespace body_byte
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

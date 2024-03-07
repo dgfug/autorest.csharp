@@ -8,40 +8,32 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
     /// <summary> A skill that can call a Web API endpoint, allowing you to extend a skillset by having it call your custom code. </summary>
     public partial class WebApiSkill : Skill
     {
-        /// <summary> Initializes a new instance of WebApiSkill. </summary>
+        /// <summary> Initializes a new instance of <see cref="WebApiSkill"/>. </summary>
         /// <param name="inputs"> Inputs of the skills could be a column in the source data set, or the output of an upstream skill. </param>
         /// <param name="outputs"> The output of a skill is either a field in a search index, or a value that can be consumed as an input by another skill. </param>
         /// <param name="uri"> The url for the Web API. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="inputs"/>, <paramref name="outputs"/>, or <paramref name="uri"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="inputs"/>, <paramref name="outputs"/> or <paramref name="uri"/> is null. </exception>
         public WebApiSkill(IEnumerable<InputFieldMappingEntry> inputs, IEnumerable<OutputFieldMappingEntry> outputs, string uri) : base(inputs, outputs)
         {
-            if (inputs == null)
-            {
-                throw new ArgumentNullException(nameof(inputs));
-            }
-            if (outputs == null)
-            {
-                throw new ArgumentNullException(nameof(outputs));
-            }
-            if (uri == null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
+            Argument.AssertNotNull(inputs, nameof(inputs));
+            Argument.AssertNotNull(outputs, nameof(outputs));
+            Argument.AssertNotNull(uri, nameof(uri));
 
             Uri = uri;
             HttpHeaders = new ChangeTrackingDictionary<string, string>();
             OdataType = "#Microsoft.Skills.Custom.WebApiSkill";
         }
 
-        /// <summary> Initializes a new instance of WebApiSkill. </summary>
+        /// <summary> Initializes a new instance of <see cref="WebApiSkill"/>. </summary>
         /// <param name="odataType"> Identifies the concrete type of the skill. </param>
-        /// <param name="name"> The name of the skill which uniquely identifies it within the skillset. A skill with no name defined will be given a default name of its 1-based index in the skills array, prefixed with the character &apos;#&apos;. </param>
+        /// <param name="name"> The name of the skill which uniquely identifies it within the skillset. A skill with no name defined will be given a default name of its 1-based index in the skills array, prefixed with the character '#'. </param>
         /// <param name="description"> The description of the skill which describes the inputs, outputs, and usage of the skill. </param>
         /// <param name="context"> Represents the level at which operations take place, such as the document root or document content (for example, /document or /document/content). The default is /document. </param>
         /// <param name="inputs"> Inputs of the skills could be a column in the source data set, or the output of an upstream skill. </param>

@@ -8,22 +8,20 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using additionalProperties;
 
 namespace additionalProperties.Models
 {
     /// <summary> The PetAPInPropertiesWithAPString. </summary>
     public partial class PetAPInPropertiesWithAPString
     {
-        /// <summary> Initializes a new instance of PetAPInPropertiesWithAPString. </summary>
+        /// <summary> Initializes a new instance of <see cref="PetAPInPropertiesWithAPString"/>. </summary>
         /// <param name="id"></param>
         /// <param name="odataLocation"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="odataLocation"/> is null. </exception>
         public PetAPInPropertiesWithAPString(int id, string odataLocation)
         {
-            if (odataLocation == null)
-            {
-                throw new ArgumentNullException(nameof(odataLocation));
-            }
+            Argument.AssertNotNull(odataLocation, nameof(odataLocation));
 
             Id = id;
             OdataLocation = odataLocation;
@@ -31,7 +29,7 @@ namespace additionalProperties.Models
             MoreAdditionalProperties = new ChangeTrackingDictionary<string, string>();
         }
 
-        /// <summary> Initializes a new instance of PetAPInPropertiesWithAPString. </summary>
+        /// <summary> Initializes a new instance of <see cref="PetAPInPropertiesWithAPString"/>. </summary>
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="status"></param>
@@ -46,6 +44,11 @@ namespace additionalProperties.Models
             OdataLocation = odataLocation;
             AdditionalProperties = additionalProperties;
             MoreAdditionalProperties = moreAdditionalProperties;
+        }
+
+        /// <summary> Initializes a new instance of <see cref="PetAPInPropertiesWithAPString"/> for deserialization. </summary>
+        internal PetAPInPropertiesWithAPString()
+        {
         }
 
         /// <summary> Gets or sets the id. </summary>

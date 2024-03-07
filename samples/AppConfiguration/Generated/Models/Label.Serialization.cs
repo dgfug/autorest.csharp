@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace AppConfiguration.Models
 {
@@ -14,16 +13,20 @@ namespace AppConfiguration.Models
     {
         internal static Label DeserializeLabel(JsonElement element)
         {
-            Optional<string> name = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string name = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
             }
-            return new Label(name.Value);
+            return new Label(name);
         }
     }
 }

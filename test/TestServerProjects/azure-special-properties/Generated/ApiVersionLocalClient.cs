@@ -29,6 +29,7 @@ namespace azure_special_properties
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal ApiVersionLocalClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new ApiVersionLocalRestClient(clientDiagnostics, pipeline, endpoint);
@@ -36,7 +37,7 @@ namespace azure_special_properties
             _pipeline = pipeline;
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetMethodLocalValidAsync(CancellationToken cancellationToken = default)
         {
@@ -53,7 +54,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetMethodLocalValid(CancellationToken cancellationToken = default)
         {
@@ -106,7 +107,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetPathLocalValidAsync(CancellationToken cancellationToken = default)
         {
@@ -123,7 +124,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetPathLocalValid(CancellationToken cancellationToken = default)
         {
@@ -140,7 +141,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> GetSwaggerLocalValidAsync(CancellationToken cancellationToken = default)
         {
@@ -157,7 +158,7 @@ namespace azure_special_properties
             }
         }
 
-        /// <summary> Get method with api-version modeled in the method.  pass in api-version = &apos;2.0&apos; to succeed. </summary>
+        /// <summary> Get method with api-version modeled in the method.  pass in api-version = '2.0' to succeed. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response GetSwaggerLocalValid(CancellationToken cancellationToken = default)
         {

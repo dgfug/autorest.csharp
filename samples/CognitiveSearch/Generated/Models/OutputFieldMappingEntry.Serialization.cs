@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -15,11 +16,11 @@ namespace CognitiveSearch.Models
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName("name");
+            writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             if (Optional.IsDefined(TargetName))
             {
-                writer.WritePropertyName("targetName");
+                writer.WritePropertyName("targetName"u8);
                 writer.WriteStringValue(TargetName);
             }
             writer.WriteEndObject();
@@ -27,22 +28,26 @@ namespace CognitiveSearch.Models
 
         internal static OutputFieldMappingEntry DeserializeOutputFieldMappingEntry(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             string name = default;
-            Optional<string> targetName = default;
+            string targetName = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("targetName"))
+                if (property.NameEquals("targetName"u8))
                 {
                     targetName = property.Value.GetString();
                     continue;
                 }
             }
-            return new OutputFieldMappingEntry(name, targetName.Value);
+            return new OutputFieldMappingEntry(name, targetName);
         }
     }
 }

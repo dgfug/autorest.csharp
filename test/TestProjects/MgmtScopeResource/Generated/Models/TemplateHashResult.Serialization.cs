@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtScopeResource.Models
 {
@@ -14,22 +13,26 @@ namespace MgmtScopeResource.Models
     {
         internal static TemplateHashResult DeserializeTemplateHashResult(JsonElement element)
         {
-            Optional<string> minifiedTemplate = default;
-            Optional<string> templateHash = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string minifiedTemplate = default;
+            string templateHash = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("minifiedTemplate"))
+                if (property.NameEquals("minifiedTemplate"u8))
                 {
                     minifiedTemplate = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("templateHash"))
+                if (property.NameEquals("templateHash"u8))
                 {
                     templateHash = property.Value.GetString();
                     continue;
                 }
             }
-            return new TemplateHashResult(minifiedTemplate.Value, templateHash.Value);
+            return new TemplateHashResult(minifiedTemplate, templateHash);
         }
     }
 }

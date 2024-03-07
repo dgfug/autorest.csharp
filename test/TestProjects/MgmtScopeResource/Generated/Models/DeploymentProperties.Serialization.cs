@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using MgmtScopeResource;
 
 namespace MgmtScopeResource.Models
 {
@@ -17,15 +18,29 @@ namespace MgmtScopeResource.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(Template))
             {
-                writer.WritePropertyName("template");
-                writer.WriteObjectValue(Template);
+                writer.WritePropertyName("template"u8);
+#if NET6_0_OR_GREATER
+				writer.WriteRawValue(Template);
+#else
+                using (JsonDocument document = JsonDocument.Parse(Template))
+                {
+                    JsonSerializer.Serialize(writer, document.RootElement);
+                }
+#endif
             }
             if (Optional.IsDefined(Parameters))
             {
-                writer.WritePropertyName("parameters");
-                writer.WriteObjectValue(Parameters);
+                writer.WritePropertyName("parameters"u8);
+#if NET6_0_OR_GREATER
+				writer.WriteRawValue(Parameters);
+#else
+                using (JsonDocument document = JsonDocument.Parse(Parameters))
+                {
+                    JsonSerializer.Serialize(writer, document.RootElement);
+                }
+#endif
             }
-            writer.WritePropertyName("mode");
+            writer.WritePropertyName("mode"u8);
             writer.WriteStringValue(Mode.ToSerialString());
             writer.WriteEndObject();
         }

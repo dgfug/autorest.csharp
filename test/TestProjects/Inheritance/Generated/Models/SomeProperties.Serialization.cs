@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using Inheritance;
 
 namespace Inheritance.Models
 {
@@ -17,12 +18,12 @@ namespace Inheritance.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(SomeProperty))
             {
-                writer.WritePropertyName("SomeProperty");
+                writer.WritePropertyName("SomeProperty"u8);
                 writer.WriteStringValue(SomeProperty);
             }
             if (Optional.IsDefined(SomeOtherProperty))
             {
-                writer.WritePropertyName("SomeOtherProperty");
+                writer.WritePropertyName("SomeOtherProperty"u8);
                 writer.WriteStringValue(SomeOtherProperty);
             }
             writer.WriteEndObject();
@@ -30,22 +31,26 @@ namespace Inheritance.Models
 
         internal static SomeProperties DeserializeSomeProperties(JsonElement element)
         {
-            Optional<string> someProperty = default;
-            Optional<string> someOtherProperty = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string someProperty = default;
+            string someOtherProperty = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("SomeProperty"))
+                if (property.NameEquals("SomeProperty"u8))
                 {
                     someProperty = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("SomeOtherProperty"))
+                if (property.NameEquals("SomeOtherProperty"u8))
                 {
                     someOtherProperty = property.Value.GetString();
                     continue;
                 }
             }
-            return new SomeProperties(someProperty.Value, someOtherProperty.Value);
+            return new SomeProperties(someProperty, someOtherProperty);
         }
     }
 }

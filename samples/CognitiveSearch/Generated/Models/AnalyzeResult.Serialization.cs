@@ -7,7 +7,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -15,10 +14,14 @@ namespace CognitiveSearch.Models
     {
         internal static AnalyzeResult DeserializeAnalyzeResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IReadOnlyList<TokenInfo> tokens = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("tokens"))
+                if (property.NameEquals("tokens"u8))
                 {
                     List<TokenInfo> array = new List<TokenInfo>();
                     foreach (var item in property.Value.EnumerateArray())

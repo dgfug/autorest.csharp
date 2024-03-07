@@ -16,26 +16,29 @@ namespace url
 {
     internal partial class PathItemsRestClient
     {
-        private string globalStringPath;
-        private Uri endpoint;
-        private string globalStringQuery;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly string _globalStringPath;
+        private readonly Uri _endpoint;
+        private readonly string _globalStringQuery;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of PathItemsRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
-        /// <param name="globalStringPath"> A string value &apos;globalItemStringPath&apos; that appears in the path. </param>
+        /// <param name="globalStringPath"> A string value 'globalItemStringPath' that appears in the path. </param>
         /// <param name="endpoint"> server parameter. </param>
         /// <param name="globalStringQuery"> should contain value null. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="globalStringPath"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/> or <paramref name="globalStringPath"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="globalStringPath"/> is an empty string, and was expected to be non-empty. </exception>
         public PathItemsRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string globalStringPath, Uri endpoint = null, string globalStringQuery = null)
         {
-            this.globalStringPath = globalStringPath ?? throw new ArgumentNullException(nameof(globalStringPath));
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            this.globalStringQuery = globalStringQuery;
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _globalStringPath = globalStringPath ?? throw new ArgumentNullException(nameof(globalStringPath));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
+            _globalStringQuery = globalStringQuery;
         }
 
         internal HttpMessage CreateGetAllWithValuesRequest(string pathItemStringPath, string localStringPath, string pathItemStringQuery, string localStringQuery)
@@ -44,9 +47,9 @@ namespace url
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/pathitem/nullable/globalStringPath/", false);
-            uri.AppendPath(globalStringPath, true);
+            uri.AppendPath(_globalStringPath, true);
             uri.AppendPath("/pathItemStringPath/", false);
             uri.AppendPath(pathItemStringPath, true);
             uri.AppendPath("/localStringPath/", false);
@@ -56,9 +59,9 @@ namespace url
             {
                 uri.AppendQuery("pathItemStringQuery", pathItemStringQuery, true);
             }
-            if (globalStringQuery != null)
+            if (_globalStringQuery != null)
             {
-                uri.AppendQuery("globalStringQuery", globalStringQuery, true);
+                uri.AppendQuery("globalStringQuery", _globalStringQuery, true);
             }
             if (localStringQuery != null)
             {
@@ -69,11 +72,11 @@ namespace url
             return message;
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=&apos;globalStringQuery&apos;, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=&apos;localStringQuery&apos;. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
-        /// <param name="localStringQuery"> should contain value &apos;localStringQuery&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery='globalStringQuery', pathItemStringQuery='pathItemStringQuery', localStringQuery='localStringQuery'. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
+        /// <param name="localStringQuery"> should contain value 'localStringQuery'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
         public async Task<Response> GetAllWithValuesAsync(string pathItemStringPath, string localStringPath, string pathItemStringQuery = null, string localStringQuery = null, CancellationToken cancellationToken = default)
@@ -94,15 +97,15 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=&apos;globalStringQuery&apos;, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=&apos;localStringQuery&apos;. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
-        /// <param name="localStringQuery"> should contain value &apos;localStringQuery&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery='globalStringQuery', pathItemStringQuery='pathItemStringQuery', localStringQuery='localStringQuery'. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
+        /// <param name="localStringQuery"> should contain value 'localStringQuery'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
         public Response GetAllWithValues(string pathItemStringPath, string localStringPath, string pathItemStringQuery = null, string localStringQuery = null, CancellationToken cancellationToken = default)
@@ -123,7 +126,7 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -133,9 +136,9 @@ namespace url
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/pathitem/nullable/globalStringPath/", false);
-            uri.AppendPath(globalStringPath, true);
+            uri.AppendPath(_globalStringPath, true);
             uri.AppendPath("/pathItemStringPath/", false);
             uri.AppendPath(pathItemStringPath, true);
             uri.AppendPath("/localStringPath/", false);
@@ -145,9 +148,9 @@ namespace url
             {
                 uri.AppendQuery("pathItemStringQuery", pathItemStringQuery, true);
             }
-            if (globalStringQuery != null)
+            if (_globalStringQuery != null)
             {
-                uri.AppendQuery("globalStringQuery", globalStringQuery, true);
+                uri.AppendQuery("globalStringQuery", _globalStringQuery, true);
             }
             if (localStringQuery != null)
             {
@@ -158,11 +161,11 @@ namespace url
             return message;
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=null, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=&apos;localStringQuery&apos;. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
-        /// <param name="localStringQuery"> should contain value &apos;localStringQuery&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery=null, pathItemStringQuery='pathItemStringQuery', localStringQuery='localStringQuery'. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
+        /// <param name="localStringQuery"> should contain value 'localStringQuery'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
         public async Task<Response> GetGlobalQueryNullAsync(string pathItemStringPath, string localStringPath, string pathItemStringQuery = null, string localStringQuery = null, CancellationToken cancellationToken = default)
@@ -183,15 +186,15 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=null, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=&apos;localStringQuery&apos;. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
-        /// <param name="localStringQuery"> should contain value &apos;localStringQuery&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery=null, pathItemStringQuery='pathItemStringQuery', localStringQuery='localStringQuery'. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
+        /// <param name="localStringQuery"> should contain value 'localStringQuery'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
         public Response GetGlobalQueryNull(string pathItemStringPath, string localStringPath, string pathItemStringQuery = null, string localStringQuery = null, CancellationToken cancellationToken = default)
@@ -212,7 +215,7 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -222,9 +225,9 @@ namespace url
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/pathitem/nullable/globalStringPath/", false);
-            uri.AppendPath(globalStringPath, true);
+            uri.AppendPath(_globalStringPath, true);
             uri.AppendPath("/pathItemStringPath/", false);
             uri.AppendPath(pathItemStringPath, true);
             uri.AppendPath("/localStringPath/", false);
@@ -234,9 +237,9 @@ namespace url
             {
                 uri.AppendQuery("pathItemStringQuery", pathItemStringQuery, true);
             }
-            if (globalStringQuery != null)
+            if (_globalStringQuery != null)
             {
-                uri.AppendQuery("globalStringQuery", globalStringQuery, true);
+                uri.AppendQuery("globalStringQuery", _globalStringQuery, true);
             }
             if (localStringQuery != null)
             {
@@ -247,10 +250,10 @@ namespace url
             return message;
         }
 
-        /// <summary> send globalStringPath=globalStringPath, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=null, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=null. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
+        /// <summary> send globalStringPath=globalStringPath, pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery=null, pathItemStringQuery='pathItemStringQuery', localStringQuery=null. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
         /// <param name="localStringQuery"> should contain null value. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
@@ -272,14 +275,14 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> send globalStringPath=globalStringPath, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=null, pathItemStringQuery=&apos;pathItemStringQuery&apos;, localStringQuery=null. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
-        /// <param name="pathItemStringQuery"> A string value &apos;pathItemStringQuery&apos; that appears as a query parameter. </param>
+        /// <summary> send globalStringPath=globalStringPath, pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery=null, pathItemStringQuery='pathItemStringQuery', localStringQuery=null. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
+        /// <param name="pathItemStringQuery"> A string value 'pathItemStringQuery' that appears as a query parameter. </param>
         /// <param name="localStringQuery"> should contain null value. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathItemStringPath"/> or <paramref name="localStringPath"/> is null. </exception>
@@ -301,7 +304,7 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -311,9 +314,9 @@ namespace url
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/pathitem/nullable/globalStringPath/", false);
-            uri.AppendPath(globalStringPath, true);
+            uri.AppendPath(_globalStringPath, true);
             uri.AppendPath("/pathItemStringPath/", false);
             uri.AppendPath(pathItemStringPath, true);
             uri.AppendPath("/localStringPath/", false);
@@ -323,9 +326,9 @@ namespace url
             {
                 uri.AppendQuery("pathItemStringQuery", pathItemStringQuery, true);
             }
-            if (globalStringQuery != null)
+            if (_globalStringQuery != null)
             {
-                uri.AppendQuery("globalStringQuery", globalStringQuery, true);
+                uri.AppendQuery("globalStringQuery", _globalStringQuery, true);
             }
             if (localStringQuery != null)
             {
@@ -336,9 +339,9 @@ namespace url
             return message;
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=&apos;globalStringQuery&apos;, pathItemStringQuery=null, localStringQuery=null. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery='globalStringQuery', pathItemStringQuery=null, localStringQuery=null. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
         /// <param name="pathItemStringQuery"> should contain value null. </param>
         /// <param name="localStringQuery"> should contain value null. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
@@ -361,13 +364,13 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        /// <summary> send globalStringPath=&apos;globalStringPath&apos;, pathItemStringPath=&apos;pathItemStringPath&apos;, localStringPath=&apos;localStringPath&apos;, globalStringQuery=&apos;globalStringQuery&apos;, pathItemStringQuery=null, localStringQuery=null. </summary>
-        /// <param name="pathItemStringPath"> A string value &apos;pathItemStringPath&apos; that appears in the path. </param>
-        /// <param name="localStringPath"> should contain value &apos;localStringPath&apos;. </param>
+        /// <summary> send globalStringPath='globalStringPath', pathItemStringPath='pathItemStringPath', localStringPath='localStringPath', globalStringQuery='globalStringQuery', pathItemStringQuery=null, localStringQuery=null. </summary>
+        /// <param name="pathItemStringPath"> A string value 'pathItemStringPath' that appears in the path. </param>
+        /// <param name="localStringPath"> should contain value 'localStringPath'. </param>
         /// <param name="pathItemStringQuery"> should contain value null. </param>
         /// <param name="localStringQuery"> should contain value null. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
@@ -390,7 +393,7 @@ namespace url
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

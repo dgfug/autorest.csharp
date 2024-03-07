@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -14,13 +13,17 @@ namespace CognitiveSearch.Models
     {
         internal static ServiceLimits DeserializeServiceLimits(JsonElement element)
         {
-            Optional<int?> maxFieldsPerIndex = default;
-            Optional<int?> maxFieldNestingDepthPerIndex = default;
-            Optional<int?> maxComplexCollectionFieldsPerIndex = default;
-            Optional<int?> maxComplexObjectsInCollectionsPerDocument = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            int? maxFieldsPerIndex = default;
+            int? maxFieldNestingDepthPerIndex = default;
+            int? maxComplexCollectionFieldsPerIndex = default;
+            int? maxComplexObjectsInCollectionsPerDocument = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("maxFieldsPerIndex"))
+                if (property.NameEquals("maxFieldsPerIndex"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -30,7 +33,7 @@ namespace CognitiveSearch.Models
                     maxFieldsPerIndex = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("maxFieldNestingDepthPerIndex"))
+                if (property.NameEquals("maxFieldNestingDepthPerIndex"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -40,7 +43,7 @@ namespace CognitiveSearch.Models
                     maxFieldNestingDepthPerIndex = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("maxComplexCollectionFieldsPerIndex"))
+                if (property.NameEquals("maxComplexCollectionFieldsPerIndex"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -50,7 +53,7 @@ namespace CognitiveSearch.Models
                     maxComplexCollectionFieldsPerIndex = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("maxComplexObjectsInCollectionsPerDocument"))
+                if (property.NameEquals("maxComplexObjectsInCollectionsPerDocument"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -61,7 +64,7 @@ namespace CognitiveSearch.Models
                     continue;
                 }
             }
-            return new ServiceLimits(Optional.ToNullable(maxFieldsPerIndex), Optional.ToNullable(maxFieldNestingDepthPerIndex), Optional.ToNullable(maxComplexCollectionFieldsPerIndex), Optional.ToNullable(maxComplexObjectsInCollectionsPerDocument));
+            return new ServiceLimits(maxFieldsPerIndex, maxFieldNestingDepthPerIndex, maxComplexCollectionFieldsPerIndex, maxComplexObjectsInCollectionsPerDocument);
         }
     }
 }

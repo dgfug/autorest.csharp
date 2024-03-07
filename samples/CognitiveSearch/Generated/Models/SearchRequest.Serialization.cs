@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -18,12 +19,12 @@ namespace CognitiveSearch.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(IncludeTotalResultCount))
             {
-                writer.WritePropertyName("count");
+                writer.WritePropertyName("count"u8);
                 writer.WriteBooleanValue(IncludeTotalResultCount.Value);
             }
             if (Optional.IsCollectionDefined(Facets))
             {
-                writer.WritePropertyName("facets");
+                writer.WritePropertyName("facets"u8);
                 writer.WriteStartArray();
                 foreach (var item in Facets)
                 {
@@ -33,42 +34,42 @@ namespace CognitiveSearch.Models
             }
             if (Optional.IsDefined(Filter))
             {
-                writer.WritePropertyName("filter");
+                writer.WritePropertyName("filter"u8);
                 writer.WriteStringValue(Filter);
             }
             if (Optional.IsDefined(HighlightFields))
             {
-                writer.WritePropertyName("highlight");
+                writer.WritePropertyName("highlight"u8);
                 writer.WriteStringValue(HighlightFields);
             }
             if (Optional.IsDefined(HighlightPostTag))
             {
-                writer.WritePropertyName("highlightPostTag");
+                writer.WritePropertyName("highlightPostTag"u8);
                 writer.WriteStringValue(HighlightPostTag);
             }
             if (Optional.IsDefined(HighlightPreTag))
             {
-                writer.WritePropertyName("highlightPreTag");
+                writer.WritePropertyName("highlightPreTag"u8);
                 writer.WriteStringValue(HighlightPreTag);
             }
             if (Optional.IsDefined(MinimumCoverage))
             {
-                writer.WritePropertyName("minimumCoverage");
+                writer.WritePropertyName("minimumCoverage"u8);
                 writer.WriteNumberValue(MinimumCoverage.Value);
             }
             if (Optional.IsDefined(OrderBy))
             {
-                writer.WritePropertyName("orderby");
+                writer.WritePropertyName("orderby"u8);
                 writer.WriteStringValue(OrderBy);
             }
             if (Optional.IsDefined(QueryType))
             {
-                writer.WritePropertyName("queryType");
+                writer.WritePropertyName("queryType"u8);
                 writer.WriteStringValue(QueryType.Value.ToSerialString());
             }
             if (Optional.IsCollectionDefined(ScoringParameters))
             {
-                writer.WritePropertyName("scoringParameters");
+                writer.WritePropertyName("scoringParameters"u8);
                 writer.WriteStartArray();
                 foreach (var item in ScoringParameters)
                 {
@@ -78,37 +79,37 @@ namespace CognitiveSearch.Models
             }
             if (Optional.IsDefined(ScoringProfile))
             {
-                writer.WritePropertyName("scoringProfile");
+                writer.WritePropertyName("scoringProfile"u8);
                 writer.WriteStringValue(ScoringProfile);
             }
             if (Optional.IsDefined(SearchText))
             {
-                writer.WritePropertyName("search");
+                writer.WritePropertyName("search"u8);
                 writer.WriteStringValue(SearchText);
             }
             if (Optional.IsDefined(SearchFields))
             {
-                writer.WritePropertyName("searchFields");
+                writer.WritePropertyName("searchFields"u8);
                 writer.WriteStringValue(SearchFields);
             }
             if (Optional.IsDefined(SearchMode))
             {
-                writer.WritePropertyName("searchMode");
+                writer.WritePropertyName("searchMode"u8);
                 writer.WriteStringValue(SearchMode.Value.ToSerialString());
             }
             if (Optional.IsDefined(Select))
             {
-                writer.WritePropertyName("select");
+                writer.WritePropertyName("select"u8);
                 writer.WriteStringValue(Select);
             }
             if (Optional.IsDefined(Skip))
             {
-                writer.WritePropertyName("skip");
+                writer.WritePropertyName("skip"u8);
                 writer.WriteNumberValue(Skip.Value);
             }
             if (Optional.IsDefined(Top))
             {
-                writer.WritePropertyName("top");
+                writer.WritePropertyName("top"u8);
                 writer.WriteNumberValue(Top.Value);
             }
             writer.WriteEndObject();
@@ -116,40 +117,42 @@ namespace CognitiveSearch.Models
 
         internal static SearchRequest DeserializeSearchRequest(JsonElement element)
         {
-            Optional<bool> count = default;
-            Optional<IList<string>> facets = default;
-            Optional<string> filter = default;
-            Optional<string> highlight = default;
-            Optional<string> highlightPostTag = default;
-            Optional<string> highlightPreTag = default;
-            Optional<double> minimumCoverage = default;
-            Optional<string> orderby = default;
-            Optional<QueryType> queryType = default;
-            Optional<IList<string>> scoringParameters = default;
-            Optional<string> scoringProfile = default;
-            Optional<string> search = default;
-            Optional<string> searchFields = default;
-            Optional<SearchMode> searchMode = default;
-            Optional<string> select = default;
-            Optional<int> skip = default;
-            Optional<int> top = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            bool? count = default;
+            IList<string> facets = default;
+            string filter = default;
+            string highlight = default;
+            string highlightPostTag = default;
+            string highlightPreTag = default;
+            double? minimumCoverage = default;
+            string orderby = default;
+            QueryType? queryType = default;
+            IList<string> scoringParameters = default;
+            string scoringProfile = default;
+            string search = default;
+            string searchFields = default;
+            SearchMode? searchMode = default;
+            string select = default;
+            int? skip = default;
+            int? top = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("count"))
+                if (property.NameEquals("count"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     count = property.Value.GetBoolean();
                     continue;
                 }
-                if (property.NameEquals("facets"))
+                if (property.NameEquals("facets"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<string> array = new List<string>();
@@ -160,56 +163,53 @@ namespace CognitiveSearch.Models
                     facets = array;
                     continue;
                 }
-                if (property.NameEquals("filter"))
+                if (property.NameEquals("filter"u8))
                 {
                     filter = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("highlight"))
+                if (property.NameEquals("highlight"u8))
                 {
                     highlight = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("highlightPostTag"))
+                if (property.NameEquals("highlightPostTag"u8))
                 {
                     highlightPostTag = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("highlightPreTag"))
+                if (property.NameEquals("highlightPreTag"u8))
                 {
                     highlightPreTag = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("minimumCoverage"))
+                if (property.NameEquals("minimumCoverage"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     minimumCoverage = property.Value.GetDouble();
                     continue;
                 }
-                if (property.NameEquals("orderby"))
+                if (property.NameEquals("orderby"u8))
                 {
                     orderby = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("queryType"))
+                if (property.NameEquals("queryType"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     queryType = property.Value.GetString().ToQueryType();
                     continue;
                 }
-                if (property.NameEquals("scoringParameters"))
+                if (property.NameEquals("scoringParameters"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<string> array = new List<string>();
@@ -220,58 +220,72 @@ namespace CognitiveSearch.Models
                     scoringParameters = array;
                     continue;
                 }
-                if (property.NameEquals("scoringProfile"))
+                if (property.NameEquals("scoringProfile"u8))
                 {
                     scoringProfile = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("search"))
+                if (property.NameEquals("search"u8))
                 {
                     search = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("searchFields"))
+                if (property.NameEquals("searchFields"u8))
                 {
                     searchFields = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("searchMode"))
+                if (property.NameEquals("searchMode"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     searchMode = property.Value.GetString().ToSearchMode();
                     continue;
                 }
-                if (property.NameEquals("select"))
+                if (property.NameEquals("select"u8))
                 {
                     select = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("skip"))
+                if (property.NameEquals("skip"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     skip = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("top"))
+                if (property.NameEquals("top"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     top = property.Value.GetInt32();
                     continue;
                 }
             }
-            return new SearchRequest(Optional.ToNullable(count), Optional.ToList(facets), filter.Value, highlight.Value, highlightPostTag.Value, highlightPreTag.Value, Optional.ToNullable(minimumCoverage), orderby.Value, Optional.ToNullable(queryType), Optional.ToList(scoringParameters), scoringProfile.Value, search.Value, searchFields.Value, Optional.ToNullable(searchMode), select.Value, Optional.ToNullable(skip), Optional.ToNullable(top));
+            return new SearchRequest(
+                count,
+                facets ?? new ChangeTrackingList<string>(),
+                filter,
+                highlight,
+                highlightPostTag,
+                highlightPreTag,
+                minimumCoverage,
+                orderby,
+                queryType,
+                scoringParameters ?? new ChangeTrackingList<string>(),
+                scoringProfile,
+                search,
+                searchFields,
+                searchMode,
+                select,
+                skip,
+                top);
         }
     }
 }

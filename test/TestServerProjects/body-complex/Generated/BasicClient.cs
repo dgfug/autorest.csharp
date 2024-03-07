@@ -31,6 +31,7 @@ namespace body_complex
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
         /// <param name="apiVersion"> Api Version. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/> or <paramref name="apiVersion"/> is null. </exception>
         internal BasicClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null, string apiVersion = "2016-02-29")
         {
             RestClient = new BasicRestClient(clientDiagnostics, pipeline, endpoint, apiVersion);
@@ -38,7 +39,7 @@ namespace body_complex
             _pipeline = pipeline;
         }
 
-        /// <summary> Get complex type {id: 2, name: &apos;abc&apos;, color: &apos;YELLOW&apos;}. </summary>
+        /// <summary> Get complex type {id: 2, name: 'abc', color: 'YELLOW'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<Basic>> GetValidAsync(CancellationToken cancellationToken = default)
         {
@@ -55,7 +56,7 @@ namespace body_complex
             }
         }
 
-        /// <summary> Get complex type {id: 2, name: &apos;abc&apos;, color: &apos;YELLOW&apos;}. </summary>
+        /// <summary> Get complex type {id: 2, name: 'abc', color: 'YELLOW'}. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<Basic> GetValid(CancellationToken cancellationToken = default)
         {
@@ -72,8 +73,8 @@ namespace body_complex
             }
         }
 
-        /// <summary> Please put {id: 2, name: &apos;abc&apos;, color: &apos;Magenta&apos;}. </summary>
-        /// <param name="complexBody"> Please put {id: 2, name: &apos;abc&apos;, color: &apos;Magenta&apos;}. </param>
+        /// <summary> Please put {id: 2, name: 'abc', color: 'Magenta'}. </summary>
+        /// <param name="complexBody"> Please put {id: 2, name: 'abc', color: 'Magenta'}. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutValidAsync(Basic complexBody, CancellationToken cancellationToken = default)
         {
@@ -90,8 +91,8 @@ namespace body_complex
             }
         }
 
-        /// <summary> Please put {id: 2, name: &apos;abc&apos;, color: &apos;Magenta&apos;}. </summary>
-        /// <param name="complexBody"> Please put {id: 2, name: &apos;abc&apos;, color: &apos;Magenta&apos;}. </param>
+        /// <summary> Please put {id: 2, name: 'abc', color: 'Magenta'}. </summary>
+        /// <param name="complexBody"> Please put {id: 2, name: 'abc', color: 'Magenta'}. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutValid(Basic complexBody, CancellationToken cancellationToken = default)
         {
@@ -210,7 +211,7 @@ namespace body_complex
             }
         }
 
-        /// <summary> Get a basic complex type while the server doesn&apos;t provide a response payload. </summary>
+        /// <summary> Get a basic complex type while the server doesn't provide a response payload. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<Basic>> GetNotProvidedAsync(CancellationToken cancellationToken = default)
         {
@@ -227,7 +228,7 @@ namespace body_complex
             }
         }
 
-        /// <summary> Get a basic complex type while the server doesn&apos;t provide a response payload. </summary>
+        /// <summary> Get a basic complex type while the server doesn't provide a response payload. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<Basic> GetNotProvided(CancellationToken cancellationToken = default)
         {

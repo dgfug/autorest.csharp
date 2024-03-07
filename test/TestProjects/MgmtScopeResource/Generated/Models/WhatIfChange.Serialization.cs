@@ -5,8 +5,8 @@
 
 #nullable disable
 
+using System;
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtScopeResource.Models
 {
@@ -14,50 +14,52 @@ namespace MgmtScopeResource.Models
     {
         internal static WhatIfChange DeserializeWhatIfChange(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             string resourceId = default;
             ChangeType changeType = default;
-            Optional<string> unsupportedReason = default;
-            Optional<object> before = default;
-            Optional<object> after = default;
+            string unsupportedReason = default;
+            BinaryData before = default;
+            BinaryData after = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("resourceId"))
+                if (property.NameEquals("resourceId"u8))
                 {
                     resourceId = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("changeType"))
+                if (property.NameEquals("changeType"u8))
                 {
                     changeType = property.Value.GetString().ToChangeType();
                     continue;
                 }
-                if (property.NameEquals("unsupportedReason"))
+                if (property.NameEquals("unsupportedReason"u8))
                 {
                     unsupportedReason = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("before"))
+                if (property.NameEquals("before"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    before = property.Value.GetObject();
+                    before = BinaryData.FromString(property.Value.GetRawText());
                     continue;
                 }
-                if (property.NameEquals("after"))
+                if (property.NameEquals("after"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    after = property.Value.GetObject();
+                    after = BinaryData.FromString(property.Value.GetRawText());
                     continue;
                 }
             }
-            return new WhatIfChange(resourceId, changeType, unsupportedReason.Value, before.Value, after.Value);
+            return new WhatIfChange(resourceId, changeType, unsupportedReason, before, after);
         }
     }
 }

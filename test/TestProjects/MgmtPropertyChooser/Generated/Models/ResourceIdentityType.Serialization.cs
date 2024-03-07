@@ -13,19 +13,19 @@ namespace MgmtPropertyChooser.Models
     {
         public static string ToSerialString(this ResourceIdentityType value) => value switch
         {
+            ResourceIdentityType.None => "None",
             ResourceIdentityType.SystemAssigned => "SystemAssigned",
             ResourceIdentityType.UserAssigned => "UserAssigned",
             ResourceIdentityType.SystemAssignedUserAssigned => "SystemAssigned, UserAssigned",
-            ResourceIdentityType.None => "None",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "Unknown ResourceIdentityType value.")
         };
 
         public static ResourceIdentityType ToResourceIdentityType(this string value)
         {
-            if (string.Equals(value, "SystemAssigned", StringComparison.InvariantCultureIgnoreCase)) return ResourceIdentityType.SystemAssigned;
-            if (string.Equals(value, "UserAssigned", StringComparison.InvariantCultureIgnoreCase)) return ResourceIdentityType.UserAssigned;
-            if (string.Equals(value, "SystemAssigned, UserAssigned", StringComparison.InvariantCultureIgnoreCase)) return ResourceIdentityType.SystemAssignedUserAssigned;
-            if (string.Equals(value, "None", StringComparison.InvariantCultureIgnoreCase)) return ResourceIdentityType.None;
+            if (StringComparer.OrdinalIgnoreCase.Equals(value, "None")) return ResourceIdentityType.None;
+            if (StringComparer.OrdinalIgnoreCase.Equals(value, "SystemAssigned")) return ResourceIdentityType.SystemAssigned;
+            if (StringComparer.OrdinalIgnoreCase.Equals(value, "UserAssigned")) return ResourceIdentityType.UserAssigned;
+            if (StringComparer.OrdinalIgnoreCase.Equals(value, "SystemAssigned, UserAssigned")) return ResourceIdentityType.SystemAssignedUserAssigned;
             throw new ArgumentOutOfRangeException(nameof(value), value, "Unknown ResourceIdentityType value.");
         }
     }

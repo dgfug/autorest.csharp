@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using MgmtScopeResource;
 
 namespace MgmtScopeResource.Models
 {
@@ -15,27 +16,30 @@ namespace MgmtScopeResource.Models
     {
         internal static WhatIfOperationResult DeserializeWhatIfOperationResult(JsonElement element)
         {
-            Optional<string> status = default;
-            Optional<ErrorResponse> error = default;
-            Optional<IReadOnlyList<WhatIfChange>> changes = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string status = default;
+            ErrorResponse errorResponse = default;
+            IReadOnlyList<WhatIfChange> changes = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("status"))
+                if (property.NameEquals("status"u8))
                 {
                     status = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("error"))
+                if (property.NameEquals("errorResponse"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    error = ErrorResponse.DeserializeErrorResponse(property.Value);
+                    errorResponse = ErrorResponse.DeserializeErrorResponse(property.Value);
                     continue;
                 }
-                if (property.NameEquals("properties"))
+                if (property.NameEquals("properties"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -44,11 +48,10 @@ namespace MgmtScopeResource.Models
                     }
                     foreach (var property0 in property.Value.EnumerateObject())
                     {
-                        if (property0.NameEquals("changes"))
+                        if (property0.NameEquals("changes"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<WhatIfChange> array = new List<WhatIfChange>();
@@ -63,7 +66,7 @@ namespace MgmtScopeResource.Models
                     continue;
                 }
             }
-            return new WhatIfOperationResult(status.Value, error.Value, Optional.ToList(changes));
+            return new WhatIfOperationResult(status, errorResponse, changes ?? new ChangeTrackingList<WhatIfChange>());
         }
     }
 }

@@ -30,6 +30,7 @@ namespace FlattenedParameters
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal FlattenedParametersClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new FlattenedParametersRestClient(clientDiagnostics, pipeline, endpoint);
@@ -37,7 +38,7 @@ namespace FlattenedParameters
             _pipeline = pipeline;
         }
 
-        /// <param name="items"> The PatchContentSchemaItems to use. </param>
+        /// <param name="items"> The <see cref="IEnumerable{T}"/> where <c>T</c> is of type <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> OperationAsync(IEnumerable<string> items = null, CancellationToken cancellationToken = default)
         {
@@ -54,7 +55,7 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="items"> The PatchContentSchemaItems to use. </param>
+        /// <param name="items"> The <see cref="IEnumerable{T}"/> where <c>T</c> is of type <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response Operation(IEnumerable<string> items = null, CancellationToken cancellationToken = default)
         {
@@ -71,7 +72,7 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="items"> The ArrayOfString to use. </param>
+        /// <param name="items"> The <see cref="IEnumerable{T}"/> where <c>T</c> is of type <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> OperationNotNullAsync(IEnumerable<string> items = null, CancellationToken cancellationToken = default)
         {
@@ -88,7 +89,7 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="items"> The ArrayOfString to use. </param>
+        /// <param name="items"> The <see cref="IEnumerable{T}"/> where <c>T</c> is of type <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response OperationNotNull(IEnumerable<string> items = null, CancellationToken cancellationToken = default)
         {
@@ -105,8 +106,8 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="required"> The FlattenedPropertiesRequired to use. </param>
-        /// <param name="nonRequired"> The FlattenedPropertiesNonRequired to use. </param>
+        /// <param name="required"> The <see cref="string"/> to use. </param>
+        /// <param name="nonRequired"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> OperationNotRequiredAsync(string required = null, string nonRequired = null, CancellationToken cancellationToken = default)
         {
@@ -123,8 +124,8 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="required"> The FlattenedPropertiesRequired to use. </param>
-        /// <param name="nonRequired"> The FlattenedPropertiesNonRequired to use. </param>
+        /// <param name="required"> The <see cref="string"/> to use. </param>
+        /// <param name="nonRequired"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response OperationNotRequired(string required = null, string nonRequired = null, CancellationToken cancellationToken = default)
         {
@@ -141,8 +142,8 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="required"> The FlattenedPropertiesRequired to use. </param>
-        /// <param name="nonRequired"> The FlattenedPropertiesNonRequired to use. </param>
+        /// <param name="required"> The <see cref="string"/> to use. </param>
+        /// <param name="nonRequired"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> OperationRequiredAsync(string required, string nonRequired = null, CancellationToken cancellationToken = default)
         {
@@ -159,8 +160,8 @@ namespace FlattenedParameters
             }
         }
 
-        /// <param name="required"> The FlattenedPropertiesRequired to use. </param>
-        /// <param name="nonRequired"> The FlattenedPropertiesNonRequired to use. </param>
+        /// <param name="required"> The <see cref="string"/> to use. </param>
+        /// <param name="nonRequired"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response OperationRequired(string required, string nonRequired = null, CancellationToken cancellationToken = default)
         {

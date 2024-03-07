@@ -29,11 +29,13 @@ namespace constants
         /// <summary> Initializes a new instance of ContantsClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
-        /// <param name="headerConstant"> Constant header property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
-        /// <param name="queryConstant"> Constant query property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
-        /// <param name="pathConstant"> Constant path property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
+        /// <param name="headerConstant"> Constant header property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is True. </param>
+        /// <param name="queryConstant"> Constant query property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is 100. </param>
+        /// <param name="pathConstant"> Constant path property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is "path". </param>
         /// <param name="endpoint"> server parameter. </param>
-        internal ContantsClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Enum8 headerConstant, Enum9 queryConstant, Enum10 pathConstant, Uri endpoint = null)
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/> or <paramref name="pathConstant"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="pathConstant"/> is an empty string, and was expected to be non-empty. </exception>
+        internal ContantsClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, bool headerConstant, int queryConstant, string pathConstant, Uri endpoint = null)
         {
             RestClient = new ContantsRestClient(clientDiagnostics, pipeline, headerConstant, queryConstant, pathConstant, endpoint);
             _clientDiagnostics = clientDiagnostics;
@@ -41,7 +43,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutNoModelAsStringNoRequiredTwoValueNoDefaultAsync(NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -59,7 +61,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutNoModelAsStringNoRequiredTwoValueNoDefault(NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -77,9 +79,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutNoModelAsStringNoRequiredTwoValueDefaultAsync(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = NoModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutNoModelAsStringNoRequiredTwoValueDefaultAsync(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredTwoValueDefault");
             scope.Start();
@@ -95,9 +97,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutNoModelAsStringNoRequiredTwoValueDefault(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = NoModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public virtual Response PutNoModelAsStringNoRequiredTwoValueDefault(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredTwoValueDefault");
             scope.Start();
@@ -113,14 +115,15 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(NoModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredOneValueNoDefault");
             scope.Start();
             try
             {
-                return await RestClient.PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(cancellationToken).ConfigureAwait(false);
+                return await RestClient.PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(input, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -130,14 +133,15 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutNoModelAsStringNoRequiredOneValueNoDefault(CancellationToken cancellationToken = default)
+        public virtual Response PutNoModelAsStringNoRequiredOneValueNoDefault(NoModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredOneValueNoDefault");
             scope.Start();
             try
             {
-                return RestClient.PutNoModelAsStringNoRequiredOneValueNoDefault(cancellationToken);
+                return RestClient.PutNoModelAsStringNoRequiredOneValueNoDefault(input, cancellationToken);
             }
             catch (Exception e)
             {
@@ -147,14 +151,15 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutNoModelAsStringNoRequiredOneValueDefaultAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutNoModelAsStringNoRequiredOneValueDefaultAsync(NoModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredOneValueDefault");
             scope.Start();
             try
             {
-                return await RestClient.PutNoModelAsStringNoRequiredOneValueDefaultAsync(cancellationToken).ConfigureAwait(false);
+                return await RestClient.PutNoModelAsStringNoRequiredOneValueDefaultAsync(input, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -164,14 +169,15 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutNoModelAsStringNoRequiredOneValueDefault(CancellationToken cancellationToken = default)
+        public virtual Response PutNoModelAsStringNoRequiredOneValueDefault(NoModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringNoRequiredOneValueDefault");
             scope.Start();
             try
             {
-                return RestClient.PutNoModelAsStringNoRequiredOneValueDefault(cancellationToken);
+                return RestClient.PutNoModelAsStringNoRequiredOneValueDefault(input, cancellationToken);
             }
             catch (Exception e)
             {
@@ -181,7 +187,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutNoModelAsStringRequiredTwoValueNoDefaultAsync(NoModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -199,7 +205,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutNoModelAsStringRequiredTwoValueNoDefault(NoModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -217,9 +223,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutNoModelAsStringRequiredTwoValueDefaultAsync(NoModelAsStringRequiredTwoValueDefaultOpEnum input = NoModelAsStringRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutNoModelAsStringRequiredTwoValueDefaultAsync(NoModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringRequiredTwoValueDefault");
             scope.Start();
@@ -235,9 +241,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutNoModelAsStringRequiredTwoValueDefault(NoModelAsStringRequiredTwoValueDefaultOpEnum input = NoModelAsStringRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public virtual Response PutNoModelAsStringRequiredTwoValueDefault(NoModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutNoModelAsStringRequiredTwoValueDefault");
             scope.Start();
@@ -321,7 +327,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutModelAsStringNoRequiredTwoValueNoDefaultAsync(ModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -339,7 +345,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutModelAsStringNoRequiredTwoValueNoDefault(ModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -357,9 +363,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutModelAsStringNoRequiredTwoValueDefaultAsync(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutModelAsStringNoRequiredTwoValueDefaultAsync(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringNoRequiredTwoValueDefault");
             scope.Start();
@@ -375,9 +381,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutModelAsStringNoRequiredTwoValueDefault(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual Response PutModelAsStringNoRequiredTwoValueDefault(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringNoRequiredTwoValueDefault");
             scope.Start();
@@ -393,7 +399,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutModelAsStringNoRequiredOneValueNoDefaultAsync(ModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -411,7 +417,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutModelAsStringNoRequiredOneValueNoDefault(ModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -429,9 +435,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutModelAsStringNoRequiredOneValueDefaultAsync(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutModelAsStringNoRequiredOneValueDefaultAsync(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringNoRequiredOneValueDefault");
             scope.Start();
@@ -447,9 +453,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutModelAsStringNoRequiredOneValueDefault(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual Response PutModelAsStringNoRequiredOneValueDefault(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringNoRequiredOneValueDefault");
             scope.Start();
@@ -465,7 +471,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutModelAsStringRequiredTwoValueNoDefaultAsync(ModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -483,7 +489,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutModelAsStringRequiredTwoValueNoDefault(ModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -501,9 +507,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutModelAsStringRequiredTwoValueDefaultAsync(ModelAsStringRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutModelAsStringRequiredTwoValueDefaultAsync(ModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringRequiredTwoValueDefault");
             scope.Start();
@@ -519,9 +525,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutModelAsStringRequiredTwoValueDefault(ModelAsStringRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual Response PutModelAsStringRequiredTwoValueDefault(ModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringRequiredTwoValueDefault");
             scope.Start();
@@ -537,7 +543,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutModelAsStringRequiredOneValueNoDefaultAsync(ModelAsStringRequiredOneValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -555,7 +561,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutModelAsStringRequiredOneValueNoDefault(ModelAsStringRequiredOneValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -573,9 +579,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual async Task<Response> PutModelAsStringRequiredOneValueDefaultAsync(ModelAsStringRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual async Task<Response> PutModelAsStringRequiredOneValueDefaultAsync(ModelAsStringRequiredOneValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringRequiredOneValueDefault");
             scope.Start();
@@ -591,9 +597,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public virtual Response PutModelAsStringRequiredOneValueDefault(ModelAsStringRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public virtual Response PutModelAsStringRequiredOneValueDefault(ModelAsStringRequiredOneValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var scope = _clientDiagnostics.CreateScope("ContantsClient.PutModelAsStringRequiredOneValueDefault");
             scope.Start();

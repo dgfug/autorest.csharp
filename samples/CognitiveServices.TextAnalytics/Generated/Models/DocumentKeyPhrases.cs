@@ -8,38 +8,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The DocumentKeyPhrases. </summary>
     public partial class DocumentKeyPhrases
     {
-        /// <summary> Initializes a new instance of DocumentKeyPhrases. </summary>
+        /// <summary> Initializes a new instance of <see cref="DocumentKeyPhrases"/>. </summary>
         /// <param name="id"> Unique, non-empty document identifier. </param>
         /// <param name="keyPhrases"> A list of representative words or phrases. The number of key phrases returned is proportional to the number of words in the input document. </param>
         /// <param name="warnings"> Warnings encountered while processing document. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="id"/>, <paramref name="keyPhrases"/>, or <paramref name="warnings"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="id"/>, <paramref name="keyPhrases"/> or <paramref name="warnings"/> is null. </exception>
         internal DocumentKeyPhrases(string id, IEnumerable<string> keyPhrases, IEnumerable<TextAnalyticsWarning> warnings)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-            if (keyPhrases == null)
-            {
-                throw new ArgumentNullException(nameof(keyPhrases));
-            }
-            if (warnings == null)
-            {
-                throw new ArgumentNullException(nameof(warnings));
-            }
+            Argument.AssertNotNull(id, nameof(id));
+            Argument.AssertNotNull(keyPhrases, nameof(keyPhrases));
+            Argument.AssertNotNull(warnings, nameof(warnings));
 
             Id = id;
             KeyPhrases = keyPhrases.ToList();
             Warnings = warnings.ToList();
         }
 
-        /// <summary> Initializes a new instance of DocumentKeyPhrases. </summary>
+        /// <summary> Initializes a new instance of <see cref="DocumentKeyPhrases"/>. </summary>
         /// <param name="id"> Unique, non-empty document identifier. </param>
         /// <param name="keyPhrases"> A list of representative words or phrases. The number of key phrases returned is proportional to the number of words in the input document. </param>
         /// <param name="warnings"> Warnings encountered while processing document. </param>

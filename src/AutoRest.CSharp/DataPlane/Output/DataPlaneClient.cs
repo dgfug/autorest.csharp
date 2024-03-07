@@ -1,16 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Common.Output.Builders;
 using AutoRest.CSharp.Generation.Types;
-using AutoRest.CSharp.Generation.Writers;
-using AutoRest.CSharp.Input;
-using AutoRest.CSharp.Output.Builders;
+using AutoRest.CSharp.Input.Source;
+
 using AutoRest.CSharp.Output.Models.Requests;
-using AutoRest.CSharp.Output.Models.Responses;
 using AutoRest.CSharp.Output.Models.Shared;
 using AutoRest.CSharp.Output.Models.Types;
 
@@ -18,61 +16,56 @@ namespace AutoRest.CSharp.Output.Models
 {
     internal class DataPlaneClient : TypeProvider
     {
-        private readonly OperationGroup _operationGroup;
-        private readonly BuildContext<DataPlaneOutputLibrary> _context;
+        private readonly InputClient _inputClient;
+        private readonly DataPlaneOutputLibrary _library;
         private PagingMethod[]? _pagingMethods;
         private ClientMethod[]? _methods;
         private LongRunningOperationMethod[]? _longRunningOperationMethods;
-        private DataPlaneRestClient? _restClient;
 
-        public DataPlaneClient(OperationGroup operationGroup, BuildContext<DataPlaneOutputLibrary> context): base(context)
+        public DataPlaneClient(InputClient inputClient, DataPlaneRestClient restClient, string defaultName, DataPlaneOutputLibrary library, SourceInputModel? sourceInputModel) : base(Configuration.Namespace, sourceInputModel)
         {
-            _operationGroup = operationGroup;
-            _context = context;
-            var clientPrefix = ClientBuilder.GetClientPrefix(operationGroup.Language.Default.Name, context);
-            var clientSuffix = ClientBuilder.GetClientSuffix(context);
-            DefaultName = clientPrefix + clientSuffix;
-            ClientShortName = string.IsNullOrEmpty(clientPrefix) ? DefaultName : clientPrefix;
+            _inputClient = inputClient;
+            _library = library;
+            RestClient = restClient;
+            DefaultName = defaultName;
         }
 
-        public string ClientShortName { get; }
-        public string Description => BuilderHelpers.EscapeXmlDescription(ClientBuilder.CreateDescription(_operationGroup, ClientBuilder.GetClientPrefix(Declaration.Name, _context)));
-        public DataPlaneRestClient RestClient => _restClient ??= _context.Library.FindRestClient(_operationGroup);
-        public ClientMethod[] Methods => _methods ??= ClientBuilder.BuildMethods(_operationGroup, RestClient, Declaration).ToArray();
+        protected override string DefaultName { get; }
+        public string Description => ClientBuilder.CreateDescription(_inputClient.Description, ClientBuilder.GetClientPrefix(Declaration.Name, DefaultName));
+        public DataPlaneRestClient RestClient { get; }
 
-        public PagingMethod[] PagingMethods => _pagingMethods ??= ClientBuilder.BuildPagingMethods(_operationGroup, RestClient, Declaration).ToArray();
+        public ClientMethod[] Methods => _methods ??= ClientBuilder.BuildMethods(_inputClient, RestClient, Declaration).ToArray();
+
+        public PagingMethod[] PagingMethods => _pagingMethods ??= ClientBuilder.BuildPagingMethods(_inputClient, RestClient, Declaration).ToArray();
 
         public LongRunningOperationMethod[] LongRunningOperationMethods => _longRunningOperationMethods ??= BuildLongRunningOperationMethods().ToArray();
-
-        protected override string DefaultName { get; }
 
         protected override string DefaultAccessibility { get; } = "public";
 
         private IEnumerable<LongRunningOperationMethod> BuildLongRunningOperationMethods()
         {
-            foreach (var operation in _operationGroup.Operations)
+            foreach (var operation in _inputClient.Operations)
             {
-                if (operation.IsLongRunning)
+                if (operation.LongRunning == null)
                 {
-                    foreach (var serviceRequest in operation.Requests)
-                    {
-                        var name = operation.CSharpName();
-                        RestClientMethod startMethod = RestClient.GetOperationMethod(serviceRequest);
-
-                        yield return new LongRunningOperationMethod(
-                            name,
-                            _context.Library.FindLongRunningOperation(operation),
-                            startMethod,
-                            new Diagnostic($"{Declaration.Name}.Start{name}")
-                        );
-                    }
+                    continue;
                 }
+
+                var name = operation.CleanName;
+                RestClientMethod startMethod = RestClient.GetOperationMethod(operation);
+
+                yield return new LongRunningOperationMethod(
+                    name,
+                    _library.FindLongRunningOperation(operation),
+                    startMethod,
+                    new Diagnostic($"{Declaration.Name}.Start{name}")
+                );
             }
         }
 
         public IReadOnlyCollection<Parameter> GetClientConstructorParameters(CSharpType credentialType)
         {
-            return RestClientBuilder.GetConstructorParameters(RestClient.Parameters, credentialType, false);
+            return RestClientBuilder.GetConstructorParameters(RestClient.ClientBuilder.GetOrderedParametersByRequired(), credentialType, false);
         }
     }
 }

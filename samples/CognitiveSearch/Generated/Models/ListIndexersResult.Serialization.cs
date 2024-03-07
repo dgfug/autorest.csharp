@@ -7,7 +7,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -15,10 +14,14 @@ namespace CognitiveSearch.Models
     {
         internal static ListIndexersResult DeserializeListIndexersResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IReadOnlyList<Indexer> value = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     List<Indexer> array = new List<Indexer>();
                     foreach (var item in property.Value.EnumerateArray())

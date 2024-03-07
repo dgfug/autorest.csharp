@@ -6,20 +6,20 @@
 #nullable disable
 
 using System.Collections.Generic;
-using Azure.Core;
+using MgmtListMethods;
 
 namespace MgmtListMethods.Models
 {
     /// <summary> The List of Non Resource Child operation response. </summary>
-    public partial class NonResourceChildListResult
+    internal partial class NonResourceChildListResult
     {
-        /// <summary> Initializes a new instance of NonResourceChildListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="NonResourceChildListResult"/>. </summary>
         internal NonResourceChildListResult()
         {
             Value = new ChangeTrackingList<NonResourceChild>();
         }
 
-        /// <summary> Initializes a new instance of NonResourceChildListResult. </summary>
+        /// <summary> Initializes a new instance of <see cref="NonResourceChildListResult"/>. </summary>
         /// <param name="value"> The list of Non Resource Child. </param>
         internal NonResourceChildListResult(IReadOnlyList<NonResourceChild> value)
         {

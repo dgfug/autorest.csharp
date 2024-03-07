@@ -3,10 +3,13 @@
 
 using System;
 using System.Linq;
+using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Generation.Types;
 using AutoRest.CSharp.Input;
+using AutoRest.CSharp.Input.Source;
 using AutoRest.CSharp.Output.Builders;
 using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Utilities;
 
 namespace AutoRest.CSharp.Output.Models.Responses
 {
@@ -20,47 +23,46 @@ namespace AutoRest.CSharp.Output.Models.Responses
             "x-ms-request-id"
         };
 
-        public DataPlaneResponseHeaderGroupType(OperationGroup operationGroup, Operation operation, HttpResponseHeader[] httpResponseHeaders, BuildContext<DataPlaneOutputLibrary> context) : base(context)
+        public DataPlaneResponseHeaderGroupType(InputOperation operation, OperationResponseHeader[] httpResponseHeaders, TypeFactory typeFactory, string clientPrefix, SourceInputModel? sourceInputModel)
+            : base(Configuration.Namespace, sourceInputModel)
         {
-            ResponseHeader CreateResponseHeader(HttpResponseHeader header)
+            ResponseHeader CreateResponseHeader(OperationResponseHeader header)
             {
-                CSharpType type = context.TypeFactory.CreateType(header.Schema, true);
+                CSharpType type = typeFactory.CreateType(header.Type);
 
                 return new ResponseHeader(
-                    header.CSharpName(),
-                    header.Extensions?.HeaderCollectionPrefix ?? header.Header,
+                    header.Name.ToCleanName(),
+                    header.NameInResponse,
                     type,
-                    BuilderHelpers.EscapeXmlDescription(header.Language!.Default.Description));
+                    BuilderHelpers.EscapeXmlDocDescription(header.Description));
             }
 
-            string operationName = operation.CSharpName();
-            var clientName = context.Library.FindRestClient(operationGroup).ClientPrefix;
-
-            DefaultName = clientName + operationName + "Headers";
+            var operationName = operation.Name.ToCleanName();
+            DefaultName = clientPrefix + operationName + "Headers";
             Description = $"Header model for {operationName}";
             Headers = httpResponseHeaders.Select(CreateResponseHeader).ToArray();
         }
 
+        protected override string DefaultName { get; }
         public string Description { get; }
         public ResponseHeader[] Headers { get; }
-        protected override string DefaultName { get; }
         protected override string DefaultAccessibility { get; } = "internal";
 
-        public static DataPlaneResponseHeaderGroupType? TryCreate(OperationGroup operationGroup, Operation operation, BuildContext<DataPlaneOutputLibrary> context)
+        public static DataPlaneResponseHeaderGroupType? TryCreate(InputOperation operation, TypeFactory typeFactory, string clientPrefix, SourceInputModel? sourceInputModel)
         {
-            var httpResponseHeaders = operation.Responses.SelectMany(r => r.HttpResponse.Headers)
-                .Where(h => !_knownResponseHeaders.Contains(h.Header, StringComparer.InvariantCultureIgnoreCase))
-                .GroupBy(h => h.Header)
+            var operationResponseHeaders = operation.Responses.SelectMany(r => r.Headers)
+                .Where(h => !_knownResponseHeaders.Contains(h.NameInResponse, StringComparer.InvariantCultureIgnoreCase))
+                .GroupBy(h => h.NameInResponse)
                 // Take first header definition with any particular name
                 .Select(h => h.First())
                 .ToArray();
 
-            if (!httpResponseHeaders.Any())
+            if (!operationResponseHeaders.Any())
             {
                 return null;
             }
 
-            return new DataPlaneResponseHeaderGroupType(operationGroup, operation, httpResponseHeaders, context);
+            return new DataPlaneResponseHeaderGroupType(operation, operationResponseHeaders, typeFactory, clientPrefix, sourceInputModel);
         }
     }
 }

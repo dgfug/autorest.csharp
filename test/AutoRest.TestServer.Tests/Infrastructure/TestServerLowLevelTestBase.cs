@@ -2,14 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Core;
 using Azure.Core.Pipeline;
-using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
 
 namespace AutoRest.TestServer.Tests.Infrastructure
@@ -81,8 +77,13 @@ namespace AutoRest.TestServer.Tests.Infrastructure
         private static string GetScenarioName()
         {
             var testName = TestContext.CurrentContext.Test.Name;
-            var indexOfUnderscore = testName.IndexOf('_');
-            return indexOfUnderscore == -1 ? testName : testName.Substring(0, indexOfUnderscore);
+            var indexOfDelimiter = testName.LastIndexOf('_');
+            if (indexOfDelimiter == -1)
+            {
+                indexOfDelimiter = testName.IndexOf('(');
+            }
+            var name = indexOfDelimiter == -1 ? testName : testName[..indexOfDelimiter];
+            return name;
         }
 
         private class TestClientOptions : ClientOptions

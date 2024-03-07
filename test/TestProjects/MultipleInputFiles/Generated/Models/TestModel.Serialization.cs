@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using MultipleInputFiles;
 
 namespace MultipleInputFiles.Models
 {
@@ -17,12 +18,12 @@ namespace MultipleInputFiles.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(Code))
             {
-                writer.WritePropertyName("Code");
+                writer.WritePropertyName("Code"u8);
                 writer.WriteStringValue(Code);
             }
             if (Optional.IsDefined(Status))
             {
-                writer.WritePropertyName("Status");
+                writer.WritePropertyName("Status"u8);
                 writer.WriteStringValue(Status);
             }
             writer.WriteEndObject();

@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Azure.AI.FormRecognizer;
 
 namespace Azure.AI.FormRecognizer.Models
 {
     /// <summary> Report for a custom model training document. </summary>
     public partial class TrainingDocumentInfo
     {
-        /// <summary> Initializes a new instance of TrainingDocumentInfo. </summary>
+        /// <summary> Initializes a new instance of <see cref="TrainingDocumentInfo"/>. </summary>
         /// <param name="documentName"> Training document name. </param>
         /// <param name="pages"> Total number of pages trained. </param>
         /// <param name="errors"> List of errors. </param>
@@ -22,14 +23,8 @@ namespace Azure.AI.FormRecognizer.Models
         /// <exception cref="ArgumentNullException"> <paramref name="documentName"/> or <paramref name="errors"/> is null. </exception>
         internal TrainingDocumentInfo(string documentName, int pages, IEnumerable<ErrorInformation> errors, TrainStatus status)
         {
-            if (documentName == null)
-            {
-                throw new ArgumentNullException(nameof(documentName));
-            }
-            if (errors == null)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            Argument.AssertNotNull(documentName, nameof(documentName));
+            Argument.AssertNotNull(errors, nameof(errors));
 
             DocumentName = documentName;
             Pages = pages;
@@ -37,7 +32,7 @@ namespace Azure.AI.FormRecognizer.Models
             Status = status;
         }
 
-        /// <summary> Initializes a new instance of TrainingDocumentInfo. </summary>
+        /// <summary> Initializes a new instance of <see cref="TrainingDocumentInfo"/>. </summary>
         /// <param name="documentName"> Training document name. </param>
         /// <param name="pages"> Total number of pages trained. </param>
         /// <param name="errors"> List of errors. </param>

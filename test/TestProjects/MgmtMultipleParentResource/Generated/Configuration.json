@@ -1,21 +1,22 @@
 {
-  "OutputFolder": ".",
-  "Namespace": "MgmtMultipleParentResource",
-  "LibraryName": null,
-  "SharedSourceFolders": [
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Generator.Shared",
-    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\netcoreapp3.1\\Azure.Core.Shared"
+  "output-folder": ".",
+  "namespace": "MgmtMultipleParentResource",
+  "library-name": "RunCommandsClient",
+  "shared-source-folders": [
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Generator.Shared",
+    "..\\..\\..\\..\\artifacts\\bin\\AutoRest.CSharp\\Debug\\net7.0\\Azure.Core.Shared"
   ],
   "azure-arm": true,
   "public-clients": true,
   "head-as-boolean": true,
   "skip-csproj-packagereference": true,
-  "OperationGroupToParent": {
-    "Children": "Microsoft.Compute/parents/subParents",
-    "AnotherChildren": "Microsoft.Compute/anotherParents"
+  "FormatByNameRules": {
+    "tenantId": "uuid",
+    "resourceType": "resource-type",
+    "etag": "etag",
+    "location": "azure-location",
+    "*Uri": "Uri",
+    "*Uris": "Uri"
   },
-  "OperationGroupIsExtension": [
-    "Children",
-    "AnotherChildren"
-  ]
+  "helper-namespace": "MgmtMultipleParentResource"
 }

@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -16,7 +17,7 @@ namespace CognitiveSearch.Models
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName("keepWords");
+            writer.WritePropertyName("keepWords"u8);
             writer.WriteStartArray();
             foreach (var item in KeepWords)
             {
@@ -25,25 +26,29 @@ namespace CognitiveSearch.Models
             writer.WriteEndArray();
             if (Optional.IsDefined(LowerCaseKeepWords))
             {
-                writer.WritePropertyName("keepWordsCase");
+                writer.WritePropertyName("keepWordsCase"u8);
                 writer.WriteBooleanValue(LowerCaseKeepWords.Value);
             }
-            writer.WritePropertyName("@odata.type");
+            writer.WritePropertyName("@odata.type"u8);
             writer.WriteStringValue(OdataType);
-            writer.WritePropertyName("name");
+            writer.WritePropertyName("name"u8);
             writer.WriteStringValue(Name);
             writer.WriteEndObject();
         }
 
         internal static KeepTokenFilter DeserializeKeepTokenFilter(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IList<string> keepWords = default;
-            Optional<bool> keepWordsCase = default;
+            bool? keepWordsCase = default;
             string odataType = default;
             string name = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("keepWords"))
+                if (property.NameEquals("keepWords"u8))
                 {
                     List<string> array = new List<string>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -53,28 +58,27 @@ namespace CognitiveSearch.Models
                     keepWords = array;
                     continue;
                 }
-                if (property.NameEquals("keepWordsCase"))
+                if (property.NameEquals("keepWordsCase"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     keepWordsCase = property.Value.GetBoolean();
                     continue;
                 }
-                if (property.NameEquals("@odata.type"))
+                if (property.NameEquals("@odata.type"u8))
                 {
                     odataType = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
             }
-            return new KeepTokenFilter(odataType, name, keepWords, Optional.ToNullable(keepWordsCase));
+            return new KeepTokenFilter(odataType, name, keepWords, keepWordsCase);
         }
     }
 }

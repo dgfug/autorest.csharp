@@ -15,43 +15,44 @@ namespace CognitiveSearch.Models
     {
         internal static IndexerLimits DeserializeIndexerLimits(JsonElement element)
         {
-            Optional<TimeSpan> maxRunTime = default;
-            Optional<long> maxDocumentExtractionSize = default;
-            Optional<long> maxDocumentContentCharactersToExtract = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            TimeSpan? maxRunTime = default;
+            long? maxDocumentExtractionSize = default;
+            long? maxDocumentContentCharactersToExtract = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("maxRunTime"))
+                if (property.NameEquals("maxRunTime"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     maxRunTime = property.Value.GetTimeSpan("P");
                     continue;
                 }
-                if (property.NameEquals("maxDocumentExtractionSize"))
+                if (property.NameEquals("maxDocumentExtractionSize"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     maxDocumentExtractionSize = property.Value.GetInt64();
                     continue;
                 }
-                if (property.NameEquals("maxDocumentContentCharactersToExtract"))
+                if (property.NameEquals("maxDocumentContentCharactersToExtract"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     maxDocumentContentCharactersToExtract = property.Value.GetInt64();
                     continue;
                 }
             }
-            return new IndexerLimits(Optional.ToNullable(maxRunTime), Optional.ToNullable(maxDocumentExtractionSize), Optional.ToNullable(maxDocumentContentCharactersToExtract));
+            return new IndexerLimits(maxRunTime, maxDocumentExtractionSize, maxDocumentContentCharactersToExtract);
         }
     }
 }

@@ -8,12 +8,19 @@
 namespace Inheritance.Models
 {
     /// <summary> The AnotherDerivedClassWithExtensibleEnumDiscriminator. </summary>
-    internal partial class AnotherDerivedClassWithExtensibleEnumDiscriminator : BaseClassWithExtensibleEnumDiscriminator
+    public partial class AnotherDerivedClassWithExtensibleEnumDiscriminator : BaseClassWithExtensibleEnumDiscriminator
     {
-        /// <summary> Initializes a new instance of AnotherDerivedClassWithExtensibleEnumDiscriminator. </summary>
-        internal AnotherDerivedClassWithExtensibleEnumDiscriminator()
+        /// <summary> Initializes a new instance of <see cref="AnotherDerivedClassWithExtensibleEnumDiscriminator"/>. </summary>
+        public AnotherDerivedClassWithExtensibleEnumDiscriminator()
         {
             DiscriminatorProperty = new BaseClassWithEntensibleEnumDiscriminatorEnum("random value");
+        }
+
+        /// <summary> Initializes a new instance of <see cref="AnotherDerivedClassWithExtensibleEnumDiscriminator"/>. </summary>
+        /// <param name="discriminatorProperty"></param>
+        internal AnotherDerivedClassWithExtensibleEnumDiscriminator(BaseClassWithEntensibleEnumDiscriminatorEnum discriminatorProperty) : base(discriminatorProperty)
+        {
+            DiscriminatorProperty = discriminatorProperty;
         }
     }
 }

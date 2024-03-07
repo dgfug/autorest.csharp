@@ -6,9 +6,9 @@
 #nullable disable
 
 using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Autorest.CSharp.Core;
 using Azure;
 using Azure.Core;
 using Azure.Core.Pipeline;
@@ -19,22 +19,29 @@ namespace paging
     /// <summary> A long-running paging operation that includes a nextLink that has 10 pages. </summary>
     public partial class PagingGetMultiplePagesLROOperation : Operation<AsyncPageable<Product>>, IOperationSource<AsyncPageable<Product>>
     {
-        private readonly OperationInternals<AsyncPageable<Product>> _operation;
-        private readonly Func<string, Task<Response>> _nextPageFunc;
+        private readonly OperationInternal<AsyncPageable<Product>> _operation;
+        private readonly Func<int?, string, HttpMessage> _nextPageFunc;
+        private readonly ClientDiagnostics _clientDiagnostics;
+        private readonly HttpPipeline _pipeline;
 
         /// <summary> Initializes a new instance of PagingGetMultiplePagesLROOperation for mocking. </summary>
         protected PagingGetMultiplePagesLROOperation()
         {
         }
 
-        internal PagingGetMultiplePagesLROOperation(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Request request, Response response, Func<string, Task<Response>> nextPageFunc)
+        internal PagingGetMultiplePagesLROOperation(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Request request, Response response, Func<int?, string, HttpMessage> nextPageFunc)
         {
-            _operation = new OperationInternals<AsyncPageable<Product>>(this, clientDiagnostics, pipeline, request, response, OperationFinalStateVia.Location, "PagingGetMultiplePagesLROOperation");
+            IOperation<AsyncPageable<Product>> nextLinkOperation = NextLinkOperationImplementation.Create(this, pipeline, request.Method, request.Uri.ToUri(), response, OperationFinalStateVia.Location);
+            _operation = new OperationInternal<AsyncPageable<Product>>(nextLinkOperation, clientDiagnostics, response, "PagingGetMultiplePagesLROOperation");
             _nextPageFunc = nextPageFunc;
+            _clientDiagnostics = clientDiagnostics;
+            _pipeline = pipeline;
         }
 
         /// <inheritdoc />
-        public override string Id => _operation.Id;
+#pragma warning disable CA1822
+        public override string Id => throw new NotImplementedException();
+#pragma warning restore CA1822
 
         /// <inheritdoc />
         public override AsyncPageable<Product> Value => _operation.Value;
@@ -46,13 +53,19 @@ namespace paging
         public override bool HasValue => _operation.HasValue;
 
         /// <inheritdoc />
-        public override Response GetRawResponse() => _operation.GetRawResponse();
+        public override Response GetRawResponse() => _operation.RawResponse;
 
         /// <inheritdoc />
         public override Response UpdateStatus(CancellationToken cancellationToken = default) => _operation.UpdateStatus(cancellationToken);
 
         /// <inheritdoc />
         public override ValueTask<Response> UpdateStatusAsync(CancellationToken cancellationToken = default) => _operation.UpdateStatusAsync(cancellationToken);
+
+        /// <inheritdoc />
+        public override Response<AsyncPageable<Product>> WaitForCompletion(CancellationToken cancellationToken = default) => _operation.WaitForCompletion(cancellationToken);
+
+        /// <inheritdoc />
+        public override Response<AsyncPageable<Product>> WaitForCompletion(TimeSpan pollingInterval, CancellationToken cancellationToken = default) => _operation.WaitForCompletion(pollingInterval, cancellationToken);
 
         /// <inheritdoc />
         public override ValueTask<Response<AsyncPageable<Product>>> WaitForCompletionAsync(CancellationToken cancellationToken = default) => _operation.WaitForCompletionAsync(cancellationToken);
@@ -62,31 +75,12 @@ namespace paging
 
         AsyncPageable<Product> IOperationSource<AsyncPageable<Product>>.CreateResult(Response response, CancellationToken cancellationToken)
         {
-            ProductResult firstPageResult;
-            using var document = JsonDocument.Parse(response.ContentStream);
-            firstPageResult = ProductResult.DeserializeProductResult(document.RootElement);
-            Page<Product> firstPage = Page.FromValues(firstPageResult.Values, firstPageResult.NextLink, response);
-
-            return PageableHelpers.CreateAsyncEnumerable(_ => Task.FromResult(firstPage), (nextLink, _) => GetNextPage(nextLink, cancellationToken));
+            return GeneratorPageableHelpers.CreateAsyncPageable(response, _nextPageFunc, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingGetMultiplePagesLROOperation", "values", "nextLink", cancellationToken);
         }
 
-        async ValueTask<AsyncPageable<Product>> IOperationSource<AsyncPageable<Product>>.CreateResultAsync(Response response, CancellationToken cancellationToken)
+        ValueTask<AsyncPageable<Product>> IOperationSource<AsyncPageable<Product>>.CreateResultAsync(Response response, CancellationToken cancellationToken)
         {
-            ProductResult firstPageResult;
-            using var document = await JsonDocument.ParseAsync(response.ContentStream, default, cancellationToken).ConfigureAwait(false);
-            firstPageResult = ProductResult.DeserializeProductResult(document.RootElement);
-            Page<Product> firstPage = Page.FromValues(firstPageResult.Values, firstPageResult.NextLink, response);
-
-            return PageableHelpers.CreateAsyncEnumerable(_ => Task.FromResult(firstPage), (nextLink, _) => GetNextPage(nextLink, cancellationToken));
-        }
-
-        private async Task<Page<Product>> GetNextPage(string nextLink, CancellationToken cancellationToken)
-        {
-            Response response = await _nextPageFunc(nextLink).ConfigureAwait(false);
-            ProductResult nextPageResult;
-            using var document = await JsonDocument.ParseAsync(response.ContentStream, default, cancellationToken).ConfigureAwait(false);
-            nextPageResult = ProductResult.DeserializeProductResult(document.RootElement);
-            return Page.FromValues(nextPageResult.Values, nextPageResult.NextLink, response);
+            return new ValueTask<AsyncPageable<Product>>(GeneratorPageableHelpers.CreateAsyncPageable(response, _nextPageFunc, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingGetMultiplePagesLROOperation", "values", "nextLink", cancellationToken));
         }
     }
 }

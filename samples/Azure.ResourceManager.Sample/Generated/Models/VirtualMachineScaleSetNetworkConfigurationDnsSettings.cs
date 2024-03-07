@@ -5,28 +5,73 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
-using Azure.Core;
+using Azure.ResourceManager.Sample;
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> Describes a virtual machines scale sets network configuration&apos;s DNS settings. </summary>
-    public partial class VirtualMachineScaleSetNetworkConfigurationDnsSettings
+    /// <summary>
+    /// Describes a virtual machines scale sets network configuration's DNS settings.
+    /// Serialized Name: VirtualMachineScaleSetNetworkConfigurationDnsSettings
+    /// </summary>
+    internal partial class VirtualMachineScaleSetNetworkConfigurationDnsSettings
     {
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetNetworkConfigurationDnsSettings. </summary>
+        /// <summary>
+        /// Keeps track of any properties unknown to the library.
+        /// <para>
+        /// To assign an object to the value of this property use <see cref="BinaryData.FromObjectAsJson{T}(T, System.Text.Json.JsonSerializerOptions?)"/>.
+        /// </para>
+        /// <para>
+        /// To assign an already formatted json string to this property use <see cref="BinaryData.FromString(string)"/>.
+        /// </para>
+        /// <para>
+        /// Examples:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson("foo")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("\"foo\"")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson(new { key = "value" })</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("{\"key\": \"value\"}")</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        private IDictionary<string, BinaryData> _serializedAdditionalRawData;
+
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetNetworkConfigurationDnsSettings"/>. </summary>
         public VirtualMachineScaleSetNetworkConfigurationDnsSettings()
         {
             DnsServers = new ChangeTrackingList<string>();
         }
 
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetNetworkConfigurationDnsSettings. </summary>
-        /// <param name="dnsServers"> List of DNS servers IP addresses. </param>
-        internal VirtualMachineScaleSetNetworkConfigurationDnsSettings(IList<string> dnsServers)
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetNetworkConfigurationDnsSettings"/>. </summary>
+        /// <param name="dnsServers">
+        /// List of DNS servers IP addresses
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfigurationDnsSettings.dnsServers
+        /// </param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
+        internal VirtualMachineScaleSetNetworkConfigurationDnsSettings(IList<string> dnsServers, IDictionary<string, BinaryData> serializedAdditionalRawData)
         {
             DnsServers = dnsServers;
+            _serializedAdditionalRawData = serializedAdditionalRawData;
         }
 
-        /// <summary> List of DNS servers IP addresses. </summary>
+        /// <summary>
+        /// List of DNS servers IP addresses
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfigurationDnsSettings.dnsServers
+        /// </summary>
+        [WirePath("dnsServers")]
         public IList<string> DnsServers { get; }
     }
 }

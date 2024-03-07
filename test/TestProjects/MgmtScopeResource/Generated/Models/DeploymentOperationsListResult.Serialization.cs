@@ -7,7 +7,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 using MgmtScopeResource;
 
 namespace MgmtScopeResource.Models
@@ -16,32 +15,35 @@ namespace MgmtScopeResource.Models
     {
         internal static DeploymentOperationsListResult DeserializeDeploymentOperationsListResult(JsonElement element)
         {
-            Optional<IReadOnlyList<DeploymentOperationData>> value = default;
-            Optional<string> nextLink = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IReadOnlyList<DeploymentOperation> value = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    List<DeploymentOperationData> array = new List<DeploymentOperationData>();
+                    List<DeploymentOperation> array = new List<DeploymentOperation>();
                     foreach (var item in property.Value.EnumerateArray())
                     {
-                        array.Add(DeploymentOperationData.DeserializeDeploymentOperationData(item));
+                        array.Add(DeploymentOperation.DeserializeDeploymentOperation(item));
                     }
                     value = array;
                     continue;
                 }
-                if (property.NameEquals("nextLink"))
+                if (property.NameEquals("nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new DeploymentOperationsListResult(Optional.ToList(value), nextLink.Value);
+            return new DeploymentOperationsListResult(value ?? new ChangeTrackingList<DeploymentOperation>(), nextLink);
         }
     }
 }

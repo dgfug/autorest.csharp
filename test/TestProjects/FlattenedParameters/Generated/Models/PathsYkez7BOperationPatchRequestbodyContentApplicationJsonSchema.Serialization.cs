@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using FlattenedParameters;
 
 namespace FlattenedParameters.Models
 {
@@ -19,7 +20,7 @@ namespace FlattenedParameters.Models
             {
                 if (Items != null)
                 {
-                    writer.WritePropertyName("items");
+                    writer.WritePropertyName("items"u8);
                     writer.WriteStartArray();
                     foreach (var item in Items)
                     {

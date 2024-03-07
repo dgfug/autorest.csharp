@@ -30,6 +30,7 @@ namespace body_complex
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal ReadonlypropertyClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new ReadonlypropertyRestClient(clientDiagnostics, pipeline, endpoint);
@@ -72,7 +73,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types that have readonly properties. </summary>
-        /// <param name="complexBody"> The ReadonlyObj to use. </param>
+        /// <param name="complexBody"> The <see cref="ReadonlyObj"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> PutValidAsync(ReadonlyObj complexBody, CancellationToken cancellationToken = default)
         {
@@ -90,7 +91,7 @@ namespace body_complex
         }
 
         /// <summary> Put complex types that have readonly properties. </summary>
-        /// <param name="complexBody"> The ReadonlyObj to use. </param>
+        /// <param name="complexBody"> The <see cref="ReadonlyObj"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response PutValid(ReadonlyObj complexBody, CancellationToken cancellationToken = default)
         {

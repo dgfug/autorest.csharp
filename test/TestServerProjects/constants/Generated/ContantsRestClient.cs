@@ -17,28 +17,32 @@ namespace constants
 {
     internal partial class ContantsRestClient
     {
-        private Enum8 headerConstant;
-        private Enum9 queryConstant;
-        private Enum10 pathConstant;
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly bool _headerConstant;
+        private readonly int _queryConstant;
+        private readonly string _pathConstant;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of ContantsRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
-        /// <param name="headerConstant"> Constant header property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
-        /// <param name="queryConstant"> Constant query property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
-        /// <param name="pathConstant"> Constant path property on the client that is a required parameter for operation &apos;constants_putClientConstants&apos;. </param>
+        /// <param name="headerConstant"> Constant header property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is True. </param>
+        /// <param name="queryConstant"> Constant query property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is 100. </param>
+        /// <param name="pathConstant"> Constant path property on the client that is a required parameter for operation 'constants_putClientConstants'. The default value is "path". </param>
         /// <param name="endpoint"> server parameter. </param>
-        public ContantsRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Enum8 headerConstant, Enum9 queryConstant, Enum10 pathConstant, Uri endpoint = null)
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/> or <paramref name="pathConstant"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="pathConstant"/> is an empty string, and was expected to be non-empty. </exception>
+        public ContantsRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, bool headerConstant, int queryConstant, string pathConstant, Uri endpoint = null)
         {
-            this.headerConstant = headerConstant;
-            this.queryConstant = queryConstant;
-            this.pathConstant = pathConstant;
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _headerConstant = headerConstant;
+            _queryConstant = queryConstant;
+            _pathConstant = pathConstant ?? throw new ArgumentNullException(nameof(pathConstant));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreatePutNoModelAsStringNoRequiredTwoValueNoDefaultRequest(NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input)
@@ -47,7 +51,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringNoRequiredTwoValueNoDefault", false);
             if (input != null)
             {
@@ -58,7 +62,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutNoModelAsStringNoRequiredTwoValueNoDefaultAsync(NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -69,12 +73,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutNoModelAsStringNoRequiredTwoValueNoDefault(NoModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -85,7 +89,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -95,7 +99,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringNoRequiredTwoValueDefault", false);
             if (input != null)
             {
@@ -106,9 +110,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutNoModelAsStringNoRequiredTwoValueDefaultAsync(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = NoModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public async Task<Response> PutNoModelAsStringNoRequiredTwoValueDefaultAsync(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var message = CreatePutNoModelAsStringNoRequiredTwoValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
@@ -117,14 +121,14 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutNoModelAsStringNoRequiredTwoValueDefault(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = NoModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public Response PutNoModelAsStringNoRequiredTwoValueDefault(NoModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
             using var message = CreatePutNoModelAsStringNoRequiredTwoValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
@@ -133,93 +137,103 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        internal HttpMessage CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest()
+        internal HttpMessage CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest(NoModelAsStringNoRequiredOneValueNoDefaultOpEnum? input)
         {
             var message = _pipeline.CreateMessage();
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringNoRequiredOneValueNoDefault", false);
-            uri.AppendQuery("input", "value1", true);
+            if (input != null)
+            {
+                uri.AppendQuery("input", input.Value.ToString(), true);
+            }
             request.Uri = uri;
             return message;
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(CancellationToken cancellationToken = default)
+        public async Task<Response> PutNoModelAsStringNoRequiredOneValueNoDefaultAsync(NoModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            using var message = CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest();
+            using var message = CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
             {
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutNoModelAsStringNoRequiredOneValueNoDefault(CancellationToken cancellationToken = default)
+        public Response PutNoModelAsStringNoRequiredOneValueNoDefault(NoModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            using var message = CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest();
+            using var message = CreatePutNoModelAsStringNoRequiredOneValueNoDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
             {
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        internal HttpMessage CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest()
+        internal HttpMessage CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest(NoModelAsStringNoRequiredOneValueDefaultOpEnum? input)
         {
             var message = _pipeline.CreateMessage();
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringNoRequiredOneValueDefault", false);
-            uri.AppendQuery("input", "value1", true);
+            if (input != null)
+            {
+                uri.AppendQuery("input", input.Value.ToString(), true);
+            }
             request.Uri = uri;
             return message;
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutNoModelAsStringNoRequiredOneValueDefaultAsync(CancellationToken cancellationToken = default)
+        public async Task<Response> PutNoModelAsStringNoRequiredOneValueDefaultAsync(NoModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            using var message = CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest();
+            using var message = CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
             {
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
+        /// <param name="input"> The <see cref="NoModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutNoModelAsStringNoRequiredOneValueDefault(CancellationToken cancellationToken = default)
+        public Response PutNoModelAsStringNoRequiredOneValueDefault(NoModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            using var message = CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest();
+            using var message = CreatePutNoModelAsStringNoRequiredOneValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
             {
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -229,7 +243,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringRequiredTwoValueNoDefault", false);
             uri.AppendQuery("input", input.ToSerialString(), true);
             request.Uri = uri;
@@ -237,7 +251,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutNoModelAsStringRequiredTwoValueNoDefaultAsync(NoModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -248,12 +262,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutNoModelAsStringRequiredTwoValueNoDefault(NoModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -264,7 +278,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -274,7 +288,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringRequiredTwoValueDefault", false);
             uri.AppendQuery("input", input.ToSerialString(), true);
             request.Uri = uri;
@@ -282,9 +296,9 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutNoModelAsStringRequiredTwoValueDefaultAsync(NoModelAsStringRequiredTwoValueDefaultOpEnum input = NoModelAsStringRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public async Task<Response> PutNoModelAsStringRequiredTwoValueDefaultAsync(NoModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var message = CreatePutNoModelAsStringRequiredTwoValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
@@ -293,14 +307,14 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The NoModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="NoModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutNoModelAsStringRequiredTwoValueDefault(NoModelAsStringRequiredTwoValueDefaultOpEnum input = NoModelAsStringRequiredTwoValueDefaultOpEnum.Value1, CancellationToken cancellationToken = default)
+        public Response PutNoModelAsStringRequiredTwoValueDefault(NoModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
             using var message = CreatePutNoModelAsStringRequiredTwoValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
@@ -309,7 +323,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -319,7 +333,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringRequiredOneValueNoDefault", false);
             uri.AppendQuery("input", "value1", true);
             request.Uri = uri;
@@ -337,7 +351,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -352,7 +366,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -362,7 +376,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putNoModelAsStringRequiredOneValueDefault", false);
             uri.AppendQuery("input", "value1", true);
             request.Uri = uri;
@@ -380,7 +394,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -395,7 +409,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -405,7 +419,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringNoRequiredTwoValueNoDefault", false);
             if (input != null)
             {
@@ -416,7 +430,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutModelAsStringNoRequiredTwoValueNoDefaultAsync(ModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -427,12 +441,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutModelAsStringNoRequiredTwoValueNoDefault(ModelAsStringNoRequiredTwoValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -443,7 +457,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -453,7 +467,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringNoRequiredTwoValueDefault", false);
             if (input != null)
             {
@@ -464,12 +478,10 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutModelAsStringNoRequiredTwoValueDefaultAsync(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public async Task<Response> PutModelAsStringNoRequiredTwoValueDefaultAsync(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringNoRequiredTwoValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
@@ -477,17 +489,15 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredTwoValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutModelAsStringNoRequiredTwoValueDefault(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public Response PutModelAsStringNoRequiredTwoValueDefault(ModelAsStringNoRequiredTwoValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringNoRequiredTwoValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringNoRequiredTwoValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
@@ -495,7 +505,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -505,7 +515,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringNoRequiredOneValueNoDefault", false);
             if (input != null)
             {
@@ -516,7 +526,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutModelAsStringNoRequiredOneValueNoDefaultAsync(ModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -527,12 +537,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueNoDefaultOpEnum"/>? to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutModelAsStringNoRequiredOneValueNoDefault(ModelAsStringNoRequiredOneValueNoDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
@@ -543,7 +553,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -553,7 +563,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringNoRequiredOneValueDefault", false);
             if (input != null)
             {
@@ -564,12 +574,10 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutModelAsStringNoRequiredOneValueDefaultAsync(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public async Task<Response> PutModelAsStringNoRequiredOneValueDefaultAsync(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringNoRequiredOneValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringNoRequiredOneValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
@@ -577,17 +585,15 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringNoRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringNoRequiredOneValueDefaultOpEnum"/>? to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutModelAsStringNoRequiredOneValueDefault(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public Response PutModelAsStringNoRequiredOneValueDefault(ModelAsStringNoRequiredOneValueDefaultOpEnum? input = null, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringNoRequiredOneValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringNoRequiredOneValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
@@ -595,7 +601,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -605,7 +611,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringRequiredTwoValueNoDefault", false);
             uri.AppendQuery("input", input.ToString(), true);
             request.Uri = uri;
@@ -613,7 +619,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutModelAsStringRequiredTwoValueNoDefaultAsync(ModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -624,12 +630,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutModelAsStringRequiredTwoValueNoDefault(ModelAsStringRequiredTwoValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -640,33 +646,28 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        internal HttpMessage CreatePutModelAsStringRequiredTwoValueDefaultRequest(ModelAsStringRequiredTwoValueDefaultOpEnum? input)
+        internal HttpMessage CreatePutModelAsStringRequiredTwoValueDefaultRequest(ModelAsStringRequiredTwoValueDefaultOpEnum input)
         {
             var message = _pipeline.CreateMessage();
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringRequiredTwoValueDefault", false);
-            if (input != null)
-            {
-                uri.AppendQuery("input", input.Value.ToString(), true);
-            }
+            uri.AppendQuery("input", input.ToString(), true);
             request.Uri = uri;
             return message;
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutModelAsStringRequiredTwoValueDefaultAsync(ModelAsStringRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public async Task<Response> PutModelAsStringRequiredTwoValueDefaultAsync(ModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringRequiredTwoValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringRequiredTwoValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
@@ -674,17 +675,15 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredTwoValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredTwoValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutModelAsStringRequiredTwoValueDefault(ModelAsStringRequiredTwoValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public Response PutModelAsStringRequiredTwoValueDefault(ModelAsStringRequiredTwoValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringRequiredTwoValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringRequiredTwoValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
@@ -692,7 +691,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -702,7 +701,7 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringRequiredOneValueNoDefault", false);
             uri.AppendQuery("input", input.ToString(), true);
             request.Uri = uri;
@@ -710,7 +709,7 @@ namespace constants
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutModelAsStringRequiredOneValueNoDefaultAsync(ModelAsStringRequiredOneValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -721,12 +720,12 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueNoDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueNoDefaultOpEnum"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutModelAsStringRequiredOneValueNoDefault(ModelAsStringRequiredOneValueNoDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
@@ -737,33 +736,28 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
-        internal HttpMessage CreatePutModelAsStringRequiredOneValueDefaultRequest(ModelAsStringRequiredOneValueDefaultOpEnum? input)
+        internal HttpMessage CreatePutModelAsStringRequiredOneValueDefaultRequest(ModelAsStringRequiredOneValueDefaultOpEnum input)
         {
             var message = _pipeline.CreateMessage();
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/putModelAsStringRequiredOneValueDefault", false);
-            if (input != null)
-            {
-                uri.AppendQuery("input", input.Value.ToString(), true);
-            }
+            uri.AppendQuery("input", input.ToString(), true);
             request.Uri = uri;
             return message;
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public async Task<Response> PutModelAsStringRequiredOneValueDefaultAsync(ModelAsStringRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public async Task<Response> PutModelAsStringRequiredOneValueDefaultAsync(ModelAsStringRequiredOneValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringRequiredOneValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringRequiredOneValueDefaultRequest(input);
             await _pipeline.SendAsync(message, cancellationToken).ConfigureAwait(false);
             switch (message.Response.Status)
@@ -771,17 +765,15 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Puts constants to the testserver. </summary>
-        /// <param name="input"> The ModelAsStringRequiredOneValueDefaultOpEnum to use. </param>
+        /// <param name="input"> The <see cref="ModelAsStringRequiredOneValueDefaultOpEnum"/> to use. The default value is AutoRest.CSharp.Output.Models.Types.EnumTypeValue. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        public Response PutModelAsStringRequiredOneValueDefault(ModelAsStringRequiredOneValueDefaultOpEnum? input = default, CancellationToken cancellationToken = default)
+        public Response PutModelAsStringRequiredOneValueDefault(ModelAsStringRequiredOneValueDefaultOpEnum input, CancellationToken cancellationToken = default)
         {
-            input ??= ModelAsStringRequiredOneValueDefaultOpEnum.Value1;
-
             using var message = CreatePutModelAsStringRequiredOneValueDefaultRequest(input);
             _pipeline.Send(message, cancellationToken);
             switch (message.Response.Status)
@@ -789,7 +781,7 @@ namespace constants
                 case 201:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -799,12 +791,12 @@ namespace constants
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/constants/clientConstants/", false);
-            uri.AppendPath(pathConstant.ToString(), true);
-            uri.AppendQuery("query-constant", queryConstant.ToString(), true);
+            uri.AppendPath(_pathConstant, true);
+            uri.AppendQuery("query-constant", _queryConstant, true);
             request.Uri = uri;
-            request.Headers.Add("header-constant", headerConstant.ToString());
+            request.Headers.Add("header-constant", _headerConstant);
             return message;
         }
 
@@ -819,7 +811,7 @@ namespace constants
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -834,7 +826,7 @@ namespace constants
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

@@ -7,25 +7,28 @@
 
 using System;
 using System.Collections.Generic;
+using AdditionalPropertiesEx;
 
 namespace AdditionalPropertiesEx.Models
 {
     /// <summary> The OutputAdditionalPropertiesModelStruct. </summary>
     public readonly partial struct OutputAdditionalPropertiesModelStruct
     {
-        /// <summary> Initializes a new instance of OutputAdditionalPropertiesModelStruct. </summary>
+        /// <summary> Initializes a new instance of <see cref="OutputAdditionalPropertiesModelStruct"/>. </summary>
         /// <param name="id"></param>
         /// <param name="additionalProperties"> Additional Properties. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="additionalProperties"/> is null. </exception>
         internal OutputAdditionalPropertiesModelStruct(int id, IReadOnlyDictionary<string, string> additionalProperties)
         {
-            if (additionalProperties == null)
-            {
-                throw new ArgumentNullException(nameof(additionalProperties));
-            }
+            Argument.AssertNotNull(additionalProperties, nameof(additionalProperties));
 
             Id = id;
             AdditionalProperties = additionalProperties;
+        }
+
+        /// <summary> Initializes a new instance of <see cref="OutputAdditionalPropertiesModelStruct"/> for deserialization. </summary>
+        public OutputAdditionalPropertiesModelStruct()
+        {
         }
 
         /// <summary> Gets the id. </summary>

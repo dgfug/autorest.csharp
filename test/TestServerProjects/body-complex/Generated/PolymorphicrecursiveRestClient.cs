@@ -18,19 +18,22 @@ namespace body_complex
 {
     internal partial class PolymorphicrecursiveRestClient
     {
-        private Uri endpoint;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly Uri _endpoint;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of PolymorphicrecursiveRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         public PolymorphicrecursiveRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
         }
 
         internal HttpMessage CreateGetValidRequest()
@@ -39,7 +42,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphicrecursive/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -62,7 +65,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -82,7 +85,7 @@ namespace body_complex
                         return Response.FromValue(value, message.Response);
                     }
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -92,7 +95,7 @@ namespace body_complex
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/complex/polymorphicrecursive/valid", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -107,54 +110,54 @@ namespace body_complex
         /// <param name="complexBody">
         /// Please put a salmon that looks like this:
         /// {
-        ///     &quot;fishtype&quot;: &quot;salmon&quot;,
-        ///     &quot;species&quot;: &quot;king&quot;,
-        ///     &quot;length&quot;: 1,
-        ///     &quot;age&quot;: 1,
-        ///     &quot;location&quot;: &quot;alaska&quot;,
-        ///     &quot;iswild&quot;: true,
-        ///     &quot;siblings&quot;: [
+        ///     "fishtype": "salmon",
+        ///     "species": "king",
+        ///     "length": 1,
+        ///     "age": 1,
+        ///     "location": "alaska",
+        ///     "iswild": true,
+        ///     "siblings": [
         ///         {
-        ///             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///             &quot;species&quot;: &quot;predator&quot;,
-        ///             &quot;length&quot;: 20,
-        ///             &quot;age&quot;: 6,
-        ///             &quot;siblings&quot;: [
+        ///             "fishtype": "shark",
+        ///             "species": "predator",
+        ///             "length": 20,
+        ///             "age": 6,
+        ///             "siblings": [
         ///                 {
-        ///                     &quot;fishtype&quot;: &quot;salmon&quot;,
-        ///                     &quot;species&quot;: &quot;coho&quot;,
-        ///                     &quot;length&quot;: 2,
-        ///                     &quot;age&quot;: 2,
-        ///                     &quot;location&quot;: &quot;atlantic&quot;,
-        ///                     &quot;iswild&quot;: true,
-        ///                     &quot;siblings&quot;: [
+        ///                     "fishtype": "salmon",
+        ///                     "species": "coho",
+        ///                     "length": 2,
+        ///                     "age": 2,
+        ///                     "location": "atlantic",
+        ///                     "iswild": true,
+        ///                     "siblings": [
         ///                         {
-        ///                             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///                             &quot;species&quot;: &quot;predator&quot;,
-        ///                             &quot;length&quot;: 20,
-        ///                             &quot;age&quot;: 6
+        ///                             "fishtype": "shark",
+        ///                             "species": "predator",
+        ///                             "length": 20,
+        ///                             "age": 6
         ///                         },
         ///                         {
-        ///                             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///                             &quot;species&quot;: &quot;dangerous&quot;,
-        ///                             &quot;length&quot;: 10,
-        ///                             &quot;age&quot;: 105
+        ///                             "fishtype": "sawshark",
+        ///                             "species": "dangerous",
+        ///                             "length": 10,
+        ///                             "age": 105
         ///                         }
         ///                     ]
         ///                 },
         ///                 {
-        ///                     &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///                     &quot;species&quot;: &quot;dangerous&quot;,
-        ///                     &quot;length&quot;: 10,
-        ///                     &quot;age&quot;: 105
+        ///                     "fishtype": "sawshark",
+        ///                     "species": "dangerous",
+        ///                     "length": 10,
+        ///                     "age": 105
         ///                 }
         ///             ]
         ///         },
         ///         {
-        ///             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///             &quot;species&quot;: &quot;dangerous&quot;,
-        ///             &quot;length&quot;: 10,
-        ///             &quot;age&quot;: 105
+        ///             "fishtype": "sawshark",
+        ///             "species": "dangerous",
+        ///             "length": 10,
+        ///             "age": 105
         ///         }
         ///     ]
         /// }
@@ -175,7 +178,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -183,54 +186,54 @@ namespace body_complex
         /// <param name="complexBody">
         /// Please put a salmon that looks like this:
         /// {
-        ///     &quot;fishtype&quot;: &quot;salmon&quot;,
-        ///     &quot;species&quot;: &quot;king&quot;,
-        ///     &quot;length&quot;: 1,
-        ///     &quot;age&quot;: 1,
-        ///     &quot;location&quot;: &quot;alaska&quot;,
-        ///     &quot;iswild&quot;: true,
-        ///     &quot;siblings&quot;: [
+        ///     "fishtype": "salmon",
+        ///     "species": "king",
+        ///     "length": 1,
+        ///     "age": 1,
+        ///     "location": "alaska",
+        ///     "iswild": true,
+        ///     "siblings": [
         ///         {
-        ///             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///             &quot;species&quot;: &quot;predator&quot;,
-        ///             &quot;length&quot;: 20,
-        ///             &quot;age&quot;: 6,
-        ///             &quot;siblings&quot;: [
+        ///             "fishtype": "shark",
+        ///             "species": "predator",
+        ///             "length": 20,
+        ///             "age": 6,
+        ///             "siblings": [
         ///                 {
-        ///                     &quot;fishtype&quot;: &quot;salmon&quot;,
-        ///                     &quot;species&quot;: &quot;coho&quot;,
-        ///                     &quot;length&quot;: 2,
-        ///                     &quot;age&quot;: 2,
-        ///                     &quot;location&quot;: &quot;atlantic&quot;,
-        ///                     &quot;iswild&quot;: true,
-        ///                     &quot;siblings&quot;: [
+        ///                     "fishtype": "salmon",
+        ///                     "species": "coho",
+        ///                     "length": 2,
+        ///                     "age": 2,
+        ///                     "location": "atlantic",
+        ///                     "iswild": true,
+        ///                     "siblings": [
         ///                         {
-        ///                             &quot;fishtype&quot;: &quot;shark&quot;,
-        ///                             &quot;species&quot;: &quot;predator&quot;,
-        ///                             &quot;length&quot;: 20,
-        ///                             &quot;age&quot;: 6
+        ///                             "fishtype": "shark",
+        ///                             "species": "predator",
+        ///                             "length": 20,
+        ///                             "age": 6
         ///                         },
         ///                         {
-        ///                             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///                             &quot;species&quot;: &quot;dangerous&quot;,
-        ///                             &quot;length&quot;: 10,
-        ///                             &quot;age&quot;: 105
+        ///                             "fishtype": "sawshark",
+        ///                             "species": "dangerous",
+        ///                             "length": 10,
+        ///                             "age": 105
         ///                         }
         ///                     ]
         ///                 },
         ///                 {
-        ///                     &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///                     &quot;species&quot;: &quot;dangerous&quot;,
-        ///                     &quot;length&quot;: 10,
-        ///                     &quot;age&quot;: 105
+        ///                     "fishtype": "sawshark",
+        ///                     "species": "dangerous",
+        ///                     "length": 10,
+        ///                     "age": 105
         ///                 }
         ///             ]
         ///         },
         ///         {
-        ///             &quot;fishtype&quot;: &quot;sawshark&quot;,
-        ///             &quot;species&quot;: &quot;dangerous&quot;,
-        ///             &quot;length&quot;: 10,
-        ///             &quot;age&quot;: 105
+        ///             "fishtype": "sawshark",
+        ///             "species": "dangerous",
+        ///             "length": 10,
+        ///             "age": 105
         ///         }
         ///     ]
         /// }
@@ -251,7 +254,7 @@ namespace body_complex
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

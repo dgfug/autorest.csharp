@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
+using AppConfiguration;
 
 namespace AppConfiguration.Models
 {
@@ -15,15 +15,18 @@ namespace AppConfiguration.Models
     {
         internal static LabelListResult DeserializeLabelListResult(JsonElement element)
         {
-            Optional<IReadOnlyList<Label>> items = default;
-            Optional<string> nextLink = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IReadOnlyList<Label> items = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("items"))
+                if (property.NameEquals("items"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<Label> array = new List<Label>();
@@ -34,13 +37,13 @@ namespace AppConfiguration.Models
                     items = array;
                     continue;
                 }
-                if (property.NameEquals("@nextLink"))
+                if (property.NameEquals("@nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new LabelListResult(Optional.ToList(items), nextLink.Value);
+            return new LabelListResult(items ?? new ChangeTrackingList<Label>(), nextLink);
         }
     }
 }

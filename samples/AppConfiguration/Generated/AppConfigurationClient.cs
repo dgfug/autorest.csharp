@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AppConfiguration.Models;
+using Autorest.CSharp.Core;
 using Azure;
 using Azure.Core;
 using Azure.Core.Pipeline;
@@ -34,6 +35,7 @@ namespace AppConfiguration
         /// <param name="endpoint"> The endpoint of the App Configuration instance to send requests to. </param>
         /// <param name="syncToken"> Used to guarantee real-time consistency between requests. </param>
         /// <param name="apiVersion"> Api Version. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/>, <paramref name="endpoint"/> or <paramref name="apiVersion"/> is null. </exception>
         internal AppConfigurationClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string endpoint, string syncToken = null, string apiVersion = "1.0")
         {
             RestClient = new AppConfigurationRestClient(clientDiagnostics, pipeline, endpoint, syncToken, apiVersion);
@@ -129,8 +131,8 @@ namespace AppConfiguration
         /// <param name="key"> The key of the key-value to retrieve. </param>
         /// <param name="label"> The label of the key-value to retrieve. </param>
         /// <param name="acceptDatetime"> Requests the server to respond with the state of the resource at the specified time. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="select"> Used to select what fields are present in the returned resource(s). </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<KeyValue>> GetKeyValueAsync(string key, string label = null, string acceptDatetime = null, string ifMatch = null, string ifNoneMatch = null, IEnumerable<Get7ItemsItem> select = null, CancellationToken cancellationToken = default)
@@ -152,8 +154,8 @@ namespace AppConfiguration
         /// <param name="key"> The key of the key-value to retrieve. </param>
         /// <param name="label"> The label of the key-value to retrieve. </param>
         /// <param name="acceptDatetime"> Requests the server to respond with the state of the resource at the specified time. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="select"> Used to select what fields are present in the returned resource(s). </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<KeyValue> GetKeyValue(string key, string label = null, string acceptDatetime = null, string ifMatch = null, string ifNoneMatch = null, IEnumerable<Get7ItemsItem> select = null, CancellationToken cancellationToken = default)
@@ -174,8 +176,8 @@ namespace AppConfiguration
         /// <summary> Creates a key-value. </summary>
         /// <param name="key"> The key of the key-value to create. </param>
         /// <param name="label"> The label of the key-value to create. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="entity"> The key-value to create. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<KeyValue>> PutKeyValueAsync(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, KeyValue entity = null, CancellationToken cancellationToken = default)
@@ -196,8 +198,8 @@ namespace AppConfiguration
         /// <summary> Creates a key-value. </summary>
         /// <param name="key"> The key of the key-value to create. </param>
         /// <param name="label"> The label of the key-value to create. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="entity"> The key-value to create. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<KeyValue> PutKeyValue(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, KeyValue entity = null, CancellationToken cancellationToken = default)
@@ -218,7 +220,7 @@ namespace AppConfiguration
         /// <summary> Deletes a key-value. </summary>
         /// <param name="key"> The key of the key-value to delete. </param>
         /// <param name="label"> The label of the key-value to delete. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<KeyValue>> DeleteKeyValueAsync(string key, string label = null, string ifMatch = null, CancellationToken cancellationToken = default)
         {
@@ -238,7 +240,7 @@ namespace AppConfiguration
         /// <summary> Deletes a key-value. </summary>
         /// <param name="key"> The key of the key-value to delete. </param>
         /// <param name="label"> The label of the key-value to delete. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<KeyValue> DeleteKeyValue(string key, string label = null, string ifMatch = null, CancellationToken cancellationToken = default)
         {
@@ -259,8 +261,8 @@ namespace AppConfiguration
         /// <param name="key"> The key of the key-value to retrieve. </param>
         /// <param name="label"> The label of the key-value to retrieve. </param>
         /// <param name="acceptDatetime"> Requests the server to respond with the state of the resource at the specified time. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="select"> Used to select what fields are present in the returned resource(s). </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> CheckKeyValueAsync(string key, string label = null, string acceptDatetime = null, string ifMatch = null, string ifNoneMatch = null, IEnumerable<Head7ItemsItem> select = null, CancellationToken cancellationToken = default)
@@ -282,8 +284,8 @@ namespace AppConfiguration
         /// <param name="key"> The key of the key-value to retrieve. </param>
         /// <param name="label"> The label of the key-value to retrieve. </param>
         /// <param name="acceptDatetime"> Requests the server to respond with the state of the resource at the specified time. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="select"> Used to select what fields are present in the returned resource(s). </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response CheckKeyValue(string key, string label = null, string acceptDatetime = null, string ifMatch = null, string ifNoneMatch = null, IEnumerable<Head7ItemsItem> select = null, CancellationToken cancellationToken = default)
@@ -346,8 +348,8 @@ namespace AppConfiguration
         /// <summary> Locks a key-value. </summary>
         /// <param name="key"> The key of the key-value to lock. </param>
         /// <param name="label"> The label, if any, of the key-value to lock. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<KeyValue>> PutLockAsync(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, CancellationToken cancellationToken = default)
         {
@@ -367,8 +369,8 @@ namespace AppConfiguration
         /// <summary> Locks a key-value. </summary>
         /// <param name="key"> The key of the key-value to lock. </param>
         /// <param name="label"> The label, if any, of the key-value to lock. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<KeyValue> PutLock(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, CancellationToken cancellationToken = default)
         {
@@ -388,8 +390,8 @@ namespace AppConfiguration
         /// <summary> Unlocks a key-value. </summary>
         /// <param name="key"> The key of the key-value to unlock. </param>
         /// <param name="label"> The label, if any, of the key-value to unlock. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<KeyValue>> DeleteLockAsync(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, CancellationToken cancellationToken = default)
         {
@@ -409,8 +411,8 @@ namespace AppConfiguration
         /// <summary> Unlocks a key-value. </summary>
         /// <param name="key"> The key of the key-value to unlock. </param>
         /// <param name="label"> The label, if any, of the key-value to unlock. </param>
-        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource&apos;s etag matches the value provided. </param>
-        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource&apos;s etag does not match the value provided. </param>
+        /// <param name="ifMatch"> Used to perform an operation only if the targeted resource's etag matches the value provided. </param>
+        /// <param name="ifNoneMatch"> Used to perform an operation only if the targeted resource's etag does not match the value provided. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<KeyValue> DeleteLock(string key, string label = null, string ifMatch = null, string ifNoneMatch = null, CancellationToken cancellationToken = default)
         {
@@ -478,37 +480,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AsyncPageable<Key> GetKeysAsync(string name = null, string after = null, string acceptDatetime = null, CancellationToken cancellationToken = default)
         {
-            async Task<Page<Key>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeys");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetKeysAsync(name, after, acceptDatetime, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<Key>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeys");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetKeysNextPageAsync(nextLink, name, after, acceptDatetime, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetKeysRequest(name, after, acceptDatetime);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetKeysNextPageRequest(nextLink, name, after, acceptDatetime);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, Key.DeserializeKey, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetKeys", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of keys. </summary>
@@ -518,37 +492,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Pageable<Key> GetKeys(string name = null, string after = null, string acceptDatetime = null, CancellationToken cancellationToken = default)
         {
-            Page<Key> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeys");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetKeys(name, after, acceptDatetime, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<Key> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeys");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetKeysNextPage(nextLink, name, after, acceptDatetime, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetKeysRequest(name, after, acceptDatetime);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetKeysNextPageRequest(nextLink, name, after, acceptDatetime);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, Key.DeserializeKey, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetKeys", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of key-values. </summary>
@@ -560,37 +506,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AsyncPageable<KeyValue> GetKeyValuesAsync(string key = null, string label = null, string after = null, string acceptDatetime = null, IEnumerable<Get6ItemsItem> select = null, CancellationToken cancellationToken = default)
         {
-            async Task<Page<KeyValue>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeyValues");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetKeyValuesAsync(key, label, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<KeyValue>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeyValues");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetKeyValuesNextPageAsync(nextLink, key, label, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetKeyValuesRequest(key, label, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetKeyValuesNextPageRequest(nextLink, key, label, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, KeyValue.DeserializeKeyValue, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetKeyValues", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of key-values. </summary>
@@ -602,37 +520,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Pageable<KeyValue> GetKeyValues(string key = null, string label = null, string after = null, string acceptDatetime = null, IEnumerable<Get6ItemsItem> select = null, CancellationToken cancellationToken = default)
         {
-            Page<KeyValue> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeyValues");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetKeyValues(key, label, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<KeyValue> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetKeyValues");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetKeyValuesNextPage(nextLink, key, label, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetKeyValuesRequest(key, label, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetKeyValuesNextPageRequest(nextLink, key, label, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, KeyValue.DeserializeKeyValue, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetKeyValues", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of labels. </summary>
@@ -643,37 +533,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AsyncPageable<Label> GetLabelsAsync(string name = null, string after = null, string acceptDatetime = null, IEnumerable<Get5ItemsItem> select = null, CancellationToken cancellationToken = default)
         {
-            async Task<Page<Label>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetLabels");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetLabelsAsync(name, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<Label>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetLabels");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetLabelsNextPageAsync(nextLink, name, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetLabelsRequest(name, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetLabelsNextPageRequest(nextLink, name, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, Label.DeserializeLabel, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetLabels", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of labels. </summary>
@@ -684,37 +546,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Pageable<Label> GetLabels(string name = null, string after = null, string acceptDatetime = null, IEnumerable<Get5ItemsItem> select = null, CancellationToken cancellationToken = default)
         {
-            Page<Label> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetLabels");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetLabels(name, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<Label> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetLabels");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetLabelsNextPage(nextLink, name, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetLabelsRequest(name, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetLabelsNextPageRequest(nextLink, name, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, Label.DeserializeLabel, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetLabels", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of key-value revisions. </summary>
@@ -726,37 +560,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual AsyncPageable<KeyValue> GetRevisionsAsync(string key = null, string label = null, string after = null, string acceptDatetime = null, IEnumerable<Enum6> select = null, CancellationToken cancellationToken = default)
         {
-            async Task<Page<KeyValue>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetRevisions");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetRevisionsAsync(key, label, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<KeyValue>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetRevisions");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetRevisionsNextPageAsync(nextLink, key, label, after, acceptDatetime, select, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetRevisionsRequest(key, label, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetRevisionsNextPageRequest(nextLink, key, label, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, KeyValue.DeserializeKeyValue, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetRevisions", "items", "@nextLink", cancellationToken);
         }
 
         /// <summary> Gets a list of key-value revisions. </summary>
@@ -768,37 +574,9 @@ namespace AppConfiguration
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Pageable<KeyValue> GetRevisions(string key = null, string label = null, string after = null, string acceptDatetime = null, IEnumerable<Enum6> select = null, CancellationToken cancellationToken = default)
         {
-            Page<KeyValue> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetRevisions");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetRevisions(key, label, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<KeyValue> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("AppConfigurationClient.GetRevisions");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetRevisionsNextPage(nextLink, key, label, after, acceptDatetime, select, cancellationToken);
-                    return Page.FromValues(response.Value.Items, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetRevisionsRequest(key, label, after, acceptDatetime, select);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetRevisionsNextPageRequest(nextLink, key, label, after, acceptDatetime, select);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, KeyValue.DeserializeKeyValue, _clientDiagnostics, _pipeline, "AppConfigurationClient.GetRevisions", "items", "@nextLink", cancellationToken);
         }
     }
 }

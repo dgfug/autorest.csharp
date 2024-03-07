@@ -6,24 +6,27 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace MgmtLRO.Models
 {
-    public partial class FakePostResultProperties
+    internal partial class FakePostResultProperties
     {
         internal static FakePostResultProperties DeserializeFakePostResultProperties(JsonElement element)
         {
-            Optional<string> bar = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string bar = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("bar"))
+                if (property.NameEquals("bar"u8))
                 {
                     bar = property.Value.GetString();
                     continue;
                 }
             }
-            return new FakePostResultProperties(bar.Value);
+            return new FakePostResultProperties(bar);
         }
     }
 }

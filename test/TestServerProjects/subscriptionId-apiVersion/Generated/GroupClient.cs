@@ -32,6 +32,8 @@ namespace subscriptionId_apiVersion
         /// <param name="subscriptionId"> Subscription Id. </param>
         /// <param name="endpoint"> server parameter. </param>
         /// <param name="apiVersion"> Api Version. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/>, <paramref name="subscriptionId"/> or <paramref name="apiVersion"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="subscriptionId"/> is an empty string, and was expected to be non-empty. </exception>
         internal GroupClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string subscriptionId, Uri endpoint = null, string apiVersion = "2014-04-01-preview")
         {
             RestClient = new GroupRestClient(clientDiagnostics, pipeline, subscriptionId, endpoint, apiVersion);
@@ -39,8 +41,8 @@ namespace subscriptionId_apiVersion
             _pipeline = pipeline;
         }
 
-        /// <summary> Provides a resouce group with name &apos;testgroup101&apos; and location &apos;West US&apos;. </summary>
-        /// <param name="resourceGroupName"> Resource Group name &apos;testgroup101&apos;. </param>
+        /// <summary> Provides a resouce group with name 'testgroup101' and location 'West US'. </summary>
+        /// <param name="resourceGroupName"> Resource Group name 'testgroup101'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<SampleResourceGroup>> GetSampleResourceGroupAsync(string resourceGroupName, CancellationToken cancellationToken = default)
         {
@@ -57,8 +59,8 @@ namespace subscriptionId_apiVersion
             }
         }
 
-        /// <summary> Provides a resouce group with name &apos;testgroup101&apos; and location &apos;West US&apos;. </summary>
-        /// <param name="resourceGroupName"> Resource Group name &apos;testgroup101&apos;. </param>
+        /// <summary> Provides a resouce group with name 'testgroup101' and location 'West US'. </summary>
+        /// <param name="resourceGroupName"> Resource Group name 'testgroup101'. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<SampleResourceGroup> GetSampleResourceGroup(string resourceGroupName, CancellationToken cancellationToken = default)
         {

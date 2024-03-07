@@ -6,13 +6,14 @@
 #nullable disable
 
 using System;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The Entity. </summary>
     public partial class Entity
     {
-        /// <summary> Initializes a new instance of Entity. </summary>
+        /// <summary> Initializes a new instance of <see cref="Entity"/>. </summary>
         /// <param name="text"> Entity text as appears in the request. </param>
         /// <param name="category"> Entity type, such as Person/Location/Org/SSN etc. </param>
         /// <param name="offset"> Start position (in Unicode characters) for the entity text. </param>
@@ -21,14 +22,8 @@ namespace CognitiveServices.TextAnalytics.Models
         /// <exception cref="ArgumentNullException"> <paramref name="text"/> or <paramref name="category"/> is null. </exception>
         internal Entity(string text, string category, int offset, int length, double confidenceScore)
         {
-            if (text == null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
-            if (category == null)
-            {
-                throw new ArgumentNullException(nameof(category));
-            }
+            Argument.AssertNotNull(text, nameof(text));
+            Argument.AssertNotNull(category, nameof(category));
 
             Text = text;
             Category = category;
@@ -37,7 +32,7 @@ namespace CognitiveServices.TextAnalytics.Models
             ConfidenceScore = confidenceScore;
         }
 
-        /// <summary> Initializes a new instance of Entity. </summary>
+        /// <summary> Initializes a new instance of <see cref="Entity"/>. </summary>
         /// <param name="text"> Entity text as appears in the request. </param>
         /// <param name="category"> Entity type, such as Person/Location/Org/SSN etc. </param>
         /// <param name="subcategory"> Entity sub type, such as Age/Year/TimeRange etc. </param>

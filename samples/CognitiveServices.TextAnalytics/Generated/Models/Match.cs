@@ -6,13 +6,14 @@
 #nullable disable
 
 using System;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The Match. </summary>
     public partial class Match
     {
-        /// <summary> Initializes a new instance of Match. </summary>
+        /// <summary> Initializes a new instance of <see cref="Match"/>. </summary>
         /// <param name="confidenceScore"> If a well-known item is recognized, a decimal number denoting the confidence level between 0 and 1 will be returned. </param>
         /// <param name="text"> Entity text as appears in the request. </param>
         /// <param name="offset"> Start position (in Unicode characters) for the entity match text. </param>
@@ -20,10 +21,7 @@ namespace CognitiveServices.TextAnalytics.Models
         /// <exception cref="ArgumentNullException"> <paramref name="text"/> is null. </exception>
         internal Match(double confidenceScore, string text, int offset, int length)
         {
-            if (text == null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
+            Argument.AssertNotNull(text, nameof(text));
 
             ConfidenceScore = confidenceScore;
             Text = text;

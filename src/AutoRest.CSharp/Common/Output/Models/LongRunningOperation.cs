@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System;
 using System.Diagnostics;
-using System.Linq;
+using AutoRest.CSharp.Common.Input;
 using AutoRest.CSharp.Common.Output.Models;
 using AutoRest.CSharp.Generation.Types;
-using AutoRest.CSharp.Input;
+using AutoRest.CSharp.Input.Source;
 using AutoRest.CSharp.Output.Builders;
 using AutoRest.CSharp.Output.Models.Serialization;
 using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Utilities;
 using Azure;
 using Azure.Core;
 
@@ -17,32 +17,32 @@ namespace AutoRest.CSharp.Output.Models.Requests
 {
     internal class LongRunningOperation : TypeProvider
     {
-        public LongRunningOperation(OperationGroup operationGroup, Input.Operation operation, BuildContext context, LongRunningOperationInfo lroInfo) : base(context)
+        public LongRunningOperation(InputOperation operation, TypeFactory typeFactory, string accessibility, string clientPrefix, LongRunningOperationInfo lroInfo, SourceInputModel? sourceInputModel) : base(Configuration.Namespace, sourceInputModel)
         {
-            Debug.Assert(operation.IsLongRunning);
+            Debug.Assert(operation.LongRunning != null);
 
-            DefaultName = lroInfo.ClientPrefix + operation.CSharpName() + "Operation";
-            FinalStateVia = operation.LongRunningFinalStateVia;
+            FinalStateVia = operation.LongRunning.FinalStateVia;
 
-            var finalResponse = operation.LongRunningFinalResponse;
-            Schema? finalResponseSchema = finalResponse.ResponseSchema;
+            var finalResponse = operation.LongRunning.FinalResponse;
+            var returnType = operation.LongRunning.ReturnType;
 
-            if (finalResponseSchema != null)
+            if (returnType != null)
             {
-                ResultType = TypeFactory.GetOutputType(context.TypeFactory.CreateType(finalResponseSchema, false));
-                ResultSerialization = new SerializationBuilder().Build(finalResponse.HttpResponse.KnownMediaType, finalResponseSchema, ResultType);
+                ResultType = TypeFactory.GetOutputType(typeFactory.CreateType(returnType with {IsNullable = false}));
+                ResultSerialization = SerializationBuilder.Build(finalResponse.BodyMediaType, returnType, ResultType, null);
 
-                Paging? paging = operation.Language.Default.Paging;
+                var paging = operation.Paging;
                 if (paging != null)
                 {
                     NextPageMethod = lroInfo.NextOperationMethod;
-                    PagingResponse = new PagingResponseInfo(paging, ResultType);
+                    PagingResponse = new PagingResponseInfo(paging.NextLinkName, paging.ItemName, ResultType);
                     ResultType = new CSharpType(typeof(AsyncPageable<>), PagingResponse.ItemType);
                 }
             }
 
-            Description = BuilderHelpers.EscapeXmlDescription(operation.Language.Default.Description);
-            DefaultAccessibility = lroInfo.Accessibility;
+            DefaultName = clientPrefix + operation.Name.ToCleanName() + "Operation";
+            Description = BuilderHelpers.EscapeXmlDocDescription(operation.Description);
+            DefaultAccessibility = accessibility;
         }
 
         public CSharpType? ResultType { get; }

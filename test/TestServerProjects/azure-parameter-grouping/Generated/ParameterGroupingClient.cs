@@ -30,6 +30,7 @@ namespace azure_parameter_grouping
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal ParameterGroupingClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new ParameterGroupingRestClient(clientDiagnostics, pipeline, endpoint);
@@ -211,6 +212,42 @@ namespace azure_parameter_grouping
             try
             {
                 return RestClient.PostSharedParameterGroupObject(firstParameterGroup, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                scope.Failed(e);
+                throw;
+            }
+        }
+
+        /// <summary> Parameter group with a constant. Pass in 'foo' for groupedConstant and 'bar' for groupedParameter. </summary>
+        /// <param name="grouper"> Parameter group. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        public virtual async Task<Response> GroupWithConstantAsync(Grouper grouper = null, CancellationToken cancellationToken = default)
+        {
+            using var scope = _clientDiagnostics.CreateScope("ParameterGroupingClient.GroupWithConstant");
+            scope.Start();
+            try
+            {
+                return await RestClient.GroupWithConstantAsync(grouper, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                scope.Failed(e);
+                throw;
+            }
+        }
+
+        /// <summary> Parameter group with a constant. Pass in 'foo' for groupedConstant and 'bar' for groupedParameter. </summary>
+        /// <param name="grouper"> Parameter group. </param>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        public virtual Response GroupWithConstant(Grouper grouper = null, CancellationToken cancellationToken = default)
+        {
+            using var scope = _clientDiagnostics.CreateScope("ParameterGroupingClient.GroupWithConstant");
+            scope.Start();
+            try
+            {
+                return RestClient.GroupWithConstant(grouper, cancellationToken);
             }
             catch (Exception e)
             {

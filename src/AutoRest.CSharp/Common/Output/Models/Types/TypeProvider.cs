@@ -2,39 +2,58 @@
 // Licensed under the MIT License.
 
 using System;
+using AutoRest.CSharp.Common.Input;
+using System.Diagnostics;
 using AutoRest.CSharp.Generation.Types;
-using AutoRest.CSharp.Input;
+using AutoRest.CSharp.Input.Source;
 using AutoRest.CSharp.Output.Builders;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AutoRest.CSharp.Output.Models.Types
 {
+    [DebuggerDisplay("{GetDebuggerDisplay(),nq}")]
     internal abstract class TypeProvider
     {
         private readonly Lazy<INamedTypeSymbol?> _existingType;
-        private TypeDeclarationOptions? _type;
 
-        protected TypeProvider(BuildContext context)
+        protected string? _deprecated;
+
+        private TypeDeclarationOptions? _type;
+        protected readonly SourceInputModel? _sourceInputModel;
+
+        protected TypeProvider(string defaultNamespace, SourceInputModel? sourceInputModel)
         {
-            Context = context;
-            _existingType = new Lazy<INamedTypeSymbol?>(() => Context.SourceInputModel?.FindForType(DefaultNamespace, DefaultName));
+            _sourceInputModel = sourceInputModel;
+            DefaultNamespace = defaultNamespace;
+            _existingType = new Lazy<INamedTypeSymbol?>(() => sourceInputModel?.FindForType(DefaultNamespace, DefaultName));
         }
 
-        public CSharpType Type => new CSharpType(
-            this,
-            Declaration.Namespace,
-            Declaration.Name,
-            TypeKind == TypeKind.Struct || TypeKind == TypeKind.Enum);
+        protected TypeProvider(BuildContext context) : this(context.DefaultNamespace, context.SourceInputModel) { }
+
+        public CSharpType Type => new(this, isValueType: TypeKind is TypeKind.Struct or TypeKind.Enum, isEnum: this is EnumType, arguments: TypeArguments);
         public TypeDeclarationOptions Declaration => _type ??= BuildType();
 
-        internal BuildContext Context { get; private set; }
         protected abstract string DefaultName { get; }
-        protected virtual string DefaultNamespace => Context.DefaultNamespace;
+        protected virtual string DefaultNamespace { get; }
         protected abstract string DefaultAccessibility { get; }
+
+        private IReadOnlyList<CSharpType>? _typeArguments;
+        protected IReadOnlyList<CSharpType> TypeArguments => _typeArguments ??= BuildTypeArguments().ToArray();
+
+        public string? Deprecated => _deprecated;
         protected virtual TypeKind TypeKind { get; } = TypeKind.Class;
+        protected virtual bool IsAbstract { get; } = false;
         protected INamedTypeSymbol? ExistingType => _existingType.Value;
+        public virtual SignatureType? SignatureType => null;
 
         internal virtual Type? SerializeAs => null;
+
+        protected virtual IEnumerable<CSharpType> BuildTypeArguments()
+        {
+            yield break;
+        }
 
         private TypeDeclarationOptions BuildType()
         {
@@ -43,21 +62,49 @@ namespace AutoRest.CSharp.Output.Models.Types
                 DefaultNamespace,
                 DefaultAccessibility,
                 ExistingType,
-                existingTypeOverrides: TypeKind == TypeKind.Enum);
+                existingTypeOverrides: TypeKind == TypeKind.Enum,
+                isAbstract: IsAbstract);
         }
 
-        public string GetDefaultNamespace(string? namespaceExtension, BuildContext context)
+        public static string GetDefaultModelNamespace(string? namespaceExtension, string defaultNamespace)
         {
-            var result = context.DefaultNamespace;
             if (namespaceExtension != default)
             {
-                result = namespaceExtension;
+                return namespaceExtension;
             }
-            else if (context.Configuration.ModelNamespace)
+
+            if (Configuration.ModelNamespace)
             {
-                result = $"{context.DefaultNamespace}.Models";
+                return $"{defaultNamespace}.Models";
             }
-            return result;
+
+            return defaultNamespace;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null)
+                return false;
+            if (obj is not TypeProvider other)
+                return false;
+
+            return string.Equals(DefaultName, other.DefaultName, StringComparison.Ordinal) &&
+                string.Equals(DefaultNamespace, other.DefaultNamespace, StringComparison.Ordinal) &&
+                string.Equals(DefaultAccessibility, other.DefaultAccessibility, StringComparison.Ordinal) &&
+                TypeKind == other.TypeKind;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DefaultName, DefaultNamespace, DefaultAccessibility, TypeKind);
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            if (_type is null)
+                return "<pending calculation>";
+
+            return $"TypeProvider ({Declaration.Accessibility} {Declaration.Namespace}.{Declaration.Name}";
         }
     }
 }

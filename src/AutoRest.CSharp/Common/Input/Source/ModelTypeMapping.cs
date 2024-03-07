@@ -1,90 +1,86 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using Azure.Core;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace AutoRest.CSharp.Input.Source
 {
     public class ModelTypeMapping
     {
-        private readonly INamedTypeSymbol? _existingType;
-        private SourceMemberMapping[] PropertyMappings { get; }
+        private readonly Dictionary<string, ISymbol> _propertyMappings;
+        private readonly Dictionary<string, ISymbol> _codeGenMemberMappings;
+        private readonly Dictionary<string, SourcePropertySerializationMapping> _typeSerializationMappings;
 
         public string[]? Usage { get; }
         public string[]? Formats { get; }
 
-        public ModelTypeMapping(INamedTypeSymbol modelAttribute, INamedTypeSymbol memberAttribute, INamedTypeSymbol? existingType)
+        public ModelTypeMapping(CodeGenAttributes codeGenAttributes, INamedTypeSymbol existingType)
         {
-            _existingType = existingType;
+            _propertyMappings = new();
+            _codeGenMemberMappings = new();
+            _typeSerializationMappings = new();
 
-            List<SourceMemberMapping> memberMappings = new List<SourceMemberMapping>();
             foreach (ISymbol member in GetMembers(existingType))
             {
-                if (SourceInputModel.TryGetName(member, memberAttribute, out var schemaMemberName))
+                // If member is defined in both base and derived class, use derived one
+                if (ShouldIncludeMember(member) && !_propertyMappings.ContainsKey(member.Name))
                 {
-                    memberMappings.Add(new SourceMemberMapping(schemaMemberName, member));
+                    _propertyMappings[member.Name] = member;
                 }
-            }
 
-            PropertyMappings = memberMappings.ToArray();
-            if (existingType != null)
-            {
-                foreach (var attributeData in existingType.GetAttributes())
+                foreach (var attributeData in member.GetAttributes())
                 {
-                    if (SymbolEqualityComparer.Default.Equals(attributeData.AttributeClass, modelAttribute))
+                    // handle CodeGenMember attribute
+                    if (codeGenAttributes.TryGetCodeGenMemberAttributeValue(attributeData, out var schemaMemberName))
                     {
-                        foreach (var namedArgument in attributeData.NamedArguments)
-                        {
-                            switch (namedArgument.Key)
-                            {
-                                case nameof(CodeGenModelAttribute.Usage):
-                                    Usage = ToStringArray(namedArgument.Value.Values);
-                                    break;
-                                case nameof(CodeGenModelAttribute.Formats):
-                                    Formats = ToStringArray(namedArgument.Value.Values);
-                                    break;
-                            }
-                        }
+                        _codeGenMemberMappings[schemaMemberName] = member;
                     }
                 }
             }
-        }
 
-        private string[]? ToStringArray(ImmutableArray<TypedConstant> values)
-        {
-            if (values.IsDefaultOrEmpty)
+            foreach (var attributeData in existingType.GetAttributes())
             {
-                return null;
-            }
-
-            return values
-                .Select(v => (string?) v.Value)
-                .OfType<string>()
-                .ToArray();
-        }
-
-        public SourceMemberMapping? GetForMember(string name)
-        {
-            var memberMapping = PropertyMappings.SingleOrDefault(p => string.Equals(p.OriginalName, name, StringComparison.InvariantCultureIgnoreCase));
-            if (memberMapping == null)
-            {
-                var memberSymbol = _existingType?.GetMembers(name).FirstOrDefault();
-                if (memberSymbol != null)
+                // handle CodeGenModel attribute
+                if (codeGenAttributes.TryGetCodeGenModelAttributeValue(attributeData, out var usage, out var formats))
                 {
-                    memberMapping = new SourceMemberMapping(memberSymbol.Name, memberSymbol);
+                    Usage = usage;
+                    Formats = formats;
+                }
+
+                // handle CodeGenSerialization attribute
+                if (codeGenAttributes.TryGetCodeGenSerializationAttributeValue(attributeData, out var propertyName, out var serializationNames, out var serializationHook, out var deserializationHook, out var bicepSerializationHook) && !_typeSerializationMappings.ContainsKey(propertyName))
+                {
+                    _typeSerializationMappings.Add(propertyName, new(propertyName, serializationNames, serializationHook, deserializationHook, bicepSerializationHook));
                 }
             }
-
-            return memberMapping;
         }
 
-        private IEnumerable<ISymbol> GetMembers(INamedTypeSymbol? typeSymbol)
+        private static bool ShouldIncludeMember(ISymbol member)
+        {
+            // here we exclude those "CompilerGenerated" members, such as the backing field of a property which is also a field.
+            return !member.IsImplicitlyDeclared && member is IPropertySymbol or IFieldSymbol;
+        }
+
+        public ISymbol? GetMemberByOriginalName(string name)
+            => _codeGenMemberMappings.TryGetValue(name, out var renamedSymbol) ?
+                renamedSymbol :
+                _propertyMappings.TryGetValue(name, out var memberSymbol) ? memberSymbol : null;
+
+        public SourcePropertySerializationMapping? GetForMemberSerialization(string name)
+            => _typeSerializationMappings.TryGetValue(name, out var serialization) ? serialization : null;
+
+        public IEnumerable<ISymbol> GetPropertiesWithSerialization()
+        {
+            // only the property with CodeGenSerialization attribute will be emitted into the serialization code.
+            foreach (var (propertyName, symbol) in _propertyMappings)
+            {
+                if (_typeSerializationMappings.ContainsKey(propertyName))
+                    yield return symbol;
+            }
+        }
+
+        private static IEnumerable<ISymbol> GetMembers(INamedTypeSymbol? typeSymbol)
         {
             while (typeSymbol != null)
             {

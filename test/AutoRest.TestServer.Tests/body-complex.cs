@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 using AutoRest.TestServer.Tests.Infrastructure;
+using Azure.Core;
 using Azure.Core.Pipeline;
 using body_complex;
 using body_complex.Models;
@@ -229,7 +230,7 @@ namespace AutoRest.TestServer.Tests
         public Task GetComplexPrimitiveDate() => Test(async (host, pipeline) =>
         {
             var result = await new PrimitiveClient(ClientDiagnostics, pipeline, host).GetDateAsync();
-            Assert.AreEqual(DateTimeOffset.Parse("0001-01-01", styles: DateTimeStyles.AssumeUniversal), result.Value.Field);
+            Assert.AreEqual(DateTimeOffset.MinValue, result.Value.Field);
             Assert.AreEqual(DateTimeOffset.Parse("2016-02-29", styles: DateTimeStyles.AssumeUniversal), result.Value.Leap);
         });
 
@@ -238,7 +239,7 @@ namespace AutoRest.TestServer.Tests
         {
             var value = new DateWrapper
             {
-                Field = DateTimeOffset.Parse("0001-01-01", styles: DateTimeStyles.AssumeUniversal),
+                Field = DateTimeOffset.MinValue,
                 Leap = DateTimeOffset.Parse("2016-02-29", styles: DateTimeStyles.AssumeUniversal)
             };
             return await new PrimitiveClient(ClientDiagnostics, pipeline, host).PutDateAsync( value);
@@ -340,7 +341,7 @@ namespace AutoRest.TestServer.Tests
         public Task GetComplexArrayEmpty() => Test(async (host, pipeline) =>
         {
             var result = await new ArrayClient(ClientDiagnostics, pipeline, host).GetEmptyAsync();
-            Assert.AreEqual(new string[0], result.Value.Array);
+            Assert.AreEqual(Array.Empty<string>(), result.Value.Array);
         });
 
         [Test]
@@ -412,7 +413,9 @@ namespace AutoRest.TestServer.Tests
         {
             var result = await new DictionaryClient(ClientDiagnostics, pipeline, host).GetNullAsync();
             Assert.AreEqual(200, result.GetRawResponse().Status);
-            Assert.AreEqual(null, result.Value.DefaultProgram);
+            // the DefaultProgram should be undefined here
+            Assert.IsNotNull(result.Value.DefaultProgram);
+            Assert.IsFalse(!(result.Value.DefaultProgram is ChangeTrackingDictionary<string, string> changeTrackingDictionary && changeTrackingDictionary.IsUndefined));
         });
 
         [Test]
@@ -825,17 +828,17 @@ namespace AutoRest.TestServer.Tests
             Assert.AreEqual("king", dotSalmon.Species);
 
             var dotFish = result.Value.SampleFish;
-            Assert.AreEqual(null, dotFish.FishType);
+            Assert.AreEqual("Unknown", dotFish.FishType);
             Assert.AreEqual("king", dotFish.Species);
 
             var fishes = result.Value.Fishes.ToArray();
 
             dotFish = fishes[0];
-            Assert.AreEqual(null, dotFish.FishType);
+            Assert.AreEqual("Unknown", dotFish.FishType);
             Assert.AreEqual("king", dotFish.Species);
 
             dotFish = fishes[1];
-            Assert.AreEqual(null, dotFish.FishType);
+            Assert.AreEqual("Unknown", dotFish.FishType);
             Assert.AreEqual("king", dotFish.Species);
         });
 

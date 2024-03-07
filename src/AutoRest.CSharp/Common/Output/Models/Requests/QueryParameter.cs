@@ -1,27 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using AutoRest.CSharp.Output.Models.Serialization;
 
 namespace AutoRest.CSharp.Output.Models.Requests
 {
-    internal class QueryParameter
-    {
-        public QueryParameter(string name, ReferenceOrConstant value, RequestParameterSerializationStyle serializationStyle, bool escape, SerializationFormat serializationFormat, bool explode)
-        {
-            Name = name;
-            Value = value;
-            SerializationStyle = serializationStyle;
-            Escape = escape;
-            SerializationFormat = serializationFormat;
-            Explode = explode;
-        }
-
-        public string Name { get; }
-        public ReferenceOrConstant Value { get; }
-        public RequestParameterSerializationStyle SerializationStyle { get; }
-        public SerializationFormat SerializationFormat { get; }
-        public bool Escape { get; }
-        public bool Explode { get; }
-    }
+    internal record QueryParameter(string Name, ReferenceOrConstant Value, string? Delimiter, bool Escape, SerializationFormat SerializationFormat, bool Explode, bool IsApiVersion);
 }

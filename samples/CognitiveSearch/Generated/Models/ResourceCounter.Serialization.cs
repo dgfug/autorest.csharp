@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -14,16 +13,20 @@ namespace CognitiveSearch.Models
     {
         internal static ResourceCounter DeserializeResourceCounter(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             long usage = default;
-            Optional<long?> quota = default;
+            long? quota = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("usage"))
+                if (property.NameEquals("usage"u8))
                 {
                     usage = property.Value.GetInt64();
                     continue;
                 }
-                if (property.NameEquals("quota"))
+                if (property.NameEquals("quota"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -34,7 +37,7 @@ namespace CognitiveSearch.Models
                     continue;
                 }
             }
-            return new ResourceCounter(usage, Optional.ToNullable(quota));
+            return new ResourceCounter(usage, quota);
         }
     }
 }

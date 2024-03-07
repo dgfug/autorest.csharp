@@ -2,65 +2,27 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
+using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using AutoRest.CSharp.AutoRest.Communication;
-using AutoRest.CSharp.Input;
-using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Common.Input;
+using AutoRest.CSharp.Generation.Writers;
 
 namespace AutoRest.CSharp.AutoRest.Plugins
 {
-    // ReSharper disable once StringLiteralTypo
-    [PluginName("csharpproj")]
-    // ReSharper disable once IdentifierTypo
-    internal class CSharpProj : IPlugin
+    // TODO -- move this somewhere else because it is no longer a "plugin"
+    internal class CSharpProj
     {
-        private string _csProjContent = @"<Project Sdk=""Microsoft.NET.Sdk"">
+        private readonly bool _needAzureKeyAuth;
+        private readonly bool _includeDfe;
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Nullable>annotations</Nullable>
-  </PropertyGroup>
-{0}{1}
+        public CSharpProj(bool needAzureKeyAuth, bool includeDfe)
+        {
+            _needAzureKeyAuth = needAzureKeyAuth;
+            _includeDfe = includeDfe;
+        }
 
-</Project>
-";
-        private string _coreCsProjContent = @"
-  <ItemGroup>
-    <PackageReference Include=""Azure.Core"" Version=""1.19.0"" />
-  </ItemGroup>";
-
-        private string _armCsProjContent = @"
-  <PropertyGroup>
-    <IncludeManagementSharedCode>true</IncludeManagementSharedCode>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include=""Azure.ResourceManager"" Version=""1.0.0-beta.4"" />
-  </ItemGroup>
-";
-
-        private string _csProjPackageReference = @"
-  <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
-    <IncludeGeneratorSharedCode>true</IncludeGeneratorSharedCode>
-    <RestoreAdditionalProjectSources>https://azuresdkartifacts.blob.core.windows.net/azure-sdk-tools/index.json</RestoreAdditionalProjectSources>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include=""Microsoft.Azure.AutoRest.CSharp"" Version=""{0}"" PrivateAssets=""All"" />
-  </ItemGroup>
-";
-
-      private string _llcProjectContent = @"
-<ItemGroup>
-    <PackageReference Include=""Azure.Core.Experimental"" Version=""0.1.0-preview.15"" />
-</ItemGroup>
-";
-
-        internal static string GetVersion()
+        private static string GetVersion()
         {
             Assembly clientAssembly = Assembly.GetExecutingAssembly();
 
@@ -81,44 +43,141 @@ namespace AutoRest.CSharp.AutoRest.Plugins
             return version;
         }
 
-        public async Task<bool> Execute(IPluginCommunication autoRest)
+        public void Execute(IPluginCommunication autoRest)
+            => WriteCSProjFiles(async (filename, text) =>
+            {
+                await autoRest.WriteFile(Path.Combine(Configuration.RelativeProjectFolder, filename), text, "source-file-csharp");
+            });
+
+        public void Execute()
+            => WriteCSProjFiles(async (filename, text) =>
+            {
+                //TODO adding to workspace makes the formatting messed up since its a raw xml document
+                //somewhere it tries to parse it as a syntax tree and when it converts back to text
+                //its no longer valid xml.  We should consider a "raw files" concept in the work space
+                //so the file writing can still remain in one place
+                await File.WriteAllTextAsync(Path.Combine(Configuration.AbsoluteProjectFolder, filename), text);
+            });
+
+        private void WriteCSProjFiles(Action<string, string> writeFile)
         {
-            string codeModelFileName = (await autoRest.ListInputs()).FirstOrDefault();
-            if (string.IsNullOrEmpty(codeModelFileName))
-                throw new Exception("Generator did not receive the code model file.");
+            // write src csproj
+            var csprojContent = Configuration.SkipCSProjPackageReference ? GetCSProj() : GetExternalCSProj();
+            writeFile($"{Configuration.Namespace}.csproj", csprojContent);
 
-            var codeModelYaml = await autoRest.ReadFile(codeModelFileName);
-            var codeModel = CodeModelSerialization.DeserializeCodeModel(codeModelYaml);
-
-            var configuration = Configuration.GetConfiguration(autoRest);
-
-            var context = new BuildContext(codeModel, configuration, null);
-
-            string csProjContent;
-            if (configuration.SkipCSProjPackageReference)
+            // write test csproj when needed
+            if (Configuration.MgmtTestConfiguration is not null)
             {
-                string additionalContent = string.Empty;
-                if (configuration.AzureArm)
+                var testCSProjContent = GetTestCSProj();
+                string testGenProjectFolder;
+                if (Configuration.MgmtTestConfiguration.OutputFolder is { } testGenProjectOutputFolder)
                 {
-                  additionalContent += _armCsProjContent;
+                    testGenProjectFolder = Path.Combine(testGenProjectOutputFolder, "../");
                 }
-                if (configuration.LowLevelClient)
+                else
                 {
-                  additionalContent += _llcProjectContent;
+                    testGenProjectFolder = "../";
                 }
-
-                csProjContent = string.Format(_csProjContent, additionalContent, _coreCsProjContent);
+                Console.WriteLine(Path.Combine(testGenProjectFolder, $"{Configuration.Namespace}.Tests.csproj"));
+                writeFile(FormatPath(Path.Combine(testGenProjectFolder, $"{Configuration.Namespace}.Tests.csproj")), testCSProjContent);
             }
-            else
+        }
+
+        private static string FormatPath(string? path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path ?? "";
+            return Path.GetFullPath(path.TrimEnd('/', '\\')).Replace("\\", "/");
+        }
+
+        private string GetTestCSProj()
+        {
+            var writer = new CSProjWriter()
             {
-                var version = GetVersion();
-                var csProjPackageReference = string.Format(_csProjPackageReference, version);
-                csProjContent = string.Format(_csProjContent, csProjPackageReference, _coreCsProjContent);
+                TargetFramework = "netstandard2.0",
+                TreatWarningsAsErrors = true,
+                Nullable = "annotations",
+                IncludeManagementSharedCode = Configuration.AzureArm ? true : null,
+            };
+
+            writer.ProjectReferences.Add(new($"..\\src\\{Configuration.Namespace}.csproj"));
+
+            writer.PackageReferences.Add(new("NUnit"));
+            writer.PackageReferences.Add(new("Azure.Identity"));
+
+            writer.CompileIncludes.Add(new("..\\..\\..\\..\\src\\assets\\TestFramework\\MockTestBase.cs"));
+            writer.CompileIncludes.Add(new("..\\..\\..\\..\\src\\assets\\TestFramework\\RecordedTestAttribute.cs"));
+
+            return writer.Write();
+        }
+
+        private string GetCSProj()
+        {
+            var builder = new CSProjWriter()
+            {
+                TargetFramework = "netstandard2.0",
+                TreatWarningsAsErrors = true,
+                Nullable = "annotations",
+                IncludeManagementSharedCode = Configuration.AzureArm ? true : null,
+                DefineConstants = !Configuration.AzureArm && !Configuration.Generation1ConvenienceClient ? new("$(DefineConstants);EXPERIMENTAL") : null
+            };
+            builder.PackageReferences.Add(new("Azure.Core"));
+            if (_includeDfe)
+            {
+                builder.PackageReferences.Add(new("Azure.Core.Expressions.DataFactory"));
             }
 
-            await autoRest.WriteFile($"{Configuration.ProjectRelativeDirectory}{context.DefaultNamespace}.csproj", csProjContent, "source-file-csharp");
+            if (Configuration.AzureArm)
+            {
+                builder.PackageReferences.Add(new("Azure.ResourceManager"));
+            }
+            else if (!Configuration.Generation1ConvenienceClient)
+            {
+                builder.PackageReferences.Add(new("Azure.Core.Experimental"));
+            }
 
-            return true;
+            if (Configuration.UseModelReaderWriter)
+            {
+                builder.PackageReferences.Add(new("System.ClientModel"));
+            }
+
+            if (_needAzureKeyAuth)
+            {
+                builder.CompileIncludes.Add(new("$(AzureCoreSharedSources)AzureKeyCredentialPolicy.cs", "Shared/Core"));
+            }
+
+            return builder.Write();
+        }
+
+        private string GetExternalCSProj()
+        {
+            var writer = new CSProjWriter()
+            {
+                TargetFramework = "netstandard2.0",
+                TreatWarningsAsErrors = true,
+                Nullable = "annotations",
+                IncludeManagementSharedCode = Configuration.AzureArm ? true : null,
+                DefineConstants = !Configuration.AzureArm && !Configuration.Generation1ConvenienceClient ? new("$(DefineConstants);EXPERIMENTAL") : null,
+                LangVersion = "11.0",
+                IncludeGeneratorSharedCode = true,
+                RestoreAdditionalProjectSources = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+            };
+            writer.PackageReferences.Add(new("Azure.Core"));
+            if (_includeDfe)
+            {
+                writer.PackageReferences.Add(new("Azure.Core.Expressions.DataFactory"));
+            }
+
+            if (Configuration.UseModelReaderWriter)
+            {
+                writer.PackageReferences.Add(new("System.ClientModel"));
+            }
+
+            var version = GetVersion();
+
+            writer.PrivatePackageReferences.Add(new("Microsoft.Azure.AutoRest.CSharp", version));
+
+            return writer.Write();
         }
     }
 }

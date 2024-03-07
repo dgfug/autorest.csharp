@@ -1,46 +1,44 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Diagnostics;
-using System.Linq;
-using AutoRest.CSharp.Output.Models;
 using AutoRest.CSharp.Output.Models.Types;
 
 namespace AutoRest.CSharp.Generation.Writers
 {
-    internal static class ModelFactoryWriter
+    internal class ModelFactoryWriter
     {
-        public static void WriteModelFactory(CodeWriter writer, ModelFactoryTypeProvider modelFactoryType)
+        protected CodeWriter _writer;
+        private ModelFactoryTypeProvider This { get; }
+
+        public ModelFactoryWriter(ModelFactoryTypeProvider modelFactoryProvider) : this(new CodeWriter(), modelFactoryProvider)
         {
-            using (writer.Namespace(modelFactoryType.Type.Namespace))
+        }
+
+        public ModelFactoryWriter(CodeWriter writer, ModelFactoryTypeProvider modelFactoryProvider)
+        {
+            _writer = writer;
+            This = modelFactoryProvider;
+        }
+
+        public void Write()
+        {
+            using (_writer.Namespace(This.Type.Namespace))
             {
-                writer.WriteXmlDocumentationSummary($"Model factory for read-only models.");
-                using (writer.Scope($"{modelFactoryType.Declaration.Accessibility} static partial class {modelFactoryType.Type.Name}"))
+                _writer.WriteXmlDocumentationSummary(This.Description);
+                using (_writer.Scope($"{This.Declaration.Accessibility} static partial class {This.Type:D}"))
                 {
-                    foreach (var method in modelFactoryType.Methods)
+                    foreach (var method in This.Methods)
                     {
-                        WriteFactoryMethodForSchemaObjectType(writer, method);
-                        writer.Line();
+                        _writer.WriteMethodDocumentation(method.Signature);
+                        _writer.WriteMethod(method);
                     }
                 }
             }
         }
 
-        private static void WriteFactoryMethodForSchemaObjectType(CodeWriter writer, MethodSignature method)
+        public override string ToString()
         {
-            var modelType = method.ReturnType?.Implementation as SchemaObjectType;
-            Debug.Assert(modelType != null);
-
-            var ctor = modelType.SerializationConstructor;
-            var initializers = method.Parameters
-                .Select(p => new PropertyInitializer(ctor.FindPropertyInitializedByParameter(p)!, w => w.Identifier($"{p.Name}"), p.Type));
-
-            writer.WriteMethodDocumentation(method);
-            using (writer.WriteMethodDeclaration(method))
-            {
-                writer.WriteParameterNullChecks(method.Parameters);
-                writer.WriteInitialization((w, v) => w.Line($"return {v};"), modelType, ctor, initializers);
-            }
+            return _writer.ToString();
         }
     }
 }

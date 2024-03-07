@@ -1,0 +1,14 @@
+################
+# Automation
+################
+
+# Git Hub bot rules
+/.github/CODEOWNERS                           @jsquire @ronniegeraghty
+/.github/fabricbot.json                       @jsquire @ronniegeraghty
+
+#####################
+# Code Generation
+#####################
+
+# Catch all
+*                                              @m-nash @lirenhe @ArthurMa1978 @hallipr @joshlove-msft

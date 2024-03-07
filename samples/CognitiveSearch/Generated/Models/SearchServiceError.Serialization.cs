@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
@@ -15,26 +15,29 @@ namespace CognitiveSearch.Models
     {
         internal static SearchServiceError DeserializeSearchServiceError(JsonElement element)
         {
-            Optional<string> code = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string code = default;
             string message = default;
-            Optional<IReadOnlyList<SearchServiceError>> details = default;
+            IReadOnlyList<SearchServiceError> details = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("code"))
+                if (property.NameEquals("code"u8))
                 {
                     code = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("message"))
+                if (property.NameEquals("message"u8))
                 {
                     message = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("details"))
+                if (property.NameEquals("details"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<SearchServiceError> array = new List<SearchServiceError>();
@@ -46,7 +49,7 @@ namespace CognitiveSearch.Models
                     continue;
                 }
             }
-            return new SearchServiceError(code.Value, message, Optional.ToList(details));
+            return new SearchServiceError(code, message, details ?? new ChangeTrackingList<SearchServiceError>());
         }
     }
 }

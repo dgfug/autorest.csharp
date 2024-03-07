@@ -7,7 +7,7 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
+using Autorest.CSharp.Core;
 using Azure;
 using Azure.Core;
 using Azure.Core.Pipeline;
@@ -30,8 +30,9 @@ namespace custom_baseUrl_paging
         /// <summary> Initializes a new instance of PagingClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
-        /// <param name="host"> A string value that is used as a global part of the parameterized host. </param>
-        internal PagingClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string host = "host")
+        /// <param name="host"> A string value that is used as a global part of the parameterized host. The default value is "host". </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/> or <paramref name="host"/> is null. </exception>
+        internal PagingClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string host)
         {
             RestClient = new PagingRestClient(clientDiagnostics, pipeline, host);
             _clientDiagnostics = clientDiagnostics;
@@ -44,42 +45,11 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> is null. </exception>
         public virtual AsyncPageable<Product> GetPagesPartialUrlAsync(string accountName, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
 
-            async Task<Page<Product>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrl");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlAsync(accountName, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<Product>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrl");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlNextPageAsync(nextLink, accountName, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlRequest(accountName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlNextPageRequest(nextLink, accountName);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrl", "values", "nextLink", cancellationToken);
         }
 
         /// <summary> A paging operation that combines custom url, paging and partial URL and expect to concat after host. </summary>
@@ -88,42 +58,11 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> is null. </exception>
         public virtual Pageable<Product> GetPagesPartialUrl(string accountName, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
 
-            Page<Product> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrl");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrl(accountName, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<Product> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrl");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrlNextPage(nextLink, accountName, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlRequest(accountName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlNextPageRequest(nextLink, accountName);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrl", "values", "nextLink", cancellationToken);
         }
 
         /// <summary> A paging operation that combines custom url, paging and partial URL with next operation. </summary>
@@ -132,42 +71,11 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> is null. </exception>
         public virtual AsyncPageable<Product> GetPagesPartialUrlOperationAsync(string accountName, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
 
-            async Task<Page<Product>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperation");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlOperationAsync(accountName, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<Product>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperation");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlOperationNextAsync(accountName, nextLink, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlOperationRequest(accountName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrlOperation", "values", "nextLink", cancellationToken);
         }
 
         /// <summary> A paging operation that combines custom url, paging and partial URL with next operation. </summary>
@@ -176,42 +84,11 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> is null. </exception>
         public virtual Pageable<Product> GetPagesPartialUrlOperation(string accountName, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
 
-            Page<Product> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperation");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrlOperation(accountName, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<Product> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperation");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrlOperationNext(accountName, nextLink, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlOperationRequest(accountName);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrlOperation", "values", "nextLink", cancellationToken);
         }
 
         /// <summary> A paging operation that combines custom url, paging and partial URL. </summary>
@@ -221,46 +98,12 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> or <paramref name="nextLink"/> is null. </exception>
         public virtual AsyncPageable<Product> GetPagesPartialUrlOperationNextAsync(string accountName, string nextLink, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
-            if (nextLink == null)
-            {
-                throw new ArgumentNullException(nameof(nextLink));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
+            Argument.AssertNotNull(nextLink, nameof(nextLink));
 
-            async Task<Page<Product>> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperationNext");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlOperationNextAsync(accountName, nextLink, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            async Task<Page<Product>> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperationNext");
-                scope.Start();
-                try
-                {
-                    var response = await RestClient.GetPagesPartialUrlOperationNextAsync(accountName, nextLink, cancellationToken).ConfigureAwait(false);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateAsyncEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrlOperationNext", "values", "nextLink", cancellationToken);
         }
 
         /// <summary> A paging operation that combines custom url, paging and partial URL. </summary>
@@ -270,46 +113,12 @@ namespace custom_baseUrl_paging
         /// <exception cref="ArgumentNullException"> <paramref name="accountName"/> or <paramref name="nextLink"/> is null. </exception>
         public virtual Pageable<Product> GetPagesPartialUrlOperationNext(string accountName, string nextLink, CancellationToken cancellationToken = default)
         {
-            if (accountName == null)
-            {
-                throw new ArgumentNullException(nameof(accountName));
-            }
-            if (nextLink == null)
-            {
-                throw new ArgumentNullException(nameof(nextLink));
-            }
+            Argument.AssertNotNull(accountName, nameof(accountName));
+            Argument.AssertNotNull(nextLink, nameof(nextLink));
 
-            Page<Product> FirstPageFunc(int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperationNext");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrlOperationNext(accountName, nextLink, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            Page<Product> NextPageFunc(string nextLink, int? pageSizeHint)
-            {
-                using var scope = _clientDiagnostics.CreateScope("PagingClient.GetPagesPartialUrlOperationNext");
-                scope.Start();
-                try
-                {
-                    var response = RestClient.GetPagesPartialUrlOperationNext(accountName, nextLink, cancellationToken);
-                    return Page.FromValues(response.Value.Values, response.Value.NextLink, response.GetRawResponse());
-                }
-                catch (Exception e)
-                {
-                    scope.Failed(e);
-                    throw;
-                }
-            }
-            return PageableHelpers.CreateEnumerable(FirstPageFunc, NextPageFunc);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => RestClient.CreateGetPagesPartialUrlOperationNextRequest(accountName, nextLink);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => Product.DeserializeProduct(e), _clientDiagnostics, _pipeline, "PagingClient.GetPagesPartialUrlOperationNext", "values", "nextLink", cancellationToken);
         }
     }
 }

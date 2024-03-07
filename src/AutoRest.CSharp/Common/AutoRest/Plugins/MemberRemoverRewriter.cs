@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using AutoRest.CSharp.Utilities;
 using Azure.Core;
@@ -59,27 +58,38 @@ namespace AutoRest.CSharp.AutoRest.Plugins
         public override SyntaxNode? VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
             var symbol = _semanticModel.GetDeclaredSymbol(node);
-
             return ShouldRemoveMember(symbol) ? null : base.VisitConstructorDeclaration(node);
         }
 
         public override SyntaxNode? VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             var symbol = _semanticModel.GetDeclaredSymbol(node);
-
             return ShouldRemoveMember(symbol) ? null : base.VisitPropertyDeclaration(node);
         }
 
         public override SyntaxNode? VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             var symbol = _semanticModel.GetDeclaredSymbol(node);
-
             return ShouldRemoveMember(symbol) ? null : base.VisitMethodDeclaration(node);
+        }
+
+        public override SyntaxNode? VisitOperatorDeclaration(OperatorDeclarationSyntax node)
+        {
+            var symbol = _semanticModel.GetDeclaredSymbol(node);
+            return ShouldRemoveMember(symbol) ? null : base.VisitOperatorDeclaration(node);
+        }
+
+        public override SyntaxNode? VisitConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
+        {
+            var symbol = _semanticModel.GetDeclaredSymbol(node);
+            return ShouldRemoveMember(symbol) ? null : base.VisitConversionOperatorDeclaration(node);
         }
 
         public override SyntaxNode? VisitFieldDeclaration(FieldDeclarationSyntax node)
         {
-            var symbol = _semanticModel.GetDeclaredSymbol(node);
+            var symbol = node.Declaration.Variables.Count == 1
+                ? _semanticModel.GetDeclaredSymbol(node.Declaration.Variables[0])
+                : null;
 
             return ShouldRemoveMember(symbol) ? null : base.VisitFieldDeclaration(node);
         }

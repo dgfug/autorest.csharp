@@ -17,12 +17,14 @@ namespace required_optional
 {
     internal partial class ImplicitRestClient
     {
-        private string requiredGlobalPath;
-        private string requiredGlobalQuery;
-        private Uri endpoint;
-        private int? optionalGlobalQuery;
-        private ClientDiagnostics _clientDiagnostics;
-        private HttpPipeline _pipeline;
+        private readonly HttpPipeline _pipeline;
+        private readonly string _requiredGlobalPath;
+        private readonly string _requiredGlobalQuery;
+        private readonly Uri _endpoint;
+        private readonly int? _optionalGlobalQuery;
+
+        /// <summary> The ClientDiagnostics is used to provide tracing support for the client library. </summary>
+        internal ClientDiagnostics ClientDiagnostics { get; }
 
         /// <summary> Initializes a new instance of ImplicitRestClient. </summary>
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
@@ -31,15 +33,16 @@ namespace required_optional
         /// <param name="requiredGlobalQuery"> number of items to skip. </param>
         /// <param name="endpoint"> server parameter. </param>
         /// <param name="optionalGlobalQuery"> number of items to skip. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="requiredGlobalPath"/> or <paramref name="requiredGlobalQuery"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/>, <paramref name="pipeline"/>, <paramref name="requiredGlobalPath"/> or <paramref name="requiredGlobalQuery"/> is null. </exception>
+        /// <exception cref="ArgumentException"> <paramref name="requiredGlobalPath"/> is an empty string, and was expected to be non-empty. </exception>
         public ImplicitRestClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, string requiredGlobalPath, string requiredGlobalQuery, Uri endpoint = null, int? optionalGlobalQuery = null)
         {
-            this.requiredGlobalPath = requiredGlobalPath ?? throw new ArgumentNullException(nameof(requiredGlobalPath));
-            this.requiredGlobalQuery = requiredGlobalQuery ?? throw new ArgumentNullException(nameof(requiredGlobalQuery));
-            this.endpoint = endpoint ?? new Uri("http://localhost:3000");
-            this.optionalGlobalQuery = optionalGlobalQuery;
-            _clientDiagnostics = clientDiagnostics;
-            _pipeline = pipeline;
+            ClientDiagnostics = clientDiagnostics ?? throw new ArgumentNullException(nameof(clientDiagnostics));
+            _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+            _requiredGlobalPath = requiredGlobalPath ?? throw new ArgumentNullException(nameof(requiredGlobalPath));
+            _requiredGlobalQuery = requiredGlobalQuery ?? throw new ArgumentNullException(nameof(requiredGlobalQuery));
+            _endpoint = endpoint ?? new Uri("http://localhost:3000");
+            _optionalGlobalQuery = optionalGlobalQuery;
         }
 
         internal HttpMessage CreateGetRequiredPathRequest(string pathParameter)
@@ -48,7 +51,7 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/implicit/required/path/", false);
             uri.AppendPath(pathParameter, true);
             request.Uri = uri;
@@ -57,7 +60,7 @@ namespace required_optional
         }
 
         /// <summary> Test implicitly required path parameter. </summary>
-        /// <param name="pathParameter"> The String to use. </param>
+        /// <param name="pathParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathParameter"/> is null. </exception>
         public async Task<Response> GetRequiredPathAsync(string pathParameter, CancellationToken cancellationToken = default)
@@ -74,12 +77,12 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Test implicitly required path parameter. </summary>
-        /// <param name="pathParameter"> The String to use. </param>
+        /// <param name="pathParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="pathParameter"/> is null. </exception>
         public Response GetRequiredPath(string pathParameter, CancellationToken cancellationToken = default)
@@ -96,7 +99,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -106,7 +109,7 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/implicit/optional/query", false);
             if (queryParameter != null)
             {
@@ -118,7 +121,7 @@ namespace required_optional
         }
 
         /// <summary> Test implicitly optional query parameter. </summary>
-        /// <param name="queryParameter"> The String to use. </param>
+        /// <param name="queryParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutOptionalQueryAsync(string queryParameter = null, CancellationToken cancellationToken = default)
         {
@@ -129,12 +132,12 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Test implicitly optional query parameter. </summary>
-        /// <param name="queryParameter"> The String to use. </param>
+        /// <param name="queryParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutOptionalQuery(string queryParameter = null, CancellationToken cancellationToken = default)
         {
@@ -145,7 +148,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -155,7 +158,7 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/implicit/optional/header", false);
             request.Uri = uri;
             if (queryParameter != null)
@@ -167,7 +170,7 @@ namespace required_optional
         }
 
         /// <summary> Test implicitly optional header parameter. </summary>
-        /// <param name="queryParameter"> The String to use. </param>
+        /// <param name="queryParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutOptionalHeaderAsync(string queryParameter = null, CancellationToken cancellationToken = default)
         {
@@ -178,12 +181,12 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Test implicitly optional header parameter. </summary>
-        /// <param name="queryParameter"> The String to use. </param>
+        /// <param name="queryParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutOptionalHeader(string queryParameter = null, CancellationToken cancellationToken = default)
         {
@@ -194,7 +197,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -204,7 +207,7 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/implicit/optional/body", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -219,7 +222,7 @@ namespace required_optional
         }
 
         /// <summary> Test implicitly optional body parameter. </summary>
-        /// <param name="bodyParameter"> The String to use. </param>
+        /// <param name="bodyParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutOptionalBodyAsync(string bodyParameter = null, CancellationToken cancellationToken = default)
         {
@@ -230,12 +233,12 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Test implicitly optional body parameter. </summary>
-        /// <param name="bodyParameter"> The String to use. </param>
+        /// <param name="bodyParameter"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutOptionalBody(string bodyParameter = null, CancellationToken cancellationToken = default)
         {
@@ -246,7 +249,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -256,7 +259,7 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Put;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/implicit/optional/binary-body", false);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -269,7 +272,7 @@ namespace required_optional
         }
 
         /// <summary> Test implicitly optional body parameter. </summary>
-        /// <param name="bodyParameter"> The binary to use. </param>
+        /// <param name="bodyParameter"> The <see cref="Stream"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public async Task<Response> PutOptionalBinaryBodyAsync(Stream bodyParameter = null, CancellationToken cancellationToken = default)
         {
@@ -280,12 +283,12 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
         /// <summary> Test implicitly optional body parameter. </summary>
-        /// <param name="bodyParameter"> The binary to use. </param>
+        /// <param name="bodyParameter"> The <see cref="Stream"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public Response PutOptionalBinaryBody(Stream bodyParameter = null, CancellationToken cancellationToken = default)
         {
@@ -296,7 +299,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -306,9 +309,9 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/global/required/path/", false);
-            uri.AppendPath(requiredGlobalPath, true);
+            uri.AppendPath(_requiredGlobalPath, true);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
@@ -325,7 +328,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -340,7 +343,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -350,9 +353,9 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/global/required/query", false);
-            uri.AppendQuery("required-global-query", requiredGlobalQuery, true);
+            uri.AppendQuery("required-global-query", _requiredGlobalQuery, true);
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
             return message;
@@ -369,7 +372,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -384,7 +387,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -394,11 +397,11 @@ namespace required_optional
             var request = message.Request;
             request.Method = RequestMethod.Get;
             var uri = new RawRequestUriBuilder();
-            uri.Reset(endpoint);
+            uri.Reset(_endpoint);
             uri.AppendPath("/reqopt/global/optional/query", false);
-            if (optionalGlobalQuery != null)
+            if (_optionalGlobalQuery != null)
             {
-                uri.AppendQuery("optional-global-query", optionalGlobalQuery.Value, true);
+                uri.AppendQuery("optional-global-query", _optionalGlobalQuery.Value, true);
             }
             request.Uri = uri;
             request.Headers.Add("Accept", "application/json");
@@ -416,7 +419,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw await _clientDiagnostics.CreateRequestFailedExceptionAsync(message.Response).ConfigureAwait(false);
+                    throw new RequestFailedException(message.Response);
             }
         }
 
@@ -431,7 +434,7 @@ namespace required_optional
                 case 200:
                     return message.Response;
                 default:
-                    throw _clientDiagnostics.CreateRequestFailedException(message.Response);
+                    throw new RequestFailedException(message.Response);
             }
         }
     }

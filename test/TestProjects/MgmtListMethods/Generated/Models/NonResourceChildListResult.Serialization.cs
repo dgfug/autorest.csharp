@@ -7,22 +7,25 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
+using MgmtListMethods;
 
 namespace MgmtListMethods.Models
 {
-    public partial class NonResourceChildListResult
+    internal partial class NonResourceChildListResult
     {
         internal static NonResourceChildListResult DeserializeNonResourceChildListResult(JsonElement element)
         {
-            Optional<IReadOnlyList<NonResourceChild>> value = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            IReadOnlyList<NonResourceChild> value = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<NonResourceChild> array = new List<NonResourceChild>();
@@ -34,7 +37,7 @@ namespace MgmtListMethods.Models
                     continue;
                 }
             }
-            return new NonResourceChildListResult(Optional.ToList(value));
+            return new NonResourceChildListResult(value ?? new ChangeTrackingList<NonResourceChild>());
         }
     }
 }

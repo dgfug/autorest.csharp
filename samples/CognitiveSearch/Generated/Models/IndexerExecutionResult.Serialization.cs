@@ -16,49 +16,51 @@ namespace CognitiveSearch.Models
     {
         internal static IndexerExecutionResult DeserializeIndexerExecutionResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IndexerExecutionStatus status = default;
-            Optional<string> errorMessage = default;
-            Optional<DateTimeOffset> startTime = default;
-            Optional<DateTimeOffset> endTime = default;
+            string errorMessage = default;
+            DateTimeOffset? startTime = default;
+            DateTimeOffset? endTime = default;
             IReadOnlyList<ItemError> errors = default;
             IReadOnlyList<ItemWarning> warnings = default;
             int itemsProcessed = default;
             int itemsFailed = default;
-            Optional<string> initialTrackingState = default;
-            Optional<string> finalTrackingState = default;
+            string initialTrackingState = default;
+            string finalTrackingState = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("status"))
+                if (property.NameEquals("status"u8))
                 {
                     status = property.Value.GetString().ToIndexerExecutionStatus();
                     continue;
                 }
-                if (property.NameEquals("errorMessage"))
+                if (property.NameEquals("errorMessage"u8))
                 {
                     errorMessage = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("startTime"))
+                if (property.NameEquals("startTime"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     startTime = property.Value.GetDateTimeOffset("O");
                     continue;
                 }
-                if (property.NameEquals("endTime"))
+                if (property.NameEquals("endTime"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     endTime = property.Value.GetDateTimeOffset("O");
                     continue;
                 }
-                if (property.NameEquals("errors"))
+                if (property.NameEquals("errors"u8))
                 {
                     List<ItemError> array = new List<ItemError>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -68,7 +70,7 @@ namespace CognitiveSearch.Models
                     errors = array;
                     continue;
                 }
-                if (property.NameEquals("warnings"))
+                if (property.NameEquals("warnings"u8))
                 {
                     List<ItemWarning> array = new List<ItemWarning>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -78,28 +80,38 @@ namespace CognitiveSearch.Models
                     warnings = array;
                     continue;
                 }
-                if (property.NameEquals("itemsProcessed"))
+                if (property.NameEquals("itemsProcessed"u8))
                 {
                     itemsProcessed = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("itemsFailed"))
+                if (property.NameEquals("itemsFailed"u8))
                 {
                     itemsFailed = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("initialTrackingState"))
+                if (property.NameEquals("initialTrackingState"u8))
                 {
                     initialTrackingState = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("finalTrackingState"))
+                if (property.NameEquals("finalTrackingState"u8))
                 {
                     finalTrackingState = property.Value.GetString();
                     continue;
                 }
             }
-            return new IndexerExecutionResult(status, errorMessage.Value, Optional.ToNullable(startTime), Optional.ToNullable(endTime), errors, warnings, itemsProcessed, itemsFailed, initialTrackingState.Value, finalTrackingState.Value);
+            return new IndexerExecutionResult(
+                status,
+                errorMessage,
+                startTime,
+                endTime,
+                errors,
+                warnings,
+                itemsProcessed,
+                itemsFailed,
+                initialTrackingState,
+                finalTrackingState);
         }
     }
 }

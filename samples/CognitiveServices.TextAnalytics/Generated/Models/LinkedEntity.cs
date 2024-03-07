@@ -8,41 +8,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CognitiveServices.TextAnalytics;
 
 namespace CognitiveServices.TextAnalytics.Models
 {
     /// <summary> The LinkedEntity. </summary>
     public partial class LinkedEntity
     {
-        /// <summary> Initializes a new instance of LinkedEntity. </summary>
+        /// <summary> Initializes a new instance of <see cref="LinkedEntity"/>. </summary>
         /// <param name="name"> Entity Linking formal name. </param>
         /// <param name="matches"> List of instances this entity appears in the text. </param>
         /// <param name="language"> Language used in the data source. </param>
-        /// <param name="url"> URL for the entity&apos;s page from the data source. </param>
+        /// <param name="url"> URL for the entity's page from the data source. </param>
         /// <param name="dataSource"> Data source used to extract entity linking, such as Wiki/Bing etc. </param>
-        /// <exception cref="ArgumentNullException"> <paramref name="name"/>, <paramref name="matches"/>, <paramref name="language"/>, <paramref name="url"/>, or <paramref name="dataSource"/> is null. </exception>
+        /// <exception cref="ArgumentNullException"> <paramref name="name"/>, <paramref name="matches"/>, <paramref name="language"/>, <paramref name="url"/> or <paramref name="dataSource"/> is null. </exception>
         internal LinkedEntity(string name, IEnumerable<Match> matches, string language, string url, string dataSource)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (matches == null)
-            {
-                throw new ArgumentNullException(nameof(matches));
-            }
-            if (language == null)
-            {
-                throw new ArgumentNullException(nameof(language));
-            }
-            if (url == null)
-            {
-                throw new ArgumentNullException(nameof(url));
-            }
-            if (dataSource == null)
-            {
-                throw new ArgumentNullException(nameof(dataSource));
-            }
+            Argument.AssertNotNull(name, nameof(name));
+            Argument.AssertNotNull(matches, nameof(matches));
+            Argument.AssertNotNull(language, nameof(language));
+            Argument.AssertNotNull(url, nameof(url));
+            Argument.AssertNotNull(dataSource, nameof(dataSource));
 
             Name = name;
             Matches = matches.ToList();
@@ -51,12 +37,12 @@ namespace CognitiveServices.TextAnalytics.Models
             DataSource = dataSource;
         }
 
-        /// <summary> Initializes a new instance of LinkedEntity. </summary>
+        /// <summary> Initializes a new instance of <see cref="LinkedEntity"/>. </summary>
         /// <param name="name"> Entity Linking formal name. </param>
         /// <param name="matches"> List of instances this entity appears in the text. </param>
         /// <param name="language"> Language used in the data source. </param>
         /// <param name="id"> Unique identifier of the recognized entity from the data source. </param>
-        /// <param name="url"> URL for the entity&apos;s page from the data source. </param>
+        /// <param name="url"> URL for the entity's page from the data source. </param>
         /// <param name="dataSource"> Data source used to extract entity linking, such as Wiki/Bing etc. </param>
         internal LinkedEntity(string name, IReadOnlyList<Match> matches, string language, string id, string url, string dataSource)
         {
@@ -76,7 +62,7 @@ namespace CognitiveServices.TextAnalytics.Models
         public string Language { get; }
         /// <summary> Unique identifier of the recognized entity from the data source. </summary>
         public string Id { get; }
-        /// <summary> URL for the entity&apos;s page from the data source. </summary>
+        /// <summary> URL for the entity's page from the data source. </summary>
         public string Url { get; }
         /// <summary> Data source used to extract entity linking, such as Wiki/Bing etc. </summary>
         public string DataSource { get; }

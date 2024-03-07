@@ -15,89 +15,112 @@ namespace MgmtScopeResource.Models
     {
         internal static DeploymentOperationProperties DeserializeDeploymentOperationProperties(JsonElement element)
         {
-            Optional<ProvisioningOperation> provisioningOperation = default;
-            Optional<string> provisioningState = default;
-            Optional<DateTimeOffset> timestamp = default;
-            Optional<string> duration = default;
-            Optional<string> serviceRequestId = default;
-            Optional<string> statusCode = default;
-            Optional<StatusMessage> statusMessage = default;
-            Optional<HttpMessage> request = default;
-            Optional<HttpMessage> response = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            ProvisioningOperation? provisioningOperation = default;
+            string provisioningState = default;
+            DateTimeOffset? timestamp = default;
+            TimeSpan? duration = default;
+            TimeSpan? anotherDuration = default;
+            string serviceRequestId = default;
+            string statusCode = default;
+            StatusMessage statusMessage = default;
+            HttpMessage request = default;
+            HttpMessage response = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("provisioningOperation"))
+                if (property.NameEquals("provisioningOperation"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     provisioningOperation = property.Value.GetString().ToProvisioningOperation();
                     continue;
                 }
-                if (property.NameEquals("provisioningState"))
+                if (property.NameEquals("provisioningState"u8))
                 {
                     provisioningState = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("timestamp"))
+                if (property.NameEquals("timestamp"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     timestamp = property.Value.GetDateTimeOffset("O");
                     continue;
                 }
-                if (property.NameEquals("duration"))
+                if (property.NameEquals("duration"u8))
                 {
-                    duration = property.Value.GetString();
+                    if (property.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    duration = property.Value.GetTimeSpan("P");
                     continue;
                 }
-                if (property.NameEquals("serviceRequestId"))
+                if (property.NameEquals("anotherDuration"u8))
+                {
+                    if (property.Value.ValueKind == JsonValueKind.Null)
+                    {
+                        continue;
+                    }
+                    anotherDuration = property.Value.GetTimeSpan("c");
+                    continue;
+                }
+                if (property.NameEquals("serviceRequestId"u8))
                 {
                     serviceRequestId = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("statusCode"))
+                if (property.NameEquals("statusCode"u8))
                 {
                     statusCode = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("statusMessage"))
+                if (property.NameEquals("statusMessage"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     statusMessage = StatusMessage.DeserializeStatusMessage(property.Value);
                     continue;
                 }
-                if (property.NameEquals("request"))
+                if (property.NameEquals("request"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     request = HttpMessage.DeserializeHttpMessage(property.Value);
                     continue;
                 }
-                if (property.NameEquals("response"))
+                if (property.NameEquals("response"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     response = HttpMessage.DeserializeHttpMessage(property.Value);
                     continue;
                 }
             }
-            return new DeploymentOperationProperties(Optional.ToNullable(provisioningOperation), provisioningState.Value, Optional.ToNullable(timestamp), duration.Value, serviceRequestId.Value, statusCode.Value, statusMessage.Value, request.Value, response.Value);
+            return new DeploymentOperationProperties(
+                provisioningOperation,
+                provisioningState,
+                timestamp,
+                duration,
+                anotherDuration,
+                serviceRequestId,
+                statusCode,
+                statusMessage,
+                request,
+                response);
         }
     }
 }

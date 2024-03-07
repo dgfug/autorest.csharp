@@ -7,6 +7,7 @@
 
 using System.Text.Json;
 using Azure.Core;
+using Azure.Network.Management.Interface;
 
 namespace Azure.Network.Management.Interface.Models
 {
@@ -17,29 +18,29 @@ namespace Azure.Network.Management.Interface.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(Name))
             {
-                writer.WritePropertyName("name");
+                writer.WritePropertyName("name"u8);
                 writer.WriteStringValue(Name);
             }
             if (Optional.IsDefined(Id))
             {
-                writer.WritePropertyName("id");
+                writer.WritePropertyName("id"u8);
                 writer.WriteStringValue(Id);
             }
-            writer.WritePropertyName("properties");
+            writer.WritePropertyName("properties"u8);
             writer.WriteStartObject();
             if (Optional.IsDefined(AddressPrefix))
             {
-                writer.WritePropertyName("addressPrefix");
+                writer.WritePropertyName("addressPrefix"u8);
                 writer.WriteStringValue(AddressPrefix);
             }
             if (Optional.IsDefined(NextHopType))
             {
-                writer.WritePropertyName("nextHopType");
+                writer.WritePropertyName("nextHopType"u8);
                 writer.WriteStringValue(NextHopType.Value.ToString());
             }
             if (Optional.IsDefined(NextHopIpAddress))
             {
-                writer.WritePropertyName("nextHopIpAddress");
+                writer.WritePropertyName("nextHopIpAddress"u8);
                 writer.WriteStringValue(NextHopIpAddress);
             }
             writer.WriteEndObject();
@@ -48,31 +49,35 @@ namespace Azure.Network.Management.Interface.Models
 
         internal static Route DeserializeRoute(JsonElement element)
         {
-            Optional<string> name = default;
-            Optional<string> etag = default;
-            Optional<string> id = default;
-            Optional<string> addressPrefix = default;
-            Optional<RouteNextHopType> nextHopType = default;
-            Optional<string> nextHopIpAddress = default;
-            Optional<ProvisioningState> provisioningState = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string name = default;
+            string etag = default;
+            string id = default;
+            string addressPrefix = default;
+            RouteNextHopType? nextHopType = default;
+            string nextHopIpAddress = default;
+            ProvisioningState? provisioningState = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("etag"))
+                if (property.NameEquals("etag"u8))
                 {
                     etag = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("id"))
+                if (property.NameEquals("id"u8))
                 {
                     id = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("properties"))
+                if (property.NameEquals("properties"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -81,31 +86,29 @@ namespace Azure.Network.Management.Interface.Models
                     }
                     foreach (var property0 in property.Value.EnumerateObject())
                     {
-                        if (property0.NameEquals("addressPrefix"))
+                        if (property0.NameEquals("addressPrefix"u8))
                         {
                             addressPrefix = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("nextHopType"))
+                        if (property0.NameEquals("nextHopType"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             nextHopType = new RouteNextHopType(property0.Value.GetString());
                             continue;
                         }
-                        if (property0.NameEquals("nextHopIpAddress"))
+                        if (property0.NameEquals("nextHopIpAddress"u8))
                         {
                             nextHopIpAddress = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("provisioningState"))
+                        if (property0.NameEquals("provisioningState"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             provisioningState = new ProvisioningState(property0.Value.GetString());
@@ -115,7 +118,14 @@ namespace Azure.Network.Management.Interface.Models
                     continue;
                 }
             }
-            return new Route(id.Value, name.Value, etag.Value, addressPrefix.Value, Optional.ToNullable(nextHopType), nextHopIpAddress.Value, Optional.ToNullable(provisioningState));
+            return new Route(
+                id,
+                name,
+                etag,
+                addressPrefix,
+                nextHopType,
+                nextHopIpAddress,
+                provisioningState);
         }
     }
 }

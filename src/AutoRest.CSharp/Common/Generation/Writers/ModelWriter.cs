@@ -2,15 +2,16 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using AutoRest.CSharp.Common.Input;
+using AutoRest.CSharp.Common.Output.Models.Types;
 using AutoRest.CSharp.Generation.Types;
+using AutoRest.CSharp.Output.Models;
 using AutoRest.CSharp.Output.Models.Types;
-using AutoRest.CSharp.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace AutoRest.CSharp.Generation.Writers
 {
@@ -20,21 +21,21 @@ namespace AutoRest.CSharp.Generation.Writers
         {
             switch (model)
             {
-                case SchemaObjectType objectSchema:
+                case ObjectType objectSchema:
                     WriteObjectSchema(writer, objectSchema);
                     break;
-                case EnumType e when e.IsExtendable:
-                    WriteChoiceSchema(writer, e);
+                case EnumType { IsExtensible: true } e:
+                    WriteExtensibleEnum(writer, e);
                     break;
-                case EnumType e when !e.IsExtendable:
-                    WriteSealedChoiceSchema(writer, e);
+                case EnumType { IsExtensible: false } e:
+                    WriteEnum(writer, e);
                     break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private void WriteObjectSchema(CodeWriter writer, SchemaObjectType schema)
+        private void WriteObjectSchema(CodeWriter writer, ObjectType schema)
         {
             using (writer.Namespace(schema.Declaration.Namespace))
             {
@@ -69,52 +70,236 @@ namespace AutoRest.CSharp.Generation.Writers
                 writer.Line();
                 using (writer.Scope())
                 {
+                    WritePrivateRawDataField(writer, schema);
+
                     WriteConstructor(writer, schema);
 
-                    foreach (var property in schema.Properties)
-                    {
-                        writer.WriteXmlDocumentationSummary(CreatePropertyDescription(property));
-
-                        CSharpType propertyType = property.Declaration.Type;
-                        writer.Append($"{property.Declaration.Accessibility} {propertyType} {property.Declaration.Name:D}");
-                        writer.AppendRaw(property.IsReadOnly ? "{ get; }" : "{ get; set; }");
-
-                        writer.Line();
-                    }
+                    WriteProperties(writer, schema);
                 }
             }
         }
-        private FormattableString CreatePropertyDescription(ObjectTypeProperty property)
+
+        protected virtual void WriteProperties(CodeWriter writer, ObjectType schema)
         {
-            if (!string.IsNullOrWhiteSpace(property.Description))
+            var rawDataField = (schema as SerializableObjectType)?.RawDataField;
+            foreach (var property in schema.Properties)
             {
-                return $"{property.Description}";
+                if (property == rawDataField)
+                    continue;
+
+                WriteProperty(writer, property, schema);
+
+                if (property.FlattenedProperty != null)
+                    WriteProperty(writer, property.FlattenedProperty, schema);
             }
-            String splitDeclarationName = string.Join(" ", StringExtensions.SplitByCamelCase(property.Declaration.Name)).ToLower();
-            if (property.IsReadOnly)
+        }
+
+        // TODO -- this is workaround because we are declaring fields and properties in different way, and this raw data field and AdditionalProperties property could be converted from each other.
+        private void WritePrivateRawDataField(CodeWriter writer, ObjectType schema)
+        {
+            if ((schema as SerializableObjectType)?.RawDataField is not { } rawDataField)
+                return;
+
+            writer.WriteXmlDocumentationSummary($"{rawDataField.Description}");
+            writer.Append($"{rawDataField.Declaration.Accessibility} ")
+                .AppendRawIf("readonly ", schema.IsStruct)
+                .Line($"{rawDataField.Declaration.Type} {rawDataField.Declaration.Name};");
+
+            writer.Line();
+        }
+
+        private void WriteFieldModifiers(CodeWriter writer, FieldModifiers modifiers)
+        {
+            writer.AppendRawIf("public ", modifiers.HasFlag(FieldModifiers.Public))
+                .AppendRawIf("internal ", modifiers.HasFlag(FieldModifiers.Internal))
+                .AppendRawIf("protected ", modifiers.HasFlag(FieldModifiers.Protected))
+                .AppendRawIf("private ", modifiers.HasFlag(FieldModifiers.Private))
+                .AppendRawIf("static ", modifiers.HasFlag(FieldModifiers.Static))
+                .AppendRawIf("readonly ", modifiers.HasFlag(FieldModifiers.ReadOnly))
+                .AppendRawIf("const ", modifiers.HasFlag(FieldModifiers.Const));
+        }
+
+        private void WriteProperty(CodeWriter writer, ObjectTypeProperty property, ObjectType objectType)
+        {
+            writer.WriteXmlDocumentationSummary(CreatePropertyDescription(property));
+            if (Configuration.EnableBicepSerialization && objectType.Declaration.Accessibility == "public" && property.Declaration.Accessibility == "public")
             {
-                return $"Gets the {splitDeclarationName}";
+                string? wrapper = property.SchemaProperty?.FlattenedNames?.FirstOrDefault();
+                wrapper = wrapper is null ? string.Empty : $"{wrapper}.";
+                writer.Line($"[WirePath(\"{wrapper}{property.SerializedName}\")]");
+            }
+            writer.Append($"{property.Declaration.Accessibility} {property.Declaration.Type} {property.Declaration.Name:D}");
+
+            // write getter
+            writer.AppendRaw("{");
+            if (property.GetterModifiers is { } getterModifiers)
+                WriteFieldModifiers(writer, getterModifiers);
+            writer.AppendRaw("get;");
+            // writer setter
+            if (!property.IsReadOnly)
+            {
+                if (property.SetterModifiers is { } setterModifiers)
+                    WriteFieldModifiers(writer, setterModifiers);
+                writer.AppendRaw("set;");
+            }
+            writer.AppendRaw("}");
+            if (property.InitializationValue != null)
+            {
+                writer.AppendRaw(" = ");
+                writer.WriteValueExpression(property.InitializationValue);
+                writer.Line($";");
+            }
+
+            writer.Line();
+        }
+
+        private void WriteProperty(CodeWriter writer, FlattenedObjectTypeProperty property, ObjectType objectType)
+        {
+            writer.WriteXmlDocumentationSummary(CreatePropertyDescription(property));
+            if (Configuration.EnableBicepSerialization && objectType.Declaration.Accessibility == "public" && property.Declaration.Accessibility == "public")
+            {
+                string? wrapper = property.UnderlyingProperty.SchemaProperty?.FlattenedNames?.FirstOrDefault();
+                wrapper = wrapper is null ? string.Empty : $"{wrapper}.";
+                writer.Line($"[WirePath(\"{wrapper}{property.SerializedName}\")]");
+            }
+            using (writer.Scope($"{property.Declaration.Accessibility} {property.Declaration.Type} {property.Declaration.Name:D}"))
+            {
+                // write getter
+                switch (property.IncludeGetterNullCheck)
+                {
+                    case true:
+                        WriteGetWithNullCheck(writer, property);
+                        break;
+                    case false:
+                        WriteGetWithDefault(writer, property);
+                        break;
+                    default:
+                        WriteGetWithEscape(writer, property);
+                        break;
+                }
+
+                // only write the setter when it is not readonly
+                if (!property.IsReadOnly)
+                {
+                    if (property.IncludeSetterNullCheck)
+                    {
+                        WriteSetWithNullCheck(writer, property);
+                    }
+                    else
+                    {
+                        WriteSetWithSingleParamCtor(writer, property);
+                    }
+                }
+            }
+
+            writer.Line();
+        }
+
+        private static void WriteSetWithNullCheck(CodeWriter writer, FlattenedObjectTypeProperty property)
+        {
+            var underlyingName = property.UnderlyingProperty.Declaration.Name;
+            var underlyingType = property.UnderlyingProperty.Declaration.Type;
+            using (writer.Scope($"set"))
+            {
+                if (property.IsOverriddenValueType)
+                {
+                    using (writer.Scope($"if (value.HasValue)"))
+                    {
+                        writer.Line($"if ({underlyingName} is null)");
+                        writer.Line($"{underlyingName} = new {underlyingType}();");
+                        writer.Line($"{underlyingName}.{property.ChildPropertyName} = value.Value;");
+                    }
+                    using (writer.Scope($"else"))
+                    {
+                        writer.Line($"{underlyingName} = null;");
+                    }
+                }
+                else
+                {
+                    writer.Line($"if ({underlyingName} is null)");
+                    writer.Line($"{underlyingName} = new {underlyingType}();");
+                    writer.Line($"{underlyingName}.{property.ChildPropertyName} = value;");
+                }
+            }
+        }
+
+        private static void WriteSetWithSingleParamCtor(CodeWriter writer, FlattenedObjectTypeProperty property)
+        {
+            var underlyingName = property.UnderlyingProperty.Declaration.Name;
+            var underlyingType = property.UnderlyingProperty.Declaration.Type;
+            if (property.IsOverriddenValueType)
+            {
+                using (writer.Scope($"set"))
+                {
+                    writer.Line($"{underlyingName} = value.HasValue ? new {underlyingType}(value.Value) : null;");
+                }
             }
             else
             {
-                return $"Gets or sets the {splitDeclarationName}";
+                writer.Line($"set => {underlyingName} = new {underlyingType}(value);");
             }
         }
 
-        private string GetAbstract(SchemaObjectType schema)
+        private static void WriteGetWithNullCheck(CodeWriter writer, FlattenedObjectTypeProperty property)
         {
-            return schema.IsAbstract ? "abstract " : string.Empty;
+            var underlyingName = property.UnderlyingProperty.Declaration.Name;
+            var underlyingType = property.UnderlyingProperty.Declaration.Type;
+            using (writer.Scope($"get"))
+            {
+                writer.Line($"if ({underlyingName} is null)");
+                writer.Line($"{underlyingName} = new {underlyingType}();");
+                writer.Line($"return {underlyingName:D}.{property.ChildPropertyName};");
+            }
         }
 
-        protected virtual void AddClassAttributes(CodeWriter writer, SchemaObjectType schema)
+        private static void WriteGetWithDefault(CodeWriter writer, FlattenedObjectTypeProperty property)
         {
+            writer.Line($"get => {property.UnderlyingProperty.Declaration.Name:I} is null ? default({property.Declaration.Type}) : {property.UnderlyingProperty.Declaration.Name}.{property.ChildPropertyName};");
+        }
+
+        private static void WriteGetWithEscape(CodeWriter writer, FlattenedObjectTypeProperty property)
+        {
+            writer.Append($"get => {property.UnderlyingProperty.Declaration.Name}")
+                .AppendRawIf("?", property.IsUnderlyingPropertyNullable)
+                .Line($".{property.ChildPropertyName};");
+        }
+
+        private FormattableString CreatePropertyDescription(ObjectTypeProperty property, string? overrideName = null)
+        {
+            if (!string.IsNullOrWhiteSpace(property.PropertyDescription.ToString()))
+            {
+                return $"{property.PropertyDescription}";
+            }
+            return $"{ObjectTypeProperty.CreateDefaultPropertyDescription(overrideName ?? property.Declaration.Name, property.IsReadOnly)}";
+        }
+
+        private string GetAbstract(ObjectType schema)
+        {
+            // Limit this change to management plane to avoid data plane affected
+            return schema.Declaration.IsAbstract ? "abstract " : string.Empty;
+        }
+
+        protected virtual void AddClassAttributes(CodeWriter writer, ObjectType schema)
+        {
+            if (schema.Deprecated != null)
+            {
+                writer.Line($"[{typeof(ObsoleteAttribute)}(\"{schema.Deprecated}\")]");
+            }
+        }
+
+        private void AddClassAttributes(CodeWriter writer, EnumType enumType)
+        {
+            if (enumType.Deprecated != null)
+            {
+                writer.Line($"[{typeof(ObsoleteAttribute)}(\"{enumType.Deprecated}\")]");
+            }
         }
 
         protected virtual void AddCtorAttribute(CodeWriter writer, ObjectType schema, ObjectTypeConstructor constructor)
         {
         }
 
-        public void WriteConstructor(CodeWriter writer, ObjectType schema)
+        private void WriteConstructor(CodeWriter writer, ObjectType schema)
         {
             foreach (var constructor in schema.Constructors)
             {
@@ -122,7 +307,7 @@ namespace AutoRest.CSharp.Generation.Writers
                 AddCtorAttribute(writer, schema, constructor);
                 using (writer.WriteMethodDeclaration(constructor.Signature))
                 {
-                    writer.WriteParameterNullChecks(constructor.Signature.Parameters);
+                    writer.WriteParametersValidation(constructor.Signature.Parameters);
 
                     foreach (var initializer in constructor.Initializers)
                     {
@@ -138,58 +323,68 @@ namespace AutoRest.CSharp.Generation.Writers
                         writer.Line($";");
                     }
                 }
-
                 writer.Line();
             }
         }
 
-        private void WriteSealedChoiceSchema(CodeWriter writer, EnumType schema)
+        public void WriteEnum(CodeWriter writer, EnumType enumType)
         {
-            if (schema.Declaration.IsUserDefined)
+            if (enumType.Declaration.IsUserDefined)
             {
                 return;
             }
 
-            using (writer.Namespace(schema.Declaration.Namespace))
+            using (writer.Namespace(enumType.Declaration.Namespace))
             {
-                writer.WriteXmlDocumentationSummary($"{schema.Description}");
+                writer.WriteXmlDocumentationSummary($"{enumType.Description}");
+                AddClassAttributes(writer, enumType);
 
-                using (writer.Scope($"{schema.Declaration.Accessibility} enum {schema.Declaration.Name}"))
+                writer.Append($"{enumType.Declaration.Accessibility} enum {enumType.Declaration.Name}")
+                    .AppendIf($" : {enumType.ValueType}", enumType.IsIntValueType && !enumType.ValueType.Equals(typeof(int)));
+                using (writer.Scope())
                 {
-                    foreach (EnumTypeValue value in schema.Values)
+                    foreach (EnumTypeValue value in enumType.Values)
                     {
                         writer.WriteXmlDocumentationSummary($"{value.Description}");
-                        writer.Line($"{value.Declaration.Name},");
+                        if (enumType.IsIntValueType)
+                        {
+                            writer.Line($"{value.Declaration.Name} = {value.Value.Value:L},");
+                        }
+                        else
+                        {
+                            writer.Line($"{value.Declaration.Name},");
+                        }
                     }
                     writer.RemoveTrailingComma();
                 }
             }
         }
 
-        private void WriteChoiceSchema(CodeWriter writer, EnumType schema)
+        public void WriteExtensibleEnum(CodeWriter writer, EnumType enumType)
         {
-            var cs = schema.Type;
-            string name = schema.Declaration.Name;
-            var isString = schema.BaseType.FrameworkType == typeof(string);
+            var cs = enumType.Type;
+            string name = enumType.Declaration.Name;
+            var isString = enumType.ValueType.FrameworkType == typeof(string);
 
-            using (writer.Namespace(schema.Declaration.Namespace))
+            using (writer.Namespace(enumType.Declaration.Namespace))
             {
-                writer.WriteXmlDocumentationSummary($"{schema.Description}");
+                writer.WriteXmlDocumentationSummary($"{enumType.Description}");
+                AddClassAttributes(writer, enumType);
 
                 var implementType = new CSharpType(typeof(IEquatable<>), cs);
-                using (writer.Scope($"{schema.Declaration.Accessibility} readonly partial struct {name}: {implementType}"))
+                using (writer.Scope($"{enumType.Declaration.Accessibility} readonly partial struct {name}: {implementType}"))
                 {
-                    writer.Line($"private readonly {schema.BaseType} _value;");
+                    writer.Line($"private readonly {enumType.ValueType} _value;");
                     writer.Line();
 
-                    writer.WriteXmlDocumentationSummary($"Initializes a new instance of <see cref=\"{name}\"/>.");
+                    writer.WriteXmlDocumentationSummary($"Initializes a new instance of {name:C}.");
 
                     if (isString)
                     {
                         writer.WriteXmlDocumentationException(typeof(ArgumentNullException), $"<paramref name=\"value\"/> is null.");
                     }
 
-                    using (writer.Scope($"public {name}({schema.BaseType} value)"))
+                    using (writer.Scope($"public {name}({enumType.ValueType} value)"))
                     {
                         writer.Append($"_value = value");
                         if (isString)
@@ -200,28 +395,36 @@ namespace AutoRest.CSharp.Generation.Writers
                     }
                     writer.Line();
 
-                    foreach (var choice in schema.Values)
+                    foreach (var choice in enumType.Values)
                     {
-                        var fieldName = GetValueFieldName(name, choice.Declaration.Name, schema.Values);
-                        writer.Line($"private const {schema.BaseType} {fieldName} = {choice.Value.Value:L};");
+                        var fieldName = GetValueFieldName(name, choice.Declaration.Name, enumType.Values);
+                        writer.Line($"private const {enumType.ValueType} {fieldName} = {choice.Value.Value:L};");
                     }
                     writer.Line();
 
-                    foreach (var choice in schema.Values)
+                    foreach (var choice in enumType.Values)
                     {
                         writer.WriteXmlDocumentationSummary($"{choice.Description}");
-                        var fieldName = GetValueFieldName(name, choice.Declaration.Name, schema.Values);
+                        var fieldName = GetValueFieldName(name, choice.Declaration.Name, enumType.Values);
                         writer.Append($"public static {cs} {choice.Declaration.Name}").AppendRaw("{ get; }").Append($" = new {cs}({fieldName});").Line();
                     }
 
-                    writer.WriteXmlDocumentationSummary($"Determines if two <see cref=\"{name}\"/> values are the same.");
+                    // write ToSerial method, only write when the underlying type is not a string
+                    if (!enumType.IsStringValueType)
+                    {
+                        writer.Line();
+                        writer.Line($"internal {enumType.ValueType} {enumType.SerializationMethodName}() => _value;");
+                        writer.Line();
+                    }
+
+                    writer.WriteXmlDocumentationSummary($"Determines if two {name:C} values are the same.");
                     writer.Line($"public static bool operator ==({cs} left, {cs} right) => left.Equals(right);");
 
-                    writer.WriteXmlDocumentationSummary($"Determines if two <see cref=\"{name}\"/> values are not the same.");
+                    writer.WriteXmlDocumentationSummary($"Determines if two {name:C} values are not the same.");
                     writer.Line($"public static bool operator !=({cs} left, {cs} right) => !left.Equals(right);");
 
-                    writer.WriteXmlDocumentationSummary($"Converts a string to a <see cref=\"{name}\"/>.");
-                    writer.Line($"public static implicit operator {cs}({schema.BaseType} value) => new {cs}(value);");
+                    writer.WriteXmlDocumentationSummary($"Converts a string to a {name:C}.");
+                    writer.Line($"public static implicit operator {cs}({enumType.ValueType} value) => new {cs}(value);");
                     writer.Line();
 
                     writer.WriteXmlDocumentationInheritDoc();
@@ -232,11 +435,11 @@ namespace AutoRest.CSharp.Generation.Writers
                     writer.Append($"public bool Equals({cs} other) => ");
                     if (isString)
                     {
-                        writer.Line($"{schema.BaseType}.Equals(_value, other._value, {typeof(StringComparison)}.InvariantCultureIgnoreCase);");
+                        writer.Line($"{enumType.ValueType}.Equals(_value, other._value, {typeof(StringComparison)}.InvariantCultureIgnoreCase);");
                     }
                     else
                     {
-                        writer.Line($"{schema.BaseType}.Equals(_value, other._value);");
+                        writer.Line($"{enumType.ValueType}.Equals(_value, other._value);");
                     }
                     writer.Line();
 
@@ -267,7 +470,7 @@ namespace AutoRest.CSharp.Generation.Writers
             }
         }
 
-        private string GetValueFieldName(string enumName, string enumValue, IList<EnumTypeValue> enumValues)
+        private static string GetValueFieldName(string enumName, string enumValue, IList<EnumTypeValue> enumValues)
         {
             if (enumName != $"{enumValue}Value")
             {
@@ -285,7 +488,7 @@ namespace AutoRest.CSharp.Generation.Writers
             return $"{enumValue}Value{index}";
         }
 
-        private void WriteEditorBrowsableFalse(CodeWriter writer)
+        private static void WriteEditorBrowsableFalse(CodeWriter writer)
         {
             writer.Line($"[{typeof(EditorBrowsableAttribute)}({typeof(EditorBrowsableState)}.{nameof(EditorBrowsableState.Never)})]");
         }

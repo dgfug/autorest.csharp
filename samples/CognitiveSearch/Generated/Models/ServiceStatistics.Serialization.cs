@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -14,16 +13,20 @@ namespace CognitiveSearch.Models
     {
         internal static ServiceStatistics DeserializeServiceStatistics(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             ServiceCounters counters = default;
             ServiceLimits limits = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("counters"))
+                if (property.NameEquals("counters"u8))
                 {
                     counters = ServiceCounters.DeserializeServiceCounters(property.Value);
                     continue;
                 }
-                if (property.NameEquals("limits"))
+                if (property.NameEquals("limits"u8))
                 {
                     limits = ServiceLimits.DeserializeServiceLimits(property.Value);
                     continue;

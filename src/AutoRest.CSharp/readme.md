@@ -4,7 +4,7 @@
 ## Configuration
 ```yaml
 use-extension:
-  "@autorest/modelerfour": "4.21.1"
+  "@autorest/modelerfour": "4.26.0"
 modelerfour:
   always-create-content-type-parameter: true
 pipeline:
@@ -18,20 +18,46 @@ output-scope:
 shared-source-folders: $(this-folder)/Generator.Shared;$(this-folder)/Azure.Core.Shared
 ```
 
-```yaml !$(low-level-client)
+```yaml $(generation1-convenience-client) || $(azure-arm)
 modelerfour:
   flatten-models: true
   flatten-payloads: true
   group-parameters: true
 ```
 
-```yaml !$(skip-csproj)
+```yaml $(sample-gen)
+use-extension:
+  "@autorest/testmodeler": "2.6.1"
+
 pipeline:
-  csharpproj:
+  test-modeler:
     input: modelerfour/identity
-  csharpproj/emitter:
-    input: csharpproj
-    scope: output-scope
+    scope : output-scope
+  test-modeler/identity:
+    input: test-modeler
+  csharpgen:
+    input: test-modeler/identity
+
+modelerfour:
+  emit-yaml-tags: true
+
+testmodeler:
+  use-parents-value: true
+  split-parents-value: false
+  add-armtemplate-payload-string: true
+
+include-x-ms-examples-original-file: true
+#   export-explicit-type: true
+```
+
+## Customization
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.PrivateEndpointConnectionProperties
+    transform: >
+      $.properties.privateLinkServiceConnectionState["x-ms-client-name"] = "connectionState";   
 ```
 
 ## Help

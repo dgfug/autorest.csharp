@@ -1,5 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using AutoRest.CSharp.Output.Models.Shared;
+using Azure.Core;
+using MgmtParamOrdering;
+using MgmtParamOrdering.Models;
 using NUnit.Framework;
 
 namespace AutoRest.TestServer.Tests.Mgmt.TestProjects
@@ -8,46 +11,60 @@ namespace AutoRest.TestServer.Tests.Mgmt.TestProjects
     {
         public MgmtParamOrderingTests() : base("MgmtParamOrdering")
         {
+            TagResourceExceptions.Add(typeof(VirtualMachineExtensionImageResource));
         }
 
-        [TestCase("AvailabilitySet", true)]
-        [TestCase("DedicatedHostGroup", true)]
-        [TestCase("DedicatedHost", true)]
-        [TestCase("VirtualMachineExtensionImage", false)]
+        [TestCase("AvailabilitySetResource", true)]
+        [TestCase("DedicatedHostGroupResource", true)]
+        [TestCase("DedicatedHostResource", true)]
+        [TestCase("VirtualMachineExtensionImageResource", true)]
         public void ValidateResource(string operation, bool isExists)
         {
             var resourceTypeExists = FindAllResources().Any(o => o.Name == operation);
             Assert.AreEqual(isExists, resourceTypeExists);
         }
 
-        [TestCase("DedicatedHostContainer", "CreateOrUpdate",  "hostName")]
-        [TestCase("DedicatedHostContainer", "CreateOrUpdateAsync", "hostName")]
-        [TestCase("DedicatedHostContainer", "Get", "hostName")]
-        [TestCase("DedicatedHostContainer", "GetAsync", "hostName")]
-        [TestCase("DedicatedHostContainer", "GetIfExists", "hostName")]
-        [TestCase("DedicatedHostContainer", "GetIfExistsAsync", "hostName")]
-        [TestCase("DedicatedHostContainer", "CheckIfExists", "hostName")]
-        [TestCase("DedicatedHostContainer", "CheckIfExistsAsync", "hostName")]
-        [TestCase("DedicatedHostGroupContainer", "CreateOrUpdate", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "CreateOrUpdateAsync", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "Get", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "GetAsync", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "GetIfExists", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "GetIfExistsAsync", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "CheckIfExists", "hostGroupName")]
-        [TestCase("DedicatedHostGroupContainer", "CheckIfExistsAsync", "hostGroupName")]
-        [TestCase("EnvironmentContainerResourceContainer", "CreateOrUpdate", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "CreateOrUpdateAsync", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "Get", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "GetAsync", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "GetIfExists", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "GetIfExistsAsync", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "CheckIfExists", "name")]
-        [TestCase("EnvironmentContainerResourceContainer", "CheckIfExistsAsync", "name")]
-        public void ValidateContainerCorrectFirstParameter(string containerName, string methodName, string parameterName)
+        [TestCase("DedicatedHostCollection", "CreateOrUpdate",  "hostName")]
+        [TestCase("DedicatedHostCollection", "CreateOrUpdateAsync", "hostName")]
+        [TestCase("DedicatedHostCollection", "Get", "hostName")]
+        [TestCase("DedicatedHostCollection", "GetAsync", "hostName")]
+        [TestCase("DedicatedHostCollection", "Exists", "hostName")]
+        [TestCase("DedicatedHostCollection", "ExistsAsync", "hostName")]
+        [TestCase("DedicatedHostGroupCollection", "CreateOrUpdate", "hostGroupName")]
+        [TestCase("DedicatedHostGroupCollection", "CreateOrUpdateAsync", "hostGroupName")]
+        [TestCase("DedicatedHostGroupCollection", "Get", "hostGroupName")]
+        [TestCase("DedicatedHostGroupCollection", "GetAsync", "hostGroupName")]
+        [TestCase("DedicatedHostGroupCollection", "Exists", "hostGroupName")]
+        [TestCase("DedicatedHostGroupCollection", "ExistsAsync", "hostGroupName")]
+        [TestCase("EnvironmentContainerResourceCollection", "CreateOrUpdate", "name")]
+        [TestCase("EnvironmentContainerResourceCollection", "CreateOrUpdateAsync", "name")]
+        [TestCase("EnvironmentContainerResourceCollection", "Get", "name")]
+        [TestCase("EnvironmentContainerResourceCollection", "GetAsync", "name")]
+        [TestCase("EnvironmentContainerResourceCollection", "Exists", "name")]
+        [TestCase("EnvironmentContainerResourceCollection", "ExistsAsync", "name")]
+        public void ValidateCollectionCorrectFirstParameter(string collectionName, string methodName, string parameterName)
         {
-            var method = FindAllContainers().Single(o => o.Name == containerName).GetMethod(methodName);
-            Assert.AreEqual(parameterName, method?.GetParameters().First().Name);
+            var method = FindAllCollections().Single(o => o.Name == collectionName).GetMethod(methodName);
+            var firstParamName = method?.GetParameters().First().Name;
+            if (firstParamName.Equals(KnownParameters.WaitForCompletion.Name))
+            {
+                // LRO, get next one
+                firstParamName = method?.GetParameters()[1].Name;
+            }
+            Assert.AreEqual(parameterName, firstParamName);
+        }
+
+        [Test]
+        public void ValidateAzureLocationFormat()
+        {
+            var obj = typeof(LocationFormatObject);
+            Assert.IsNotNull(obj);
+            var stringProperty = obj.GetProperty("StringLocation");
+            Assert.IsNotNull(stringProperty);
+            Assert.AreEqual(typeof(string), stringProperty.PropertyType);
+            var objProperty = obj.GetProperty("ObjectLocation");
+            Assert.IsNotNull(objProperty);
+            Assert.AreEqual(typeof(AzureLocation?), objProperty.PropertyType);
         }
     }
 }

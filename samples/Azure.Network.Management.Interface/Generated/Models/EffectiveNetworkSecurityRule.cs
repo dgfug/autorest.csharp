@@ -6,14 +6,14 @@
 #nullable disable
 
 using System.Collections.Generic;
-using Azure.Core;
+using Azure.Network.Management.Interface;
 
 namespace Azure.Network.Management.Interface.Models
 {
     /// <summary> Effective network security rules. </summary>
     public partial class EffectiveNetworkSecurityRule
     {
-        /// <summary> Initializes a new instance of EffectiveNetworkSecurityRule. </summary>
+        /// <summary> Initializes a new instance of <see cref="EffectiveNetworkSecurityRule"/>. </summary>
         internal EffectiveNetworkSecurityRule()
         {
             SourcePortRanges = new ChangeTrackingList<string>();
@@ -24,13 +24,13 @@ namespace Azure.Network.Management.Interface.Models
             ExpandedDestinationAddressPrefix = new ChangeTrackingList<string>();
         }
 
-        /// <summary> Initializes a new instance of EffectiveNetworkSecurityRule. </summary>
+        /// <summary> Initializes a new instance of <see cref="EffectiveNetworkSecurityRule"/>. </summary>
         /// <param name="name"> The name of the security rule specified by the user (if created by the user). </param>
         /// <param name="protocol"> The network protocol this rule applies to. </param>
         /// <param name="sourcePortRange"> The source port or range. </param>
         /// <param name="destinationPortRange"> The destination port or range. </param>
-        /// <param name="sourcePortRanges"> The source port ranges. Expected values include a single integer between 0 and 65535, a range using &apos;-&apos; as separator (e.g. 100-400), or an asterisk (*). </param>
-        /// <param name="destinationPortRanges"> The destination port ranges. Expected values include a single integer between 0 and 65535, a range using &apos;-&apos; as separator (e.g. 100-400), or an asterisk (*). </param>
+        /// <param name="sourcePortRanges"> The source port ranges. Expected values include a single integer between 0 and 65535, a range using '-' as separator (e.g. 100-400), or an asterisk (*). </param>
+        /// <param name="destinationPortRanges"> The destination port ranges. Expected values include a single integer between 0 and 65535, a range using '-' as separator (e.g. 100-400), or an asterisk (*). </param>
         /// <param name="sourceAddressPrefix"> The source address prefix. </param>
         /// <param name="destinationAddressPrefix"> The destination address prefix. </param>
         /// <param name="sourceAddressPrefixes"> The source address prefixes. Expected values include CIDR IP ranges, Default Tags (VirtualNetwork, AzureLoadBalancer, Internet), System Tags, and the asterisk (*). </param>
@@ -67,9 +67,9 @@ namespace Azure.Network.Management.Interface.Models
         public string SourcePortRange { get; }
         /// <summary> The destination port or range. </summary>
         public string DestinationPortRange { get; }
-        /// <summary> The source port ranges. Expected values include a single integer between 0 and 65535, a range using &apos;-&apos; as separator (e.g. 100-400), or an asterisk (*). </summary>
+        /// <summary> The source port ranges. Expected values include a single integer between 0 and 65535, a range using '-' as separator (e.g. 100-400), or an asterisk (*). </summary>
         public IReadOnlyList<string> SourcePortRanges { get; }
-        /// <summary> The destination port ranges. Expected values include a single integer between 0 and 65535, a range using &apos;-&apos; as separator (e.g. 100-400), or an asterisk (*). </summary>
+        /// <summary> The destination port ranges. Expected values include a single integer between 0 and 65535, a range using '-' as separator (e.g. 100-400), or an asterisk (*). </summary>
         public IReadOnlyList<string> DestinationPortRanges { get; }
         /// <summary> The source address prefix. </summary>
         public string SourceAddressPrefix { get; }

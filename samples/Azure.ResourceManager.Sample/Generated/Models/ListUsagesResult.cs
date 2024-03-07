@@ -8,37 +8,92 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Azure.ResourceManager.Sample;
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> The List Usages operation response. </summary>
+    /// <summary>
+    /// The List Usages operation response.
+    /// Serialized Name: ListUsagesResult
+    /// </summary>
     internal partial class ListUsagesResult
     {
-        /// <summary> Initializes a new instance of ListUsagesResult. </summary>
-        /// <param name="value"> The list of compute resource usages. </param>
+        /// <summary>
+        /// Keeps track of any properties unknown to the library.
+        /// <para>
+        /// To assign an object to the value of this property use <see cref="BinaryData.FromObjectAsJson{T}(T, System.Text.Json.JsonSerializerOptions?)"/>.
+        /// </para>
+        /// <para>
+        /// To assign an already formatted json string to this property use <see cref="BinaryData.FromString(string)"/>.
+        /// </para>
+        /// <para>
+        /// Examples:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson("foo")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("\"foo\"")</term>
+        /// <description>Creates a payload of "foo".</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromObjectAsJson(new { key = "value" })</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// <item>
+        /// <term>BinaryData.FromString("{\"key\": \"value\"}")</term>
+        /// <description>Creates a payload of { "key": "value" }.</description>
+        /// </item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        private IDictionary<string, BinaryData> _serializedAdditionalRawData;
+
+        /// <summary> Initializes a new instance of <see cref="ListUsagesResult"/>. </summary>
+        /// <param name="value">
+        /// The list of compute resource usages.
+        /// Serialized Name: ListUsagesResult.value
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="value"/> is null. </exception>
-        internal ListUsagesResult(IEnumerable<Usage> value)
+        internal ListUsagesResult(IEnumerable<SampleUsage> value)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            Argument.AssertNotNull(value, nameof(value));
 
             Value = value.ToList();
         }
 
-        /// <summary> Initializes a new instance of ListUsagesResult. </summary>
-        /// <param name="value"> The list of compute resource usages. </param>
-        /// <param name="nextLink"> The URI to fetch the next page of compute resource usage information. Call ListNext() with this to fetch the next page of compute resource usage information. </param>
-        internal ListUsagesResult(IReadOnlyList<Usage> value, string nextLink)
+        /// <summary> Initializes a new instance of <see cref="ListUsagesResult"/>. </summary>
+        /// <param name="value">
+        /// The list of compute resource usages.
+        /// Serialized Name: ListUsagesResult.value
+        /// </param>
+        /// <param name="nextLink">
+        /// The URI to fetch the next page of compute resource usage information. Call ListNext() with this to fetch the next page of compute resource usage information.
+        /// Serialized Name: ListUsagesResult.nextLink
+        /// </param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
+        internal ListUsagesResult(IReadOnlyList<SampleUsage> value, string nextLink, IDictionary<string, BinaryData> serializedAdditionalRawData)
         {
             Value = value;
             NextLink = nextLink;
+            _serializedAdditionalRawData = serializedAdditionalRawData;
         }
 
-        /// <summary> The list of compute resource usages. </summary>
-        public IReadOnlyList<Usage> Value { get; }
-        /// <summary> The URI to fetch the next page of compute resource usage information. Call ListNext() with this to fetch the next page of compute resource usage information. </summary>
+        /// <summary> Initializes a new instance of <see cref="ListUsagesResult"/> for deserialization. </summary>
+        internal ListUsagesResult()
+        {
+        }
+
+        /// <summary>
+        /// The list of compute resource usages.
+        /// Serialized Name: ListUsagesResult.value
+        /// </summary>
+        public IReadOnlyList<SampleUsage> Value { get; }
+        /// <summary>
+        /// The URI to fetch the next page of compute resource usage information. Call ListNext() with this to fetch the next page of compute resource usage information.
+        /// Serialized Name: ListUsagesResult.nextLink
+        /// </summary>
         public string NextLink { get; }
     }
 }

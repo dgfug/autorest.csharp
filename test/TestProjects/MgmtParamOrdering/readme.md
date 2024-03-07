@@ -1,5 +1,7 @@
 # ExactMatchInheritance
-### AutoRest Configuration
+
+## AutoRest Configuration
+
 > see https://aka.ms/autorest
 
 ``` yaml
@@ -11,11 +13,15 @@ input-file: $(this-folder)/MgmtParamOrdering.json
 namespace: MgmtParamOrdering
 modelerfour:
   lenient-model-deduplication: true
+format-by-name-rules:
+  'tenantId': 'uuid'
+  'resourceType': 'resource-type'
+  'etag': 'etag'
+  'location': 'azure-location'
+  '*Uri': 'Uri'
+  '*Uris': 'Uri'
 
-operation-group-to-resource-type:
-   VirtualMachineExtensionImages: Microsoft.Compute/locations/publishers/vmextension
-operation-group-to-resource:
-   VirtualMachineExtensionImages: NonResource
-operation-group-to-parent:
-   VirtualMachineExtensionImages: subscriptions
+# the remover will remove this since this is not internally used or a reference type if we do not have this configuration
+keep-orphaned-models:
+- LocationFormatObject
 ```

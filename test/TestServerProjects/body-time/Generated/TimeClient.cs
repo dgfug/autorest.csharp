@@ -29,6 +29,7 @@ namespace body_time
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal TimeClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new TimeRestClient(clientDiagnostics, pipeline, endpoint);
@@ -36,7 +37,7 @@ namespace body_time
             _pipeline = pipeline;
         }
 
-        /// <summary> Get time value &quot;11:34:56&quot;. </summary>
+        /// <summary> Get time value "11:34:56". </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<TimeSpan>> GetAsync(CancellationToken cancellationToken = default)
         {
@@ -53,7 +54,7 @@ namespace body_time
             }
         }
 
-        /// <summary> Get time value &quot;11:34:56&quot;. </summary>
+        /// <summary> Get time value "11:34:56". </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<TimeSpan> Get(CancellationToken cancellationToken = default)
         {
@@ -70,8 +71,8 @@ namespace body_time
             }
         }
 
-        /// <summary> Put time value &quot;08:07:56&quot;. </summary>
-        /// <param name="timeBody"> Put time value &quot;08:07:56&quot; in parameter to pass testserver. </param>
+        /// <summary> Put time value "08:07:56". </summary>
+        /// <param name="timeBody"> Put time value "08:07:56" in parameter to pass testserver. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<string>> PutAsync(TimeSpan timeBody, CancellationToken cancellationToken = default)
         {
@@ -88,8 +89,8 @@ namespace body_time
             }
         }
 
-        /// <summary> Put time value &quot;08:07:56&quot;. </summary>
-        /// <param name="timeBody"> Put time value &quot;08:07:56&quot; in parameter to pass testserver. </param>
+        /// <summary> Put time value "08:07:56". </summary>
+        /// <param name="timeBody"> Put time value "08:07:56" in parameter to pass testserver. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<string> Put(TimeSpan timeBody, CancellationToken cancellationToken = default)
         {

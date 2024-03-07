@@ -9,59 +9,147 @@ using System;
 using System.Collections.Generic;
 using Azure.Core;
 using Azure.ResourceManager.Resources.Models;
+using Azure.ResourceManager.Sample;
 
 namespace Azure.ResourceManager.Sample.Models
 {
-    /// <summary> Describes a virtual machine scale set network profile&apos;s network configurations. </summary>
+    /// <summary>
+    /// Describes a virtual machine scale set network profile's network configurations.
+    /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration
+    /// </summary>
     public partial class VirtualMachineScaleSetNetworkConfiguration : SubResource
     {
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetNetworkConfiguration. </summary>
-        /// <param name="name"> The network configuration name. </param>
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetNetworkConfiguration"/>. </summary>
+        /// <param name="name">
+        /// The network configuration name.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.name
+        /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> is null. </exception>
         public VirtualMachineScaleSetNetworkConfiguration(string name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            Argument.AssertNotNull(name, nameof(name));
 
             Name = name;
-            IpConfigurations = new ChangeTrackingList<VirtualMachineScaleSetIPConfiguration>();
+            IPConfigurations = new ChangeTrackingList<VirtualMachineScaleSetIPConfiguration>();
         }
 
-        /// <summary> Initializes a new instance of VirtualMachineScaleSetNetworkConfiguration. </summary>
-        /// <param name="id"> Resource Id. </param>
-        /// <param name="name"> The network configuration name. </param>
-        /// <param name="primary"> Specifies the primary network interface in case the virtual machine has more than 1 network interface. </param>
-        /// <param name="enableAcceleratedNetworking"> Specifies whether the network interface is accelerated networking-enabled. </param>
-        /// <param name="networkSecurityGroup"> The network security group. </param>
-        /// <param name="dnsSettings"> The dns settings to be applied on the network interfaces. </param>
-        /// <param name="ipConfigurations"> Specifies the IP configurations of the network interface. </param>
-        /// <param name="enableIPForwarding"> Whether IP forwarding enabled on this NIC. </param>
-        internal VirtualMachineScaleSetNetworkConfiguration(string id, string name, bool? primary, bool? enableAcceleratedNetworking, WritableSubResource networkSecurityGroup, VirtualMachineScaleSetNetworkConfigurationDnsSettings dnsSettings, IList<VirtualMachineScaleSetIPConfiguration> ipConfigurations, bool? enableIPForwarding) : base(id)
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetNetworkConfiguration"/>. </summary>
+        /// <param name="id">
+        /// Resource Id
+        /// Serialized Name: SubResource.id
+        /// </param>
+        /// <param name="serializedAdditionalRawData"> Keeps track of any properties unknown to the library. </param>
+        /// <param name="name">
+        /// The network configuration name.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.name
+        /// </param>
+        /// <param name="primary">
+        /// Specifies the primary network interface in case the virtual machine has more than 1 network interface.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.primary
+        /// </param>
+        /// <param name="enableAcceleratedNetworking">
+        /// Specifies whether the network interface is accelerated networking-enabled.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.enableAcceleratedNetworking
+        /// </param>
+        /// <param name="networkSecurityGroup">
+        /// The network security group.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.networkSecurityGroup
+        /// </param>
+        /// <param name="dnsSettings">
+        /// The dns settings to be applied on the network interfaces.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.dnsSettings
+        /// </param>
+        /// <param name="ipConfigurations">
+        /// Specifies the IP configurations of the network interface.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.ipConfigurations
+        /// </param>
+        /// <param name="enableIPForwarding">
+        /// Whether IP forwarding enabled on this NIC.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.enableIPForwarding
+        /// </param>
+        internal VirtualMachineScaleSetNetworkConfiguration(string id, IDictionary<string, BinaryData> serializedAdditionalRawData, string name, bool? primary, bool? enableAcceleratedNetworking, WritableSubResource networkSecurityGroup, VirtualMachineScaleSetNetworkConfigurationDnsSettings dnsSettings, IList<VirtualMachineScaleSetIPConfiguration> ipConfigurations, bool? enableIPForwarding) : base(id, serializedAdditionalRawData)
         {
             Name = name;
             Primary = primary;
             EnableAcceleratedNetworking = enableAcceleratedNetworking;
             NetworkSecurityGroup = networkSecurityGroup;
             DnsSettings = dnsSettings;
-            IpConfigurations = ipConfigurations;
+            IPConfigurations = ipConfigurations;
             EnableIPForwarding = enableIPForwarding;
         }
 
-        /// <summary> The network configuration name. </summary>
+        /// <summary> Initializes a new instance of <see cref="VirtualMachineScaleSetNetworkConfiguration"/> for deserialization. </summary>
+        internal VirtualMachineScaleSetNetworkConfiguration()
+        {
+        }
+
+        /// <summary>
+        /// The network configuration name.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.name
+        /// </summary>
+        [WirePath("name")]
         public string Name { get; set; }
-        /// <summary> Specifies the primary network interface in case the virtual machine has more than 1 network interface. </summary>
+        /// <summary>
+        /// Specifies the primary network interface in case the virtual machine has more than 1 network interface.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.primary
+        /// </summary>
+        [WirePath("properties.primary")]
         public bool? Primary { get; set; }
-        /// <summary> Specifies whether the network interface is accelerated networking-enabled. </summary>
+        /// <summary>
+        /// Specifies whether the network interface is accelerated networking-enabled.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.enableAcceleratedNetworking
+        /// </summary>
+        [WirePath("properties.enableAcceleratedNetworking")]
         public bool? EnableAcceleratedNetworking { get; set; }
-        /// <summary> The network security group. </summary>
-        public WritableSubResource NetworkSecurityGroup { get; set; }
-        /// <summary> The dns settings to be applied on the network interfaces. </summary>
-        public VirtualMachineScaleSetNetworkConfigurationDnsSettings DnsSettings { get; set; }
-        /// <summary> Specifies the IP configurations of the network interface. </summary>
-        public IList<VirtualMachineScaleSetIPConfiguration> IpConfigurations { get; }
-        /// <summary> Whether IP forwarding enabled on this NIC. </summary>
+        /// <summary>
+        /// The network security group.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.networkSecurityGroup
+        /// </summary>
+        internal WritableSubResource NetworkSecurityGroup { get; set; }
+        /// <summary> Gets or sets Id. </summary>
+        [WirePath("properties.networkSecurityGroup.id")]
+        public ResourceIdentifier NetworkSecurityGroupId
+        {
+            get => NetworkSecurityGroup is null ? default : NetworkSecurityGroup.Id;
+            set
+            {
+                if (NetworkSecurityGroup is null)
+                    NetworkSecurityGroup = new WritableSubResource();
+                NetworkSecurityGroup.Id = value;
+            }
+        }
+
+        /// <summary>
+        /// The dns settings to be applied on the network interfaces.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.dnsSettings
+        /// </summary>
+        internal VirtualMachineScaleSetNetworkConfigurationDnsSettings DnsSettings { get; set; }
+        /// <summary>
+        /// List of DNS servers IP addresses
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfigurationDnsSettings.dnsServers
+        /// </summary>
+        [WirePath("properties.dnsSettings.dnsServers")]
+        public IList<string> DnsServers
+        {
+            get
+            {
+                if (DnsSettings is null)
+                    DnsSettings = new VirtualMachineScaleSetNetworkConfigurationDnsSettings();
+                return DnsSettings.DnsServers;
+            }
+        }
+
+        /// <summary>
+        /// Specifies the IP configurations of the network interface.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.ipConfigurations
+        /// </summary>
+        [WirePath("properties.ipConfigurations")]
+        public IList<VirtualMachineScaleSetIPConfiguration> IPConfigurations { get; }
+        /// <summary>
+        /// Whether IP forwarding enabled on this NIC.
+        /// Serialized Name: VirtualMachineScaleSetNetworkConfiguration.properties.enableIPForwarding
+        /// </summary>
+        [WirePath("properties.enableIPForwarding")]
         public bool? EnableIPForwarding { get; set; }
     }
 }

@@ -1,31 +1,44 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System;
-using AutoRest.CSharp.Output.Models.Types;
+using AutoRest.CSharp.Common.Output.Expressions.ValueExpressions;
+using AutoRest.CSharp.Generation.Types;
 
 namespace AutoRest.CSharp.Output.Models.Serialization.Json
 {
-    internal class JsonPropertySerialization
+    internal record JsonPropertySerialization : PropertySerialization
     {
-        public JsonPropertySerialization(string name, bool isRequired, bool isReadOnly, ObjectTypeProperty? property, JsonSerialization valueSerialization)
+        public JsonPropertySerialization(
+            string parameterName,
+            TypedValueExpression value,
+            string serializedName,
+            CSharpType? serializedType,
+            JsonSerialization valueSerialization,
+            bool isRequired,
+            bool shouldExcludeInWireSerialization,
+            CustomSerializationHooks? serializationHooks = null,
+            TypedValueExpression? enumerableExpression = null)
+            : base(parameterName, value, serializedName, serializedType, isRequired, shouldExcludeInWireSerialization, enumerableExpression, serializationHooks)
         {
-            Name = name;
-            IsRequired = isRequired;
-            IsReadOnly = isReadOnly;
-            Property = property;
             ValueSerialization = valueSerialization;
-
-            if (valueSerialization is JsonObjectSerialization && property != null)
-            {
-                throw new ArgumentException("Property shouldn't be set when value serialization is an object", nameof(property));
-            }
+            CustomSerializationMethodName = serializationHooks?.JsonSerializationMethodName;
+            CustomDeserializationMethodName = serializationHooks?.JsonDeserializationMethodName;
         }
 
-        public string Name { get; }
-        public bool IsRequired { get; }
-        public bool IsReadOnly { get; }
-        public ObjectTypeProperty? Property { get; }
-        public JsonSerialization ValueSerialization { get; }
+        public JsonPropertySerialization(string serializedName, JsonPropertySerialization[] propertySerializations)
+            : base(string.Empty, new TypedMemberExpression(null, serializedName, typeof(object)), serializedName, null, false, false)
+        {
+            PropertySerializations = propertySerializations;
+        }
+
+        public JsonSerialization? ValueSerialization { get; }
+        /// <summary>
+        /// This is not null when the property is flattened in generated client SDK `x-ms-client-flatten: true`
+        /// </summary>
+        public JsonPropertySerialization[]? PropertySerializations { get; }
+
+        public string? CustomSerializationMethodName { get; }
+
+        public string? CustomDeserializationMethodName { get; }
     }
 }

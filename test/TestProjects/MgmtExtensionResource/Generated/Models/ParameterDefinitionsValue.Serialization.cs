@@ -5,9 +5,11 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using MgmtExtensionResource;
 
 namespace MgmtExtensionResource.Models
 {
@@ -16,29 +18,48 @@ namespace MgmtExtensionResource.Models
         void IUtf8JsonSerializable.Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            if (Optional.IsDefined(Type))
+            if (Optional.IsDefined(ParameterType))
             {
-                writer.WritePropertyName("type");
-                writer.WriteStringValue(Type.Value.ToString());
+                writer.WritePropertyName("type"u8);
+                writer.WriteStringValue(ParameterType.Value.ToString());
             }
             if (Optional.IsCollectionDefined(AllowedValues))
             {
-                writer.WritePropertyName("allowedValues");
+                writer.WritePropertyName("allowedValues"u8);
                 writer.WriteStartArray();
                 foreach (var item in AllowedValues)
                 {
-                    writer.WriteObjectValue(item);
+                    if (item == null)
+                    {
+                        writer.WriteNullValue();
+                        continue;
+                    }
+#if NET6_0_OR_GREATER
+				writer.WriteRawValue(item);
+#else
+                    using (JsonDocument document = JsonDocument.Parse(item))
+                    {
+                        JsonSerializer.Serialize(writer, document.RootElement);
+                    }
+#endif
                 }
                 writer.WriteEndArray();
             }
             if (Optional.IsDefined(DefaultValue))
             {
-                writer.WritePropertyName("defaultValue");
-                writer.WriteObjectValue(DefaultValue);
+                writer.WritePropertyName("defaultValue"u8);
+#if NET6_0_OR_GREATER
+				writer.WriteRawValue(DefaultValue);
+#else
+                using (JsonDocument document = JsonDocument.Parse(DefaultValue))
+                {
+                    JsonSerializer.Serialize(writer, document.RootElement);
+                }
+#endif
             }
             if (Optional.IsDefined(Metadata))
             {
-                writer.WritePropertyName("metadata");
+                writer.WritePropertyName("metadata"u8);
                 writer.WriteObjectValue(Metadata);
             }
             writer.WriteEndObject();
@@ -46,59 +67,66 @@ namespace MgmtExtensionResource.Models
 
         internal static ParameterDefinitionsValue DeserializeParameterDefinitionsValue(JsonElement element)
         {
-            Optional<ParameterType> type = default;
-            Optional<IList<object>> allowedValues = default;
-            Optional<object> defaultValue = default;
-            Optional<ParameterDefinitionsValueMetadata> metadata = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            ParameterType? type = default;
+            IList<BinaryData> allowedValues = default;
+            BinaryData defaultValue = default;
+            ParameterDefinitionsValueMetadata metadata = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("type"))
+                if (property.NameEquals("type"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     type = new ParameterType(property.Value.GetString());
                     continue;
                 }
-                if (property.NameEquals("allowedValues"))
+                if (property.NameEquals("allowedValues"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    List<object> array = new List<object>();
+                    List<BinaryData> array = new List<BinaryData>();
                     foreach (var item in property.Value.EnumerateArray())
                     {
-                        array.Add(item.GetObject());
+                        if (item.ValueKind == JsonValueKind.Null)
+                        {
+                            array.Add(null);
+                        }
+                        else
+                        {
+                            array.Add(BinaryData.FromString(item.GetRawText()));
+                        }
                     }
                     allowedValues = array;
                     continue;
                 }
-                if (property.NameEquals("defaultValue"))
+                if (property.NameEquals("defaultValue"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
-                    defaultValue = property.Value.GetObject();
+                    defaultValue = BinaryData.FromString(property.Value.GetRawText());
                     continue;
                 }
-                if (property.NameEquals("metadata"))
+                if (property.NameEquals("metadata"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     metadata = ParameterDefinitionsValueMetadata.DeserializeParameterDefinitionsValueMetadata(property.Value);
                     continue;
                 }
             }
-            return new ParameterDefinitionsValue(Optional.ToNullable(type), Optional.ToList(allowedValues), defaultValue.Value, metadata.Value);
+            return new ParameterDefinitionsValue(type, allowedValues ?? new ChangeTrackingList<BinaryData>(), defaultValue, metadata);
         }
     }
 }

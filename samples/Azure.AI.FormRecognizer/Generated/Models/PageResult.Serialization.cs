@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
+using Azure.AI.FormRecognizer;
 
 namespace Azure.AI.FormRecognizer.Models
 {
@@ -15,32 +15,34 @@ namespace Azure.AI.FormRecognizer.Models
     {
         internal static PageResult DeserializePageResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             int page = default;
-            Optional<int> clusterId = default;
-            Optional<IReadOnlyList<KeyValuePair>> keyValuePairs = default;
-            Optional<IReadOnlyList<DataTable>> tables = default;
+            int? clusterId = default;
+            IReadOnlyList<KeyValuePair> keyValuePairs = default;
+            IReadOnlyList<DataTable> tables = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("page"))
+                if (property.NameEquals("page"u8))
                 {
                     page = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("clusterId"))
+                if (property.NameEquals("clusterId"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     clusterId = property.Value.GetInt32();
                     continue;
                 }
-                if (property.NameEquals("keyValuePairs"))
+                if (property.NameEquals("keyValuePairs"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<KeyValuePair> array = new List<KeyValuePair>();
@@ -51,11 +53,10 @@ namespace Azure.AI.FormRecognizer.Models
                     keyValuePairs = array;
                     continue;
                 }
-                if (property.NameEquals("tables"))
+                if (property.NameEquals("tables"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
-                        property.ThrowNonNullablePropertyIsNull();
                         continue;
                     }
                     List<DataTable> array = new List<DataTable>();
@@ -67,7 +68,7 @@ namespace Azure.AI.FormRecognizer.Models
                     continue;
                 }
             }
-            return new PageResult(page, Optional.ToNullable(clusterId), Optional.ToList(keyValuePairs), Optional.ToList(tables));
+            return new PageResult(page, clusterId, keyValuePairs ?? new ChangeTrackingList<KeyValuePair>(), tables ?? new ChangeTrackingList<DataTable>());
         }
     }
 }

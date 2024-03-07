@@ -29,6 +29,7 @@ namespace Accessibility
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal AccessibilityClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new AccessibilityRestClient(clientDiagnostics, pipeline, endpoint);
@@ -36,7 +37,7 @@ namespace Accessibility
             _pipeline = pipeline;
         }
 
-        /// <param name="body"> The String to use. </param>
+        /// <param name="body"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response> OperationAsync(string body = null, CancellationToken cancellationToken = default)
         {
@@ -53,7 +54,7 @@ namespace Accessibility
             }
         }
 
-        /// <param name="body"> The String to use. </param>
+        /// <param name="body"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response Operation(string body = null, CancellationToken cancellationToken = default)
         {
@@ -70,7 +71,7 @@ namespace Accessibility
             }
         }
 
-        /// <param name="body"> The String to use. </param>
+        /// <param name="body"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         internal virtual async Task<Response> OperationInternalAsync(string body = null, CancellationToken cancellationToken = default)
         {
@@ -87,7 +88,7 @@ namespace Accessibility
             }
         }
 
-        /// <param name="body"> The String to use. </param>
+        /// <param name="body"> The <see cref="string"/> to use. </param>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         internal virtual Response OperationInternal(string body = null, CancellationToken cancellationToken = default)
         {

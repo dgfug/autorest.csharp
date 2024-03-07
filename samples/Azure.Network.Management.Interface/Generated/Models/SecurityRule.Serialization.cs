@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Azure.Core;
+using Azure.Network.Management.Interface;
 
 namespace Azure.Network.Management.Interface.Models
 {
@@ -18,44 +19,44 @@ namespace Azure.Network.Management.Interface.Models
             writer.WriteStartObject();
             if (Optional.IsDefined(Name))
             {
-                writer.WritePropertyName("name");
+                writer.WritePropertyName("name"u8);
                 writer.WriteStringValue(Name);
             }
             if (Optional.IsDefined(Id))
             {
-                writer.WritePropertyName("id");
+                writer.WritePropertyName("id"u8);
                 writer.WriteStringValue(Id);
             }
-            writer.WritePropertyName("properties");
+            writer.WritePropertyName("properties"u8);
             writer.WriteStartObject();
             if (Optional.IsDefined(Description))
             {
-                writer.WritePropertyName("description");
+                writer.WritePropertyName("description"u8);
                 writer.WriteStringValue(Description);
             }
             if (Optional.IsDefined(Protocol))
             {
-                writer.WritePropertyName("protocol");
+                writer.WritePropertyName("protocol"u8);
                 writer.WriteStringValue(Protocol.Value.ToString());
             }
             if (Optional.IsDefined(SourcePortRange))
             {
-                writer.WritePropertyName("sourcePortRange");
+                writer.WritePropertyName("sourcePortRange"u8);
                 writer.WriteStringValue(SourcePortRange);
             }
             if (Optional.IsDefined(DestinationPortRange))
             {
-                writer.WritePropertyName("destinationPortRange");
+                writer.WritePropertyName("destinationPortRange"u8);
                 writer.WriteStringValue(DestinationPortRange);
             }
             if (Optional.IsDefined(SourceAddressPrefix))
             {
-                writer.WritePropertyName("sourceAddressPrefix");
+                writer.WritePropertyName("sourceAddressPrefix"u8);
                 writer.WriteStringValue(SourceAddressPrefix);
             }
             if (Optional.IsCollectionDefined(SourceAddressPrefixes))
             {
-                writer.WritePropertyName("sourceAddressPrefixes");
+                writer.WritePropertyName("sourceAddressPrefixes"u8);
                 writer.WriteStartArray();
                 foreach (var item in SourceAddressPrefixes)
                 {
@@ -65,7 +66,7 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsCollectionDefined(SourceApplicationSecurityGroups))
             {
-                writer.WritePropertyName("sourceApplicationSecurityGroups");
+                writer.WritePropertyName("sourceApplicationSecurityGroups"u8);
                 writer.WriteStartArray();
                 foreach (var item in SourceApplicationSecurityGroups)
                 {
@@ -75,12 +76,12 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsDefined(DestinationAddressPrefix))
             {
-                writer.WritePropertyName("destinationAddressPrefix");
+                writer.WritePropertyName("destinationAddressPrefix"u8);
                 writer.WriteStringValue(DestinationAddressPrefix);
             }
             if (Optional.IsCollectionDefined(DestinationAddressPrefixes))
             {
-                writer.WritePropertyName("destinationAddressPrefixes");
+                writer.WritePropertyName("destinationAddressPrefixes"u8);
                 writer.WriteStartArray();
                 foreach (var item in DestinationAddressPrefixes)
                 {
@@ -90,7 +91,7 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsCollectionDefined(DestinationApplicationSecurityGroups))
             {
-                writer.WritePropertyName("destinationApplicationSecurityGroups");
+                writer.WritePropertyName("destinationApplicationSecurityGroups"u8);
                 writer.WriteStartArray();
                 foreach (var item in DestinationApplicationSecurityGroups)
                 {
@@ -100,7 +101,7 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsCollectionDefined(SourcePortRanges))
             {
-                writer.WritePropertyName("sourcePortRanges");
+                writer.WritePropertyName("sourcePortRanges"u8);
                 writer.WriteStartArray();
                 foreach (var item in SourcePortRanges)
                 {
@@ -110,7 +111,7 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsCollectionDefined(DestinationPortRanges))
             {
-                writer.WritePropertyName("destinationPortRanges");
+                writer.WritePropertyName("destinationPortRanges"u8);
                 writer.WriteStartArray();
                 foreach (var item in DestinationPortRanges)
                 {
@@ -120,17 +121,17 @@ namespace Azure.Network.Management.Interface.Models
             }
             if (Optional.IsDefined(Access))
             {
-                writer.WritePropertyName("access");
+                writer.WritePropertyName("access"u8);
                 writer.WriteStringValue(Access.Value.ToString());
             }
             if (Optional.IsDefined(Priority))
             {
-                writer.WritePropertyName("priority");
+                writer.WritePropertyName("priority"u8);
                 writer.WriteNumberValue(Priority.Value);
             }
             if (Optional.IsDefined(Direction))
             {
-                writer.WritePropertyName("direction");
+                writer.WritePropertyName("direction"u8);
                 writer.WriteStringValue(Direction.Value.ToString());
             }
             writer.WriteEndObject();
@@ -139,43 +140,47 @@ namespace Azure.Network.Management.Interface.Models
 
         internal static SecurityRule DeserializeSecurityRule(JsonElement element)
         {
-            Optional<string> name = default;
-            Optional<string> etag = default;
-            Optional<string> id = default;
-            Optional<string> description = default;
-            Optional<SecurityRuleProtocol> protocol = default;
-            Optional<string> sourcePortRange = default;
-            Optional<string> destinationPortRange = default;
-            Optional<string> sourceAddressPrefix = default;
-            Optional<IList<string>> sourceAddressPrefixes = default;
-            Optional<IList<ApplicationSecurityGroup>> sourceApplicationSecurityGroups = default;
-            Optional<string> destinationAddressPrefix = default;
-            Optional<IList<string>> destinationAddressPrefixes = default;
-            Optional<IList<ApplicationSecurityGroup>> destinationApplicationSecurityGroups = default;
-            Optional<IList<string>> sourcePortRanges = default;
-            Optional<IList<string>> destinationPortRanges = default;
-            Optional<SecurityRuleAccess> access = default;
-            Optional<int> priority = default;
-            Optional<SecurityRuleDirection> direction = default;
-            Optional<ProvisioningState> provisioningState = default;
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
+            string name = default;
+            string etag = default;
+            string id = default;
+            string description = default;
+            SecurityRuleProtocol? protocol = default;
+            string sourcePortRange = default;
+            string destinationPortRange = default;
+            string sourceAddressPrefix = default;
+            IList<string> sourceAddressPrefixes = default;
+            IList<ApplicationSecurityGroup> sourceApplicationSecurityGroups = default;
+            string destinationAddressPrefix = default;
+            IList<string> destinationAddressPrefixes = default;
+            IList<ApplicationSecurityGroup> destinationApplicationSecurityGroups = default;
+            IList<string> sourcePortRanges = default;
+            IList<string> destinationPortRanges = default;
+            SecurityRuleAccess? access = default;
+            int? priority = default;
+            SecurityRuleDirection? direction = default;
+            ProvisioningState? provisioningState = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("name"))
+                if (property.NameEquals("name"u8))
                 {
                     name = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("etag"))
+                if (property.NameEquals("etag"u8))
                 {
                     etag = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("id"))
+                if (property.NameEquals("id"u8))
                 {
                     id = property.Value.GetString();
                     continue;
                 }
-                if (property.NameEquals("properties"))
+                if (property.NameEquals("properties"u8))
                 {
                     if (property.Value.ValueKind == JsonValueKind.Null)
                     {
@@ -184,41 +189,39 @@ namespace Azure.Network.Management.Interface.Models
                     }
                     foreach (var property0 in property.Value.EnumerateObject())
                     {
-                        if (property0.NameEquals("description"))
+                        if (property0.NameEquals("description"u8))
                         {
                             description = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("protocol"))
+                        if (property0.NameEquals("protocol"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             protocol = new SecurityRuleProtocol(property0.Value.GetString());
                             continue;
                         }
-                        if (property0.NameEquals("sourcePortRange"))
+                        if (property0.NameEquals("sourcePortRange"u8))
                         {
                             sourcePortRange = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("destinationPortRange"))
+                        if (property0.NameEquals("destinationPortRange"u8))
                         {
                             destinationPortRange = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("sourceAddressPrefix"))
+                        if (property0.NameEquals("sourceAddressPrefix"u8))
                         {
                             sourceAddressPrefix = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("sourceAddressPrefixes"))
+                        if (property0.NameEquals("sourceAddressPrefixes"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<string> array = new List<string>();
@@ -229,11 +232,10 @@ namespace Azure.Network.Management.Interface.Models
                             sourceAddressPrefixes = array;
                             continue;
                         }
-                        if (property0.NameEquals("sourceApplicationSecurityGroups"))
+                        if (property0.NameEquals("sourceApplicationSecurityGroups"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<ApplicationSecurityGroup> array = new List<ApplicationSecurityGroup>();
@@ -244,16 +246,15 @@ namespace Azure.Network.Management.Interface.Models
                             sourceApplicationSecurityGroups = array;
                             continue;
                         }
-                        if (property0.NameEquals("destinationAddressPrefix"))
+                        if (property0.NameEquals("destinationAddressPrefix"u8))
                         {
                             destinationAddressPrefix = property0.Value.GetString();
                             continue;
                         }
-                        if (property0.NameEquals("destinationAddressPrefixes"))
+                        if (property0.NameEquals("destinationAddressPrefixes"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<string> array = new List<string>();
@@ -264,11 +265,10 @@ namespace Azure.Network.Management.Interface.Models
                             destinationAddressPrefixes = array;
                             continue;
                         }
-                        if (property0.NameEquals("destinationApplicationSecurityGroups"))
+                        if (property0.NameEquals("destinationApplicationSecurityGroups"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<ApplicationSecurityGroup> array = new List<ApplicationSecurityGroup>();
@@ -279,11 +279,10 @@ namespace Azure.Network.Management.Interface.Models
                             destinationApplicationSecurityGroups = array;
                             continue;
                         }
-                        if (property0.NameEquals("sourcePortRanges"))
+                        if (property0.NameEquals("sourcePortRanges"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<string> array = new List<string>();
@@ -294,11 +293,10 @@ namespace Azure.Network.Management.Interface.Models
                             sourcePortRanges = array;
                             continue;
                         }
-                        if (property0.NameEquals("destinationPortRanges"))
+                        if (property0.NameEquals("destinationPortRanges"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             List<string> array = new List<string>();
@@ -309,41 +307,37 @@ namespace Azure.Network.Management.Interface.Models
                             destinationPortRanges = array;
                             continue;
                         }
-                        if (property0.NameEquals("access"))
+                        if (property0.NameEquals("access"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             access = new SecurityRuleAccess(property0.Value.GetString());
                             continue;
                         }
-                        if (property0.NameEquals("priority"))
+                        if (property0.NameEquals("priority"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             priority = property0.Value.GetInt32();
                             continue;
                         }
-                        if (property0.NameEquals("direction"))
+                        if (property0.NameEquals("direction"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             direction = new SecurityRuleDirection(property0.Value.GetString());
                             continue;
                         }
-                        if (property0.NameEquals("provisioningState"))
+                        if (property0.NameEquals("provisioningState"u8))
                         {
                             if (property0.Value.ValueKind == JsonValueKind.Null)
                             {
-                                property0.ThrowNonNullablePropertyIsNull();
                                 continue;
                             }
                             provisioningState = new ProvisioningState(property0.Value.GetString());
@@ -353,7 +347,26 @@ namespace Azure.Network.Management.Interface.Models
                     continue;
                 }
             }
-            return new SecurityRule(id.Value, name.Value, etag.Value, description.Value, Optional.ToNullable(protocol), sourcePortRange.Value, destinationPortRange.Value, sourceAddressPrefix.Value, Optional.ToList(sourceAddressPrefixes), Optional.ToList(sourceApplicationSecurityGroups), destinationAddressPrefix.Value, Optional.ToList(destinationAddressPrefixes), Optional.ToList(destinationApplicationSecurityGroups), Optional.ToList(sourcePortRanges), Optional.ToList(destinationPortRanges), Optional.ToNullable(access), Optional.ToNullable(priority), Optional.ToNullable(direction), Optional.ToNullable(provisioningState));
+            return new SecurityRule(
+                id,
+                name,
+                etag,
+                description,
+                protocol,
+                sourcePortRange,
+                destinationPortRange,
+                sourceAddressPrefix,
+                sourceAddressPrefixes ?? new ChangeTrackingList<string>(),
+                sourceApplicationSecurityGroups ?? new ChangeTrackingList<ApplicationSecurityGroup>(),
+                destinationAddressPrefix,
+                destinationAddressPrefixes ?? new ChangeTrackingList<string>(),
+                destinationApplicationSecurityGroups ?? new ChangeTrackingList<ApplicationSecurityGroup>(),
+                sourcePortRanges ?? new ChangeTrackingList<string>(),
+                destinationPortRanges ?? new ChangeTrackingList<string>(),
+                access,
+                priority,
+                direction,
+                provisioningState);
         }
     }
 }

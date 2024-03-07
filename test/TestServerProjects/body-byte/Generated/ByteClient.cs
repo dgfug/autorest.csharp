@@ -29,6 +29,7 @@ namespace body_byte
         /// <param name="clientDiagnostics"> The handler for diagnostic messaging in the client. </param>
         /// <param name="pipeline"> The HTTP pipeline for sending and receiving REST requests and responses. </param>
         /// <param name="endpoint"> server parameter. </param>
+        /// <exception cref="ArgumentNullException"> <paramref name="clientDiagnostics"/> or <paramref name="pipeline"/> is null. </exception>
         internal ByteClient(ClientDiagnostics clientDiagnostics, HttpPipeline pipeline, Uri endpoint = null)
         {
             RestClient = new ByteRestClient(clientDiagnostics, pipeline, endpoint);
@@ -70,7 +71,7 @@ namespace body_byte
             }
         }
 
-        /// <summary> Get empty byte value &apos;&apos;. </summary>
+        /// <summary> Get empty byte value ''. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<byte[]>> GetEmptyAsync(CancellationToken cancellationToken = default)
         {
@@ -87,7 +88,7 @@ namespace body_byte
             }
         }
 
-        /// <summary> Get empty byte value &apos;&apos;. </summary>
+        /// <summary> Get empty byte value ''. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<byte[]> GetEmpty(CancellationToken cancellationToken = default)
         {
@@ -174,7 +175,7 @@ namespace body_byte
             }
         }
 
-        /// <summary> Get invalid byte value &apos;:::SWAGGER::::&apos;. </summary>
+        /// <summary> Get invalid byte value ':::SWAGGER::::'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual async Task<Response<byte[]>> GetInvalidAsync(CancellationToken cancellationToken = default)
         {
@@ -191,7 +192,7 @@ namespace body_byte
             }
         }
 
-        /// <summary> Get invalid byte value &apos;:::SWAGGER::::&apos;. </summary>
+        /// <summary> Get invalid byte value ':::SWAGGER::::'. </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
         public virtual Response<byte[]> GetInvalid(CancellationToken cancellationToken = default)
         {

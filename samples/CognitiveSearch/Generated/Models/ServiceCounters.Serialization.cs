@@ -6,7 +6,6 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace CognitiveSearch.Models
 {
@@ -14,6 +13,10 @@ namespace CognitiveSearch.Models
     {
         internal static ServiceCounters DeserializeServiceCounters(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             ResourceCounter documentCount = default;
             ResourceCounter indexesCount = default;
             ResourceCounter indexersCount = default;
@@ -23,43 +26,50 @@ namespace CognitiveSearch.Models
             ResourceCounter skillsetCount = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("documentCount"))
+                if (property.NameEquals("documentCount"u8))
                 {
                     documentCount = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("indexesCount"))
+                if (property.NameEquals("indexesCount"u8))
                 {
                     indexesCount = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("indexersCount"))
+                if (property.NameEquals("indexersCount"u8))
                 {
                     indexersCount = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("dataSourcesCount"))
+                if (property.NameEquals("dataSourcesCount"u8))
                 {
                     dataSourcesCount = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("storageSize"))
+                if (property.NameEquals("storageSize"u8))
                 {
                     storageSize = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("synonymMaps"))
+                if (property.NameEquals("synonymMaps"u8))
                 {
                     synonymMaps = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
-                if (property.NameEquals("skillsetCount"))
+                if (property.NameEquals("skillsetCount"u8))
                 {
                     skillsetCount = ResourceCounter.DeserializeResourceCounter(property.Value);
                     continue;
                 }
             }
-            return new ServiceCounters(documentCount, indexesCount, indexersCount, dataSourcesCount, storageSize, synonymMaps, skillsetCount);
+            return new ServiceCounters(
+                documentCount,
+                indexesCount,
+                indexersCount,
+                dataSourcesCount,
+                storageSize,
+                synonymMaps,
+                skillsetCount);
         }
     }
 }

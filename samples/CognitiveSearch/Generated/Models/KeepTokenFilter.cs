@@ -8,32 +8,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CognitiveSearch;
 
 namespace CognitiveSearch.Models
 {
     /// <summary> A token filter that only keeps tokens with text contained in a specified list of words. This token filter is implemented using Apache Lucene. </summary>
     public partial class KeepTokenFilter : TokenFilter
     {
-        /// <summary> Initializes a new instance of KeepTokenFilter. </summary>
+        /// <summary> Initializes a new instance of <see cref="KeepTokenFilter"/>. </summary>
         /// <param name="name"> The name of the token filter. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="keepWords"> The list of words to keep. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="keepWords"/> is null. </exception>
         public KeepTokenFilter(string name, IEnumerable<string> keepWords) : base(name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (keepWords == null)
-            {
-                throw new ArgumentNullException(nameof(keepWords));
-            }
+            Argument.AssertNotNull(name, nameof(name));
+            Argument.AssertNotNull(keepWords, nameof(keepWords));
 
             KeepWords = keepWords.ToList();
             OdataType = "#Microsoft.Azure.Search.KeepTokenFilter";
         }
 
-        /// <summary> Initializes a new instance of KeepTokenFilter. </summary>
+        /// <summary> Initializes a new instance of <see cref="KeepTokenFilter"/>. </summary>
         /// <param name="odataType"> Identifies the concrete type of the token filter. </param>
         /// <param name="name"> The name of the token filter. It must only contain letters, digits, spaces, dashes or underscores, can only start and end with alphanumeric characters, and is limited to 128 characters. </param>
         /// <param name="keepWords"> The list of words to keep. </param>

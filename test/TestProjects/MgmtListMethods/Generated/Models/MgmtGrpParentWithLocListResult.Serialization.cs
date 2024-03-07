@@ -7,7 +7,6 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 using MgmtListMethods;
 
 namespace MgmtListMethods.Models
@@ -16,11 +15,15 @@ namespace MgmtListMethods.Models
     {
         internal static MgmtGrpParentWithLocListResult DeserializeMgmtGrpParentWithLocListResult(JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
             IReadOnlyList<MgmtGrpParentWithLocData> value = default;
-            Optional<string> nextLink = default;
+            string nextLink = default;
             foreach (var property in element.EnumerateObject())
             {
-                if (property.NameEquals("value"))
+                if (property.NameEquals("value"u8))
                 {
                     List<MgmtGrpParentWithLocData> array = new List<MgmtGrpParentWithLocData>();
                     foreach (var item in property.Value.EnumerateArray())
@@ -30,13 +33,13 @@ namespace MgmtListMethods.Models
                     value = array;
                     continue;
                 }
-                if (property.NameEquals("nextLink"))
+                if (property.NameEquals("nextLink"u8))
                 {
                     nextLink = property.Value.GetString();
                     continue;
                 }
             }
-            return new MgmtGrpParentWithLocListResult(value, nextLink.Value);
+            return new MgmtGrpParentWithLocListResult(value, nextLink);
         }
     }
 }

@@ -8,8 +8,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using AutoRest.CSharp.Generation.Types;
+using AutoRest.CSharp.Output.Models;
 using AutoRest.CSharp.Output.Models.Shared;
 using AutoRest.CSharp.Utilities;
+using static AutoRest.CSharp.Output.Models.Shared.ValidationType;
 
 namespace AutoRest.CSharp.Generation.Writers
 {
@@ -55,12 +57,12 @@ namespace AutoRest.CSharp.Generation.Writers
         /// <returns></returns>
         public static CodeWriter WriteXmlDocumentationParameter(this CodeWriter writer, Parameter parameter)
         {
-            return writer.WriteXmlDocumentationParameter(parameter.Name, $"{parameter.Description}");
+            return writer.WriteXmlDocumentationParameter(parameter.Name, parameter.Description);
         }
 
-        public static CodeWriter WriteXmlDocumentationException(this CodeWriter writer, Type exception, FormattableString? description)
+        public static CodeWriter WriteXmlDocumentationException(this CodeWriter writer, CSharpType exception, FormattableString? description)
         {
-            return writer.WriteDocumentationLines($"<exception cref=\"{exception.FullName}\">", $"</exception>", description);
+            return writer.WriteDocumentationLines($"<exception cref=\"{exception}\">", $"</exception>", description);
         }
 
         public static CodeWriter WriteXmlDocumentationReturns(this CodeWriter writer, FormattableString text)
@@ -68,36 +70,81 @@ namespace AutoRest.CSharp.Generation.Writers
             return writer.WriteDocumentationLines($"<returns>", $"</returns>", text);
         }
 
-        public static CodeWriter WriteXmlDocumentationRequiredParametersException(this CodeWriter writer, IReadOnlyCollection<Parameter> parameters)
+        public static CodeWriter WriteXmlDocumentationInclude(this CodeWriter writer, string filename, MethodSignature methodSignature, out string memberId)
         {
-            if (parameters.TryGetRequiredParameters(out var requiredParameters))
+            // We use short names of types for external doc reference member id
+            // This is not good enough for cref, but for now works as member id
+            // Change to cref-style names if needed
+            var sb = new StringBuilder();
+            sb.Append(methodSignature.Name).Append("(");
+            foreach (var parameter in methodSignature.Parameters)
             {
-                static string FormatParameters(IReadOnlyCollection<Parameter> parameters)
-                {
-                    var sb = new StringBuilder();
-
-                    var i = 0;
-                    for (; i < parameters.Count - 1; ++i)
-                    {
-                        sb.Append($"<paramref name=\"{{{i}}}\"/>, ");
-                    }
-
-                    sb.Append($"or <paramref name=\"{{{i}}}\"/> is null.");
-                    return sb.ToString();
-                }
-
-                var delimitedParameters = requiredParameters.Count switch
-                {
-                    1 => "<paramref name=\"{0}\"/> is null.",
-                    2 => "<paramref name=\"{0}\"/> or <paramref name=\"{1}\"/> is null.",
-                    _ => FormatParameters(requiredParameters),
-                };
-
-                var description = FormattableStringFactory.Create(delimitedParameters, requiredParameters.Select(p => (object)p.Name).ToArray());
-                return writer.WriteXmlDocumentationException(typeof(ArgumentNullException), description);
+                AppendTypeWithShortNames(parameter.Type, sb);
+                sb.Append(",");
             }
 
-            return writer;
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(")");
+
+            memberId = sb.ToString();
+            return writer.LineRaw($"/// <include file=\"{filename}\" path=\"doc/members/member[@name='{memberId}']/*\" />");
+        }
+
+        private static void AppendTypeWithShortNames(CSharpType type, StringBuilder sb)
+        {
+            sb.Append(type.TryGetCSharpFriendlyName(out var keywordName) ? keywordName : type.Name);
+
+            if (type.Arguments.Any())
+            {
+                sb.Append("{");
+                foreach (var typeArgument in type.Arguments)
+                {
+                    AppendTypeWithShortNames(typeArgument, sb);
+                    sb.Append(",");
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append("}");
+            }
+
+            if (type is { IsNullable: true, IsValueType: true })
+            {
+                sb.Append("?");
+            }
+        }
+
+        public static CodeWriter WriteXmlDocumentationRequiredParametersException(this CodeWriter writer, IEnumerable<Parameter> parameters)
+        {
+            return writer.WriteXmlDocumentationParametersExceptions(typeof(ArgumentNullException), parameters.Where(p => p.Validation is AssertNotNull or AssertNotNullOrEmpty).ToArray(), " is null.");
+        }
+
+        public static CodeWriter WriteXmlDocumentationNonEmptyParametersException(this CodeWriter writer, IEnumerable<Parameter> parameters)
+        {
+            return writer.WriteXmlDocumentationParametersExceptions(typeof(ArgumentException), parameters.Where(p => p.Validation == AssertNotNullOrEmpty).ToArray(), " is an empty string, and was expected to be non-empty.");
+        }
+
+        private static CodeWriter WriteXmlDocumentationParametersExceptions(this CodeWriter writer, Type exceptionType, IReadOnlyCollection<Parameter> parameters, string reason)
+        {
+            if (parameters.Count == 0)
+            {
+                return writer;
+            }
+
+            var formatBuilder = new StringBuilder();
+            for (var i = 0; i < parameters.Count - 2; ++i)
+            {
+                formatBuilder.Append("<paramref name=\"{").Append(i).Append("}\"/>, ");
+            }
+
+            if (parameters.Count > 1)
+            {
+                formatBuilder.Append("<paramref name=\"{").Append(parameters.Count - 2).Append("}\"/> or ");
+            }
+
+            formatBuilder.Append("<paramref name=\"{").Append(parameters.Count - 1).Append("}\"/>");
+            formatBuilder.Append(reason);
+
+            var description = FormattableStringFactory.Create(formatBuilder.ToString(), parameters.Select(p => (object)p.Name).ToArray());
+            return writer.WriteXmlDocumentationException(exceptionType, description);
         }
 
         public static CodeWriter WriteDocumentationLines(this CodeWriter writer, FormattableString startTag, FormattableString endTag, FormattableString? text)
